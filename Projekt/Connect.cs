@@ -60,7 +60,7 @@ namespace Projekt
 
         private static NpgsqlConnection GetConnection()
         {
-            return new NpgsqlConnection(@"Server=sxterm;Port=5432;User ID=adrianrodzic;Password=ADrian8151!@#;Database=adrianrodzic");
+            return new NpgsqlConnection(@"Server=sxterm;Port=5432;User ID=adrianrodzic;Password=;Database=adrianrodzic");
         }
     }
 }
