@@ -8,7 +8,7 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <TextBlock x:Name="textBlock1" HorizontalAlignment="Left" Margin="148,53,0,0" TextWrapping="Wrap" Text="Tu pojawi się wynik zapytania..." VerticalAlignment="Top" Height="300" Width="463" Visibility="Hidden"/>
-        <Grid x:Name="logowanie" Visibility="Visible">
+        <Grid x:Name="logowanie" Visibility="Visible" Margin="0,-10,0,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="13*"/>
                 <ColumnDefinition Width="18*"/>
@@ -16,12 +16,15 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="105*"/>
-                <RowDefinition Height="209*"/>
-                <RowDefinition Height="105*"/>
+                <RowDefinition Height="103*"/>
+                <RowDefinition Height="104*"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1" Grid.Column="1" Background="Gray">
-                <TextBox Grid.Column="1" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" Text="login" VerticalAlignment="Top" Width="148" Height="25" Margin="15"/>
-                <PasswordBox Grid.Column="1" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Top" Width="148" Height="25"/>
+            <StackPanel Grid.Column="1" Grid.Row="1" Background="Gray" Grid.RowSpan="1">
+                <TextBox Grid.Column="1" Grid.Row="1" TextWrapping="Wrap" Text="login" Margin="40,20,40,5"/>
+                <PasswordBox Margin="40,10,40,10"/>
+                <Button Width="150" Height="20" HorizontalAlignment="Center" Margin="3" Content="Zaloguj się"/>
+                <Button Width="150" Height="20" HorizontalAlignment="Center" Margin="3" Content="Zarejestruj się"/>
+
             </StackPanel>
         </Grid>
         <Grid x:Name="rejestracja" Visibility="Hidden">
