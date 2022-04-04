@@ -32,6 +32,7 @@ namespace Projekt
             }
 
             Debug.WriteLine("Testowa wiadomosc");
+            Debug.WriteLine("Testowa wiadomosc2");
         }
 
         private void LoginBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
