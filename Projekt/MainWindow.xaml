@@ -5,27 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Projekt"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" MinWidth="800" MinHeight="450">
     <Grid>
         <TextBlock x:Name="textBlock1" HorizontalAlignment="Left" Margin="148,53,0,0" TextWrapping="Wrap" Text="Tu pojawi się wynik zapytania..." VerticalAlignment="Top" Height="300" Width="463" Visibility="Hidden"/>
         <Grid x:Name="logowanie" Visibility="Visible" Margin="0,-10,0,10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="13*"/>
-                <ColumnDefinition Width="18*"/>
-                <ColumnDefinition Width="13*"/>
+                <ColumnDefinition Width="234*"/>
+                <ColumnDefinition Width="163*"/>
+                <ColumnDefinition Width="163*"/>
+                <ColumnDefinition Width="233*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="105*"/>
-                <RowDefinition Height="103*"/>
-                <RowDefinition Height="104*"/>
+                <RowDefinition Height="139*"/>
+                <RowDefinition Height="48*"/>
+                <RowDefinition Height="48*"/>
+                <RowDefinition Height="48*"/>
+                <RowDefinition Height="137*"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Column="1" Grid.Row="1" Background="Gray" Grid.RowSpan="1">
-                <TextBox Grid.Column="1" Grid.Row="1" TextWrapping="Wrap" Text="login" Margin="40,20,40,5"/>
-                <PasswordBox Margin="40,10,40,10"/>
-                <Button Width="150" Height="20" HorizontalAlignment="Center" Margin="3" Content="Zaloguj się"/>
-                <Button Width="150" Height="20" HorizontalAlignment="Center" Margin="3" Content="Zarejestruj się"/>
-
-            </StackPanel>
+            <TextBox x:Name="LoginBox" Grid.Column="1" Grid.Row="1" TextWrapping="Wrap" Text="login" Margin="40,12,40,12" PreviewMouseDown="LoginBox_PreviewMouseDown" Grid.ColumnSpan="2" TextAlignment="Center" VerticalContentAlignment="Center"/>
+            <Label x:Name="PodpowiedzHaslo" Content="hasło" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Panel.ZIndex="1" VerticalAlignment="Center"/>
+            <PasswordBox x:Name="PassBox" Margin="40,12,40,12" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" PreviewMouseDown="PassBox_PreviewMouseDown"/>
+            <Button Width="150" HorizontalAlignment="Center" Margin="5,5,5,5" Content="Zaloguj się" Grid.Column="1" Grid.Row="3"/>
+            <Button Width="150" HorizontalAlignment="Center" Margin="5,5,5,5" Content="Zarejestruj się" Grid.Column="2" Grid.Row="3"/>
+            <Rectangle Grid.Column="1" Grid.Row="1" Fill="Gray" Panel.ZIndex="-1" Grid.ColumnSpan="2" Grid.RowSpan="3"/>
         </Grid>
         <Grid x:Name="rejestracja" Visibility="Hidden">
         </Grid>

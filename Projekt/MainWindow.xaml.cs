@@ -33,5 +33,16 @@ namespace Projekt
 
             Debug.WriteLine("Testowa wiadomosc");
         }
+
+        private void LoginBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            LoginBox.Text = "";
+            LoginBox.TextAlignment = 0;
+        }
+
+        private void PassBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            PodpowiedzHaslo.Content = "";
+        }
     }
 }
