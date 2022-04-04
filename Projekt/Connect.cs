@@ -30,7 +30,7 @@ namespace Projekt
             List<string> result = new List<string>();
             using (NpgsqlConnection con = GetConnection())
             {
-                string query = @"SELECT * FROM test";
+                string query = @"SELECT * FROM ogloszenia";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, con);
                 con.Open();
                 using (NpgsqlDataReader reader = cmd.ExecuteReader())
@@ -39,7 +39,7 @@ namespace Projekt
                     {
                         //Console.WriteLine(reader.GetString(0));
                         //Console.WriteLine(reader["id"] + " " + reader["imie"] + " " + reader["nazwisko"] + " " + reader["nr_tel"]);
-                        result.Add(reader["id"] + " " + reader["imie"] + " " + reader["nazwisko"] + " " + reader["nr_tel"]);
+                        result.Add(reader["id_o"] + " " + reader["id_u"] + " " + reader["tytul"] + " " + reader["kategoria"] + " " + reader["tresc"]);
                     }
                 }
             }
