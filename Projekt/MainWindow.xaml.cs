@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,10 +26,12 @@ namespace Projekt
             InitializeComponent();
 
             textBlock1.Text = string.Empty;
-            foreach (var elements in Connect.SelectRecords())
+            foreach (string elements in Connect.SelectRecords())
             {
                 textBlock1.Text += elements + "\n";
             }
+
+            Debug.WriteLine("Testowa wiadomosc");
         }
     }
 }

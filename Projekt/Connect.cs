@@ -29,7 +29,7 @@ namespace Projekt
         {
             List<string> result = new List<string>();
             using (NpgsqlConnection con = GetConnection())
-            {      
+            {
                 string query = @"SELECT * FROM test";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, con);
                 con.Open();
@@ -60,7 +60,7 @@ namespace Projekt
 
         private static NpgsqlConnection GetConnection()
         {
-            return new NpgsqlConnection(@"Server=sxterm;Port=5432;User ID=adrianrodzic;Password=;Database=adrianrodzic");
+            return new NpgsqlConnection(@"Server=sxterm;Port=5432;User ID=adrianrodzic;Password=ADrian8151!@#;Database=adrianrodzic");
         }
     }
 }
