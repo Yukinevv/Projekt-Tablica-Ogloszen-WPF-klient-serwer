@@ -38,9 +38,21 @@ namespace Projekt
             LoginBox.TextAlignment = 0;
         }
 
-        private void PassBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private void BackToLogin_Click(object sender, RoutedEventArgs e)
         {
-            PodpowiedzHaslo.Content = "";
+            rejestracja.Visibility = (Visibility)1;
+            logowanie.Visibility = (Visibility)0;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ZarejestrujSieDoGrida_Click(object sender, RoutedEventArgs e)
+        {
+            logowanie.Visibility = (Visibility)1;
+            rejestracja.Visibility = (Visibility)0;
         }
     }
 }
