@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Npgsql;
 
 namespace Projekt
 {
@@ -25,10 +26,10 @@ namespace Projekt
         {
             InitializeComponent();
 
-            textBlock1.Text = string.Empty;
+            TextBlock1.Text = "Testuj na: ";
             foreach (string elements in Connect.SelectRecords())
             {
-                textBlock1.Text += elements + "\n";
+                TextBlock1.Text += elements + "\n";
             }
         }
 
@@ -42,17 +43,66 @@ namespace Projekt
         {
             rejestracja.Visibility = (Visibility)1;
             logowanie.Visibility = (Visibility)0;
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
+            TextBlock1.Visibility = (Visibility)0;
         }
 
         private void ZarejestrujSieDoGrida_Click(object sender, RoutedEventArgs e)
         {
             logowanie.Visibility = (Visibility)1;
             rejestracja.Visibility = (Visibility)0;
+            TextBlock1.Visibility = (Visibility)1;
+        }
+
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            using (NpgsqlConnection conn = Connect.GetConnection())
+            {
+                try
+                {
+                    conn.Open();
+                    //string query = @"SELECT * FROM uzytkownicy WHERE login = '@login' AND haslo = '@haslo'";
+                    string query = @"SELECT * FROM login(:_login,:_haslo)"; //login() jest funkcja w postgresie
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+
+                    cmd.Parameters.AddWithValue("_login", LoginBox.Text);
+                    cmd.Parameters.AddWithValue("_haslo", PassBox.Password);
+                    
+                    int result = (int)cmd.ExecuteScalar();
+
+                    if (result == 1)
+                    {
+                        logowanie.Visibility = (Visibility)1;
+                        //TextBlock1.Visibility = (Visibility)0;
+                        LogoutButton.Visibility = (Visibility)0;
+                        TextBlock1.Text = "Logowanie powiodlo sie!";
+                        //pokaz grid glownego layoutu
+                    }
+                    else
+                    {
+                        MessageBox.Show("Sprawdz swoje dane logowania", "Blad logowania", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                        conn.Close();
+                    }
+                }
+                catch (Exception err)
+                {
+                    MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            //tymczasowo
+            logowanie.Visibility = (Visibility)0;
+            LogoutButton.Visibility = (Visibility)1;
+            //TextBlock1.Visibility = (Visibility)1;
+
+            TextBlock1.Text = "Testuj na: ";
+            foreach (string elements in Connect.SelectRecords())
+            {
+                TextBlock1.Text += elements + "\n";
+            }
         }
     }
 }

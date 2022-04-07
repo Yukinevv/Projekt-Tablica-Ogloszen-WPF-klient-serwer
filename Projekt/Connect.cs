@@ -11,12 +11,11 @@ namespace Projekt
     {
         public static void InsertRecord()
         {
-            using (NpgsqlConnection con = GetConnection())
+            using (NpgsqlConnection conn = GetConnection())
             {
-                //string query = @"INSERT INTO public.emp(empno, ename, deptno) VALUES(4, 'Kowalski', 10)";
                 string query = @"INSERT INTO public.test VALUES(1, 'Jan', 'Kowalski', 123456789)";
-                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
-                con.Open();
+                NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+                conn.Open();
                 int n = cmd.ExecuteNonQuery();
                 if (n == 1)
                 {
@@ -28,18 +27,17 @@ namespace Projekt
         public static List<string> SelectRecords()
         {
             List<string> result = new List<string>();
-            using (NpgsqlConnection con = GetConnection())
+            using (NpgsqlConnection conn = GetConnection())
             {
-                string query = @"SELECT * FROM ogloszenia";
-                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
-                con.Open();
+                string query = @"SELECT login, haslo FROM uzytkownicy WHERE imie = 'Jan'";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+                conn.Open();
                 using (NpgsqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        //Console.WriteLine(reader.GetString(0));
-                        //Console.WriteLine(reader["id"] + " " + reader["imie"] + " " + reader["nazwisko"] + " " + reader["nr_tel"]);
-                        result.Add(reader["id_o"] + " " + reader["id_u"] + " " + reader["tytul"] + " " + reader["kategoria"] + " " + reader["tresc"]);
+                        result.Add(reader["login"] + " " + reader["haslo"]);
+                        //result.Add(reader["id_o"] + " " + reader["id_u"] + " " + reader["tytul"] + " " + reader["kategoria"] + " " + reader["tresc"]);
                     }
                 }
             }
@@ -48,17 +46,18 @@ namespace Projekt
 
         public static void TestConnection()
         {
-            using (NpgsqlConnection con = GetConnection())
+            using (NpgsqlConnection conn = GetConnection())
             {
-                con.Open();
-                if (con.State == System.Data.ConnectionState.Open)
+                conn.Open();
+                if (conn.State == System.Data.ConnectionState.Open)
                 {
                     Console.WriteLine("Polaczono z baza danych");
                 }
+                conn.Close();
             }
         }
 
-        private static NpgsqlConnection GetConnection()
+        public static NpgsqlConnection GetConnection()
         {
             return new NpgsqlConnection(@"Server=sxterm;Port=5432;User ID=adrianrodzic;Password=ADrian8151!@#;Database=adrianrodzic");
         }
