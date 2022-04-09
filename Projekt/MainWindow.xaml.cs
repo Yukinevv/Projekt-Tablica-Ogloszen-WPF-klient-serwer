@@ -26,7 +26,7 @@ namespace Projekt
         {
             InitializeComponent();
 
-            TextBlock1.Text = "Testuj na: ";
+            TextBlock1.Text = "Dostepni uzytkownicy:\n";
             foreach (string elements in Connect.SelectRecords())
             {
                 TextBlock1.Text += elements + "\n";
@@ -98,7 +98,7 @@ namespace Projekt
             LogoutButton.Visibility = (Visibility)1;
             //TextBlock1.Visibility = (Visibility)1;
 
-            TextBlock1.Text = "Testuj na: ";
+            TextBlock1.Text = "Dostepni uzytkownicy:\n";
             foreach (string elements in Connect.SelectRecords())
             {
                 TextBlock1.Text += elements + "\n";
@@ -122,10 +122,24 @@ namespace Projekt
                     cmd.Parameters.AddWithValue("_haslo", PassBox1.Password);
                     cmd.Parameters.AddWithValue("_imie", TextBoxImie.Text);
                     cmd.Parameters.AddWithValue("_nazwisko", TextBoxNazwisko.Text);
-                    cmd.Parameters.AddWithValue("_data_ur", DatePicker1.SelectedDate);
+                    cmd.Parameters.AddWithValue("_data_ur", DatePicker1.SelectedDate);  
+
+                    if (PassBox1.Password.Length < 3 || PassBox1.Password.Length > 20)
+                    {
+                        LabelPassError.Visibility = (Visibility)0;
+                        LabelPassError.Content = "Niepoprawna dlugosc hasla!";
+                        conn.Close();
+                        return;
+                    }
+                    if (PassBox1.Password != PassBox2.Password)
+                    {
+                        LabelPassError.Visibility = (Visibility)0;
+                        LabelPassError.Content = "Podane hasła nie są takie same!";
+                        conn.Close();
+                        return;
+                    }
 
                     int n = cmd.ExecuteNonQuery();
-
                     if (n == 1)
                     { 
                         TextBlock1.Visibility = (Visibility)0;
@@ -134,17 +148,30 @@ namespace Projekt
                         logowanie.Visibility = (Visibility)0;
                         rejestracja.Visibility = (Visibility)1;
                     }
-                    else //jeszcze nie okodowane
-                    {
-                        MessageBox.Show("Podany login jest juz zajety", "Blad rejestracji", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-                        conn.Close();
-                    }
                 }
                 catch (Exception err)
                 {
                     MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        private void TextBoxImie_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            TextBoxImie.Text = "";
+            TextBoxImie.TextAlignment = 0;
+        }
+
+        private void TextBoxNazwisko_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            TextBoxNazwisko.Text = "";
+            TextBoxNazwisko.TextAlignment = 0;
+        }
+
+        private void TextBoxLogin_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            TextBoxLogin.Text = "";
+            TextBoxLogin.TextAlignment = 0;
         }
 
         private void PassBox2_PasswordChanged(object sender, RoutedEventArgs e)

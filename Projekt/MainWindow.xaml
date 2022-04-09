@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" MinWidth="800" MinHeight="450">
     <Grid>
-        <TextBlock x:Name="TextBlock1" HorizontalAlignment="Left" Margin="160,47,0,0" TextWrapping="Wrap" Text="Tu pojawi się wynik zapytania..." VerticalAlignment="Top" Height="300" Width="463" Visibility="Visible" TextAlignment="Center" FontSize="22"/>
+        <TextBlock x:Name="TextBlock1" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Tu pojawi się wynik zapytania..." VerticalAlignment="Top" Height="300" Width="463" Visibility="Visible"/>
         <Button x:Name="LogoutButton" Content="Wyloguj" Margin="250,130,250,250" Visibility="Hidden" Click="LogoutButton_Click"/>
         <Grid x:Name="logowanie" Visibility="Visible" Margin="0,-10,0,10">
             <Grid.ColumnDefinitions>
@@ -44,9 +44,9 @@
                 <RowDefinition Height="60*"/>
                 <RowDefinition Height="60*"/>
             </Grid.RowDefinitions>
-            <TextBox x:Name="TextBoxImie" Grid.Column="1" Grid.Row="1" Height="36" TextWrapping="Wrap" Text="Imię" Margin="10,0,10,0" Padding="0,5,0,0" TextAlignment="Center" FontSize="16"/>
-            <TextBox x:Name="TextBoxNazwisko" Grid.Column="2" Grid.Row="1" Height="36" TextWrapping="Wrap" Text="Nazwisko" Margin="10,0,10,0" Padding="0,5,0,0" TextAlignment="Center" FontSize="16"/>
-            <TextBox x:Name="TextBoxLogin" Grid.Column="1" Grid.Row="2" Height="36" TextWrapping="Wrap" Text="Login" Margin="10,0,10,0" Padding="0,5,0,0" TextAlignment="Center" FontSize="16"/>
+            <TextBox x:Name="TextBoxImie" PreviewMouseDown="TextBoxImie_PreviewMouseDown" Grid.Column="1" Grid.Row="1" Height="36" TextWrapping="Wrap" Text="Imię" Margin="10,0,10,0" Padding="0,5,0,0" TextAlignment="Center" FontSize="16"/>
+            <TextBox x:Name="TextBoxNazwisko" PreviewMouseDown="TextBoxNazwisko_PreviewMouseDown" Grid.Column="2" Grid.Row="1" Height="36" TextWrapping="Wrap" Text="Nazwisko" Margin="10,0,10,0" Padding="0,5,0,0" TextAlignment="Center" FontSize="16"/>
+            <TextBox x:Name="TextBoxLogin" PreviewMouseDown="TextBoxLogin_PreviewMouseDown" Grid.Column="1" Grid.Row="2" Height="36" TextWrapping="Wrap" Text="Login" Margin="10,0,10,0" Padding="0,5,0,0" TextAlignment="Center" FontSize="16"/>
             <Label x:Name="LabelPass1" Grid.Column="1" Grid.Row="3" Margin="65,0,65,45" Padding="0,0,0,0" FontSize="16" Content="Hasło" Panel.ZIndex="1" HorizontalContentAlignment="Center"/>
             <Label x:Name="LabelPass2" Grid.Column="2" Grid.Row="3" Height="36" Margin="35,0,35,0" Padding="0,5,0,0" FontSize="16" Content="Powtórz Hasło" Panel.ZIndex="1" HorizontalContentAlignment="Center"/>
             <PasswordBox x:Name="PassBox1" Grid.Column="1" Grid.Row="3" Height="36" Margin="10,20,10,0" Padding="0,5,0,0" FontSize="16"/>
@@ -55,6 +55,7 @@
             <Button x:Name="Rejestruj" Grid.Column="1" Grid.Row="4" Height="36" Margin="10,0,10,0" FontSize="16" Content="Zarejestruj" Click="Rejestruj_Click"/>
             <Button x:Name="BackToLogin" Grid.Column="2" Grid.Row="4" Height="36" Margin="10,0,10,0" FontSize="16" Content="Powrot" Click="BackToLogin_Click"/>
             <Rectangle Grid.Column="1" Grid.Row="1" Fill="Gray" Panel.ZIndex="-1" Grid.ColumnSpan="2" Grid.RowSpan="4"/>
+            <Label x:Name="LabelPassError" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="2" Content="Tu pojawia sie bledy dotyczace hasła" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Foreground="Red" Visibility="Hidden"/>
         </Grid>
         <Grid x:Name="program" Visibility="Hidden">
         </Grid>

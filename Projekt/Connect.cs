@@ -29,14 +29,14 @@ namespace Projekt
             List<string> result = new List<string>();
             using (NpgsqlConnection conn = GetConnection())
             {
-                string query = @"SELECT login, haslo FROM uzytkownicy WHERE imie = 'Jan'";
+                string query = @"SELECT login, haslo FROM uzytkownicy";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
                 conn.Open();
                 using (NpgsqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        result.Add(reader["login"] + " " + reader["haslo"]);
+                        result.Add("Login: " + reader["login"] + "   Hasło: " + reader["haslo"]);
                         //result.Add(reader["id_o"] + " " + reader["id_u"] + " " + reader["tytul"] + " " + reader["kategoria"] + " " + reader["tresc"]);
                     }
                 }
