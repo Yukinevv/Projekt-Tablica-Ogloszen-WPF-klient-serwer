@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Npgsql;
+using System.Security.Cryptography;
 
 namespace Projekt
 {
@@ -60,23 +61,25 @@ namespace Projekt
                 try
                 {
                     conn.Open();
-                    //string query = @"SELECT * FROM uzytkownicy WHERE login = '@login' AND haslo = '@haslo'";
-                    string query = @"SELECT * FROM login(:_login,:_haslo)"; //login() jest funkcja w postgresie
+                    //string query = @"SELECT * FROM uzytkownicy WHERE login = :_login AND haslo = :_haslo";
+                    string query = @"SELECT * FROM login(:_login, :_haslo)"; //login() jest funkcja w postgresie
 
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
+                    SHA256 sha256Hash = SHA256.Create();
+                    string hash = GetHash(sha256Hash, PassBox.Password);
+
                     cmd.Parameters.AddWithValue("_login", LoginBox.Text);
-                    cmd.Parameters.AddWithValue("_haslo", PassBox.Password);
+                    cmd.Parameters.AddWithValue("_haslo", hash);
                     
                     int result = (int)cmd.ExecuteScalar();
 
                     if (result == 1)
-                    {
-                        logowanie.Visibility = (Visibility)1;
-                        //TextBlock1.Visibility = (Visibility)0;
-                        LogoutButton.Visibility = (Visibility)0;
+                    {   
                         TextBlock1.Text = "Logowanie powiodlo sie!";
                         //pokaz grid glownego layoutu
+                        program.Visibility = (Visibility)0;
+                        logowanie.Visibility = (Visibility)1;
                     }
                     else
                     {
@@ -95,8 +98,7 @@ namespace Projekt
         {
             //tymczasowo
             logowanie.Visibility = (Visibility)0;
-            LogoutButton.Visibility = (Visibility)1;
-            //TextBlock1.Visibility = (Visibility)1;
+            program.Visibility = (Visibility)1;
 
             TextBlock1.Text = "Dostepni uzytkownicy:\n";
             foreach (string elements in Connect.SelectRecords())
@@ -118,13 +120,16 @@ namespace Projekt
 
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
-                    cmd.Parameters.AddWithValue("_login", TextBoxLogin.Text);     
-                    cmd.Parameters.AddWithValue("_haslo", PassBox1.Password);
+                    SHA256 sha256Hash = SHA256.Create();
+                    string hash = GetHash(sha256Hash, PassBox1.Password);
+
+                    cmd.Parameters.AddWithValue("_login", TextBoxLogin.Text);
+                    cmd.Parameters.AddWithValue("_haslo", hash);
                     cmd.Parameters.AddWithValue("_imie", TextBoxImie.Text);
                     cmd.Parameters.AddWithValue("_nazwisko", TextBoxNazwisko.Text);
-                    cmd.Parameters.AddWithValue("_data_ur", DatePicker1.SelectedDate);  
+                    cmd.Parameters.AddWithValue("_data_ur", DatePicker1.SelectedDate);
 
-                    if (PassBox1.Password.Length < 3 || PassBox1.Password.Length > 20)
+                    if (PassBox1.Password.Length < 8 || PassBox1.Password.Length > 20)
                     {
                         LabelPassError.Visibility = (Visibility)0;
                         LabelPassError.Content = "Niepoprawna dlugosc hasla!";
@@ -154,6 +159,19 @@ namespace Projekt
                     MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        private static string GetHash(HashAlgorithm hashAlgorithm, string input)
+        {
+            byte[] data = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+            var sBuilder = new StringBuilder();
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+            return sBuilder.ToString();
         }
 
         private void TextBoxImie_PreviewMouseDown(object sender, MouseButtonEventArgs e)
