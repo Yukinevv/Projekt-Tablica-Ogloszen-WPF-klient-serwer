@@ -115,7 +115,7 @@ namespace Projekt
                 {
                     conn.Open();
                     string query = @"INSERT INTO uzytkownicy VALUES(
-                                     nextval('increment_id_uzytkownicy'), :_login, :_haslo, :_imie, :_nazwisko, :_data_ur, 'user')";
+                                     nextval('increment_id_uzytkownicy'), :_login, :_haslo, :_imie, :_nazwisko, :_email, :_data_ur, 'user')";
                                     //increment_id_uzytkownicy jest to sekwencja robiaca za AUTO INCREMENT w postgresie
 
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
@@ -127,6 +127,7 @@ namespace Projekt
                     cmd.Parameters.AddWithValue("_haslo", hash);
                     cmd.Parameters.AddWithValue("_imie", TextBoxImie.Text);
                     cmd.Parameters.AddWithValue("_nazwisko", TextBoxNazwisko.Text);
+                    cmd.Parameters.AddWithValue("_email", TextBoxEmail.Text);
                     cmd.Parameters.AddWithValue("_data_ur", DatePicker1.SelectedDate);
 
                     if (PassBox1.Password.Length < 8 || PassBox1.Password.Length > 20)
