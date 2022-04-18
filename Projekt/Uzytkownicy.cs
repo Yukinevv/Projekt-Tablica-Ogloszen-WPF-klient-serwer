@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Projekt
 {
-    internal class Uzytkownicy
+    public class Uzytkownicy
     {
         public int Id { get; set; }
         public string Login { get; set; }

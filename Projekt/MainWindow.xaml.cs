@@ -23,6 +23,8 @@ namespace Projekt
     /// </summary>
     public partial class MainWindow : Window
     {
+        //public static List<Ogloszenia> ogloszenia = new List<Ogloszenia>();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -107,6 +109,37 @@ namespace Projekt
                     MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        private void ListBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            program.Visibility = Visibility.Hidden;
+            edycjaOgloszenia.Visibility = Visibility.Visible;
+
+            try
+            {
+                Kategoria.Text = (int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()) - 1).ToString();
+
+                //Tresc.Text = ogloszenia[int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()) - 1].Opis + "\n";
+                //Tresc.Text += ogloszenia[int.Parse(ListBox1.SelectedItem.ToString()[0].ToString())].Opis;
+
+                // test
+                Tresc.Text = "";
+                foreach(Ogloszenia element in Connect.SelectRecordsOgloszenia2())
+                {
+                    Tresc.Text += element.Opis + "\n";
+                }
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void PowrotButton_Click(object sender, RoutedEventArgs e)
+        {
+            edycjaOgloszenia.Visibility = Visibility.Hidden;
+            program.Visibility = Visibility.Visible;
         }
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)

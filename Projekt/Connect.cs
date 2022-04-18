@@ -53,10 +53,51 @@ namespace Projekt
                 conn.Open();
                 using (NpgsqlDataReader reader = cmd.ExecuteReader())
                 {
+                    Ogloszenia tmp = new Ogloszenia();
+
                     while (reader.Read())
                     {
                         result.Add(reader["id_o"] + " " + reader["id_u"] + " " + reader["tytul"] + " " + reader["kategoria"] + " " + reader["tresc"] + " "
                             + reader["data_utw"] + " " + reader["data_ed"]);
+
+                        /*tmp.Id_o = int.Parse(reader["id_o"].ToString());
+                        tmp.Id_u = int.Parse(reader["id_u"].ToString());
+                        tmp.Tytul = (string)reader["tytul"];
+                        tmp.Kategoria = (string)reader["kategoria"];
+                        tmp.Tresc = (string)reader["tresc"];
+                        tmp.Data_utw = (DateTime)reader["data_utw"];
+                        tmp.Data_ed = (DateTime)reader["data_ed"];
+
+                        MainWindow.ogloszenia.Add(tmp);*/
+                    }
+                }
+            }
+            return result;
+        }
+
+        public static List<Ogloszenia> SelectRecordsOgloszenia2() // testowo
+        {
+            List<Ogloszenia> result = new List<Ogloszenia>();
+            using (NpgsqlConnection conn = GetConnection())
+            {
+                string query = @"SELECT * FROM ogloszenia";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+                conn.Open();
+                using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                {
+                    Ogloszenia tmp = new Ogloszenia();
+
+                    while (reader.Read())
+                    {
+                        tmp.Id_o = int.Parse(reader["id_o"].ToString());
+                        tmp.Id_u = int.Parse(reader["id_u"].ToString());
+                        tmp.Tytul = (string)reader["tytul"];
+                        tmp.Kategoria = (string)reader["kategoria"];
+                        tmp.Tresc = (string)reader["tresc"];
+                        tmp.Data_utw = (DateTime)reader["data_utw"];
+                        tmp.Data_ed = (DateTime)reader["data_ed"];
+
+                        result.Add(tmp);
                     }
                 }
             }
