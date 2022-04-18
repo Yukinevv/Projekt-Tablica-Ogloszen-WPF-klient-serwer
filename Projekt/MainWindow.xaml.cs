@@ -27,6 +27,14 @@ namespace Projekt
         {
             InitializeComponent();
 
+            // pokaz i ukryj odpowiednie gridy - roboczo
+            logowanie.Visibility = (Visibility)0;
+            TextBlock1.Visibility = (Visibility)0;
+
+            rejestracja.Visibility = Visibility.Hidden;
+            program.Visibility = Visibility.Hidden;
+            edycjaOgloszenia.Visibility = Visibility.Hidden;
+
             // wypisz dosetpne konta uzytkownikow - roboczo
             TextBlock1.Text = "Dostepni uzytkownicy:\n";
             foreach (string elements in Connect.SelectRecords())
@@ -78,19 +86,15 @@ namespace Projekt
                     
                     int result = (int)cmd.ExecuteScalar();
 
-                    if (result == 1)
+                    if (result == 1) // logowanie powiodlo sie
                     {   
-                        TextBlock1.Text = "Logowanie powiodlo sie!";
                         // pokaz grid glownego layoutu
                         program.Visibility = (Visibility)0;
-                        logowanie.Visibility = (Visibility)1;                     
+                        logowanie.Visibility = (Visibility)1;
 
                         // wypisz dostepne ogloszenia
-                        TextBlock1.Text = "Dostepne ogloszenia:\n";
-                        foreach (string elements in Connect.SelectRecordsOgloszenia())
-                        {
-                            TextBlock1.Text += elements + "\n";
-                        }
+                        TextBlock1.Visibility = Visibility.Hidden;
+                        ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia();
                     }
                     else
                     {
@@ -112,6 +116,7 @@ namespace Projekt
             program.Visibility = (Visibility)1;
 
             // wypisz dostepne konta uztykownikow - roboczo
+            TextBlock1.Visibility = Visibility.Visible;
             TextBlock1.Text = "Dostepni uzytkownicy:\n";
             foreach (string elements in Connect.SelectRecords())
             {
@@ -161,7 +166,8 @@ namespace Projekt
 
                     int n = cmd.ExecuteNonQuery();
                     if (n == 1)
-                    { 
+                    {
+                        LabelPassError.Visibility = (Visibility)1;
                         TextBlock1.Visibility = (Visibility)0;
                         TextBlock1.Text = "Rejestracja zakonczona powodzeniem!";
                         // pokaz grid logowania
