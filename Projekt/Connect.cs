@@ -37,7 +37,26 @@ namespace Projekt
                     while (reader.Read())
                     {
                         result.Add("Login: " + reader["login"] + "   Hasło: " + reader["haslo"]);
-                        //result.Add(reader["id_o"] + " " + reader["id_u"] + " " + reader["tytul"] + " " + reader["kategoria"] + " " + reader["tresc"]);
+                    }
+                }
+            }
+            return result;
+        }
+
+        public static List<string> SelectRecordsOgloszenia()
+        {
+            List<string> result = new List<string>();
+            using (NpgsqlConnection conn = GetConnection())
+            {
+                string query = @"SELECT * FROM ogloszenia";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+                conn.Open();
+                using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        result.Add(reader["id_o"] + " " + reader["id_u"] + " " + reader["tytul"] + " " + reader["kategoria"] + " " + reader["tresc"] + " "
+                            + reader["data_utw"] + " " + reader["data_ed"]);
                     }
                 }
             }

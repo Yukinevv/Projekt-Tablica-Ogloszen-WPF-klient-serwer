@@ -27,6 +27,7 @@ namespace Projekt
         {
             InitializeComponent();
 
+            // wypisz dosetpne konta uzytkownikow - roboczo
             TextBlock1.Text = "Dostepni uzytkownicy:\n";
             foreach (string elements in Connect.SelectRecords())
             {
@@ -43,6 +44,7 @@ namespace Projekt
         private void BackToLogin_Click(object sender, RoutedEventArgs e)
         {
             rejestracja.Visibility = (Visibility)1;
+            // pokaz grid logowania
             logowanie.Visibility = (Visibility)0;
             TextBlock1.Visibility = (Visibility)0;
         }
@@ -50,6 +52,7 @@ namespace Projekt
         private void ZarejestrujSieDoGrida_Click(object sender, RoutedEventArgs e)
         {
             logowanie.Visibility = (Visibility)1;
+            // pokaz grid rejestracji
             rejestracja.Visibility = (Visibility)0;
             TextBlock1.Visibility = (Visibility)1;
         }
@@ -66,6 +69,7 @@ namespace Projekt
 
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
+                    // hashowanie hasla w celu porownania zahashowanego znajdujacego sie w bazie
                     SHA256 sha256Hash = SHA256.Create();
                     string hash = GetHash(sha256Hash, PassBox.Password);
 
@@ -77,9 +81,16 @@ namespace Projekt
                     if (result == 1)
                     {   
                         TextBlock1.Text = "Logowanie powiodlo sie!";
-                        //pokaz grid glownego layoutu
+                        // pokaz grid glownego layoutu
                         program.Visibility = (Visibility)0;
-                        logowanie.Visibility = (Visibility)1;
+                        logowanie.Visibility = (Visibility)1;                     
+
+                        // wypisz dostepne ogloszenia
+                        TextBlock1.Text = "Dostepne ogloszenia:\n";
+                        foreach (string elements in Connect.SelectRecordsOgloszenia())
+                        {
+                            TextBlock1.Text += elements + "\n";
+                        }
                     }
                     else
                     {
@@ -96,10 +107,11 @@ namespace Projekt
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
-            //tymczasowo
+            // pokaz grid logowania
             logowanie.Visibility = (Visibility)0;
             program.Visibility = (Visibility)1;
 
+            // wypisz dostepne konta uztykownikow - roboczo
             TextBlock1.Text = "Dostepni uzytkownicy:\n";
             foreach (string elements in Connect.SelectRecords())
             {
@@ -120,6 +132,7 @@ namespace Projekt
 
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
+                    // hashowanie hasla
                     SHA256 sha256Hash = SHA256.Create();
                     string hash = GetHash(sha256Hash, PassBox1.Password);
 
@@ -130,6 +143,7 @@ namespace Projekt
                     cmd.Parameters.AddWithValue("_email", TextBoxEmail.Text);
                     cmd.Parameters.AddWithValue("_data_ur", DatePicker1.SelectedDate);
 
+                    // warunki poprawnosci hasla
                     if (PassBox1.Password.Length < 8 || PassBox1.Password.Length > 20)
                     {
                         LabelPassError.Visibility = (Visibility)0;
@@ -150,7 +164,7 @@ namespace Projekt
                     { 
                         TextBlock1.Visibility = (Visibility)0;
                         TextBlock1.Text = "Rejestracja zakonczona powodzeniem!";
-                        //pokaz grid logowania
+                        // pokaz grid logowania
                         logowanie.Visibility = (Visibility)0;
                         rejestracja.Visibility = (Visibility)1;
                     }
