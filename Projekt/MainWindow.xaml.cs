@@ -23,8 +23,6 @@ namespace Projekt
     /// </summary>
     public partial class MainWindow : Window
     {
-        //public static List<Ogloszenia> ogloszenia = new List<Ogloszenia>();
-
         public MainWindow()
         {
             InitializeComponent();
@@ -118,17 +116,15 @@ namespace Projekt
 
             try
             {
-                Kategoria.Text = (int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()) - 1).ToString();
+                List<string> ogloszenia = new List<string>();
+                ogloszenia = Connect.SelectRecordsOgloszenia();
 
-                //Tresc.Text = ogloszenia[int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()) - 1].Opis + "\n";
-                //Tresc.Text += ogloszenia[int.Parse(ListBox1.SelectedItem.ToString()[0].ToString())].Opis;
+                string[] tmp = new string[7];
+                tmp = ogloszenia[int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()) - 1].Split(' ');
 
-                // test
-                Tresc.Text = "";
-                foreach(Ogloszenia element in Connect.SelectRecordsOgloszenia2())
-                {
-                    Tresc.Text += element.Opis + "\n";
-                }
+                Tytul.Text = tmp[2];
+                Kategoria.Text = tmp[3];
+                Tresc.Text = tmp[4];
             }
             catch (Exception err)
             {

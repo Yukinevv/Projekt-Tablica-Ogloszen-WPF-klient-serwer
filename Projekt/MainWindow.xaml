@@ -63,15 +63,15 @@
         </Grid>
 
         <Grid x:Name="edycjaOgloszenia" Visibility="Visible">
-            <TextBox x:Name="Tresc" HorizontalAlignment="Center" Margin="0,183,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="268" Height="160"/>
-            <TextBox HorizontalAlignment="Left" Margin="266,40,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="148" Height="44"/>
-            <TextBox x:Name="Kategoria" HorizontalAlignment="Left" Margin="266,116,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="144" Height="40"/>
-            <Label Content="Tytuł" HorizontalAlignment="Left" Margin="146,43,0,0" VerticalAlignment="Top" Height="37" Width="94"/>
-            <Label Content="Kategoria" HorizontalAlignment="Left" Margin="146,116,0,0" VerticalAlignment="Top" Height="37" Width="94"/>
-            <Label Content="Treść" HorizontalAlignment="Left" Margin="146,244,0,0" VerticalAlignment="Top" Height="38" Width="94"/>
-            <Button x:Name="ZatwierdzButton" Content="Zatwierdź" HorizontalAlignment="Left" Margin="607,128,0,0" VerticalAlignment="Top" Height="41" Width="102"/>
-            <Button x:Name="UsunButton" Content="Usuń" HorizontalAlignment="Left" Margin="607,222,0,0" VerticalAlignment="Top" Height="41" Width="102"/>
-            <Button x:Name="PowrotButton" Content="Powrót" HorizontalAlignment="Left" Margin="607,318,0,0" VerticalAlignment="Top" Height="41" Width="102" Click="PowrotButton_Click"/>
+            <TextBox x:Name="Tresc" HorizontalAlignment="Center" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="528" Height="197"/>
+            <TextBox x:Name="Tytul" HorizontalAlignment="Left" Margin="137,25,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="148" Height="25"/>
+            <TextBox x:Name="Kategoria" HorizontalAlignment="Left" Margin="137,68,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="148" Height="25"/>
+            <Label Content="Tytuł" HorizontalAlignment="Left" Margin="51,25,0,0" VerticalAlignment="Top" Height="25" Width="70"/>
+            <Label Content="Kategoria" HorizontalAlignment="Left" Margin="51,68,0,0" VerticalAlignment="Top" Height="25" Width="70"/>
+            <Label Content="Treść" HorizontalAlignment="Left" Margin="51,129,0,0" VerticalAlignment="Top" Height="28" Width="70"/>
+            <Button x:Name="ZatwierdzButton" Content="Zatwierdź" HorizontalAlignment="Left" Margin="137,350,0,0" VerticalAlignment="Top" Height="41" Width="102"/>
+            <Button x:Name="UsunButton" Content="Usuń" HorizontalAlignment="Left" Margin="298,350,0,0" VerticalAlignment="Top" Height="41" Width="102"/>
+            <Button x:Name="PowrotButton" Content="Powrót" HorizontalAlignment="Left" Margin="562,350,0,0" VerticalAlignment="Top" Height="41" Width="102" Click="PowrotButton_Click"/>
 
         </Grid>
     </Grid>
