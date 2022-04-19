@@ -39,6 +39,7 @@ namespace Projekt
             dodajOgloszenie.Visibility = Visibility.Hidden;
             edycjaOgloszenia.Visibility = Visibility.Hidden;
 
+            rezultatDodania.Visibility = Visibility.Hidden;
             rezultatEdycji.Visibility = Visibility.Hidden;
 
             // wypisz dosetpne konta uzytkownikow - roboczo
@@ -152,6 +153,9 @@ namespace Projekt
             program.Visibility = Visibility.Hidden;
             edycjaOgloszenia.Visibility = Visibility.Visible;
 
+            ZatwierdzButton.Visibility = Visibility.Visible;
+            UsunButton.Visibility = Visibility.Visible;
+
             try
             {
                 List<string> ogloszenia = new List<string>();
@@ -176,6 +180,33 @@ namespace Projekt
                 Kategoria.Text = ogloszenia[ListBox1.SelectedIndex].Kategoria;
                 Tresc.Text = ogloszenia[ListBox1.SelectedIndex].Tresc;*/
 
+                // sprawdzenie uprawnien zalogowanego uzytkownika do edycji i usuwania wybranego ogloszenia
+                using (NpgsqlConnection conn = Connect.GetConnection())
+                {
+                    string query = @"SELECT U.login FROM uzytkownicy U JOIN ogloszenia O ON U.id=O.id_u WHERE O.id_u=:_id_u OR U.uprawnienia='admin'";
+                    NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+
+                    cmd.Parameters.AddWithValue("_id_u", int.Parse(ListBox1.SelectedItem.ToString()[2].ToString()));
+
+                    string login = "";
+
+                    conn.Open();
+
+                    using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            login = (string)reader["login"];
+
+                            if (login != LoginBox.Text)
+                            {
+                                ZatwierdzButton.Visibility = Visibility.Hidden;
+                                UsunButton.Visibility = Visibility.Hidden;
+                                break;
+                            }
+                        }
+                    }
+                }     
             }
             catch (Exception err)
             {
