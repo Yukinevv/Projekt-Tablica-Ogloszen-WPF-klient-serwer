@@ -348,5 +348,32 @@ namespace Projekt
             dodajOgloszenie.Visibility = Visibility.Hidden;
             program.Visibility = Visibility.Visible;
         }
+
+        private void UsunButton_Click(object sender, RoutedEventArgs e)
+        {
+            using (NpgsqlConnection conn = Connect.GetConnection())
+            {
+                try
+                {
+                    conn.Open();
+                    string query = @"DELETE FROM ogloszenia WHERE id_o = :_id_o";
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+
+                    cmd.Parameters.AddWithValue("_id_o", int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()));   
+
+                    int n = cmd.ExecuteNonQuery();
+                    if (n == 1)
+                    {
+                        rezultatEdycji.Visibility = Visibility.Visible;
+                        rezultatEdycji.Content = "Usunieto ogloszenie!";
+                    }
+                }
+                catch (Exception err)
+                {
+                    MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
     }
 }
