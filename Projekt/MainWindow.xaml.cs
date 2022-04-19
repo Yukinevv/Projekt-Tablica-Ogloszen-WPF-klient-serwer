@@ -110,22 +110,10 @@ namespace Projekt
                         }
 
                         // policz ilosc dostepnych ogloszen
-                        string query3 = @"SELECT COUNT(*) AS ile FROM ogloszenia";
-                        NpgsqlCommand cmd3 = new NpgsqlCommand(query3, conn);
-
-                        int iloscOgloszen = 0;
-
-                        using (NpgsqlDataReader reader = cmd3.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                iloscOgloszen = int.Parse(reader["ile"].ToString());
-                            }
-                        }
-                        iloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
+                        PoliczOgloszenia();
 
                         // wypisz nazwe uzytkownika
-                        witajLabel.Content = $"Witaj {LoginBox.Text}!";
+                        WitajLabel.Content = $"Witaj {LoginBox.Text}!";
 
                         // pokaz grid glownego layoutu
                         program.Visibility = (Visibility)0;
@@ -146,6 +134,35 @@ namespace Projekt
                     MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        private void PoliczOgloszenia()
+        {
+            using (NpgsqlConnection conn = Connect.GetConnection())
+            {
+                try
+                {
+                    string query = @"SELECT COUNT(*) AS ile FROM ogloszenia";
+                    NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+
+                    int iloscOgloszen = 0;
+
+                    conn.Open();
+
+                    using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            iloscOgloszen = int.Parse(reader["ile"].ToString());
+                        }
+                    }
+                    IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
+                }
+                catch (Exception err)
+                {
+                    MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }          
         }
 
         private void ListBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -186,7 +203,10 @@ namespace Projekt
                     string query = @"SELECT U.login FROM uzytkownicy U JOIN ogloszenia O ON U.id=O.id_u WHERE O.id_u=:_id_u OR U.uprawnienia='admin'";
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
-                    cmd.Parameters.AddWithValue("_id_u", int.Parse(ListBox1.SelectedItem.ToString()[2].ToString()));
+                    string[] tmp2 = new string[1000];
+                    tmp2 = ListBox1.SelectedItem.ToString().Split(' ');
+                    cmd.Parameters.AddWithValue("_id_u", int.Parse(tmp2[1]));
+                    //cmd.Parameters.AddWithValue("_id_u", int.Parse(ListBox1.SelectedItem.ToString()[2].ToString()));
 
                     string login = "";
 
@@ -337,7 +357,11 @@ namespace Projekt
                     cmd.Parameters.AddWithValue("_tytul", Tytul.Text);
                     cmd.Parameters.AddWithValue("_kategoria", Kategoria.Text);
                     cmd.Parameters.AddWithValue("_tresc", Tresc.Text);
-                    cmd.Parameters.AddWithValue("_id_o", int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()));
+                    
+                    string[] tmp = new string[1000];
+                    tmp = ListBox1.SelectedItem.ToString().Split(' ');
+                    cmd.Parameters.AddWithValue("_id_o", int.Parse(tmp[0]));
+                    //cmd.Parameters.AddWithValue("_id_o", int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()));
 
                     int n = cmd.ExecuteNonQuery();
                     if (n == 1)
@@ -359,9 +383,12 @@ namespace Projekt
 
             edycjaOgloszenia.Visibility = Visibility.Hidden;
             program.Visibility = Visibility.Visible;
+
+            ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia();
+            PoliczOgloszenia();
         }
 
-        private void dodajOgoszenieButton_Click(object sender, RoutedEventArgs e)
+        private void DodajOgoszenieButton_Click(object sender, RoutedEventArgs e)
         {
             program.Visibility = Visibility.Hidden;
             dodajOgloszenie.Visibility = Visibility.Visible;
@@ -404,6 +431,9 @@ namespace Projekt
 
             dodajOgloszenie.Visibility = Visibility.Hidden;
             program.Visibility = Visibility.Visible;
+
+            ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia();
+            PoliczOgloszenia();
         }
 
         private void UsunButton_Click(object sender, RoutedEventArgs e)
@@ -417,7 +447,10 @@ namespace Projekt
 
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
-                    cmd.Parameters.AddWithValue("_id_o", int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()));   
+                    string[] tmp = new string[1000];
+                    tmp = ListBox1.SelectedItem.ToString().Split(' ');
+                    cmd.Parameters.AddWithValue("_id_o", int.Parse(tmp[0]));
+                    //cmd.Parameters.AddWithValue("_id_o", int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()));   
 
                     int n = cmd.ExecuteNonQuery();
                     if (n == 1)
