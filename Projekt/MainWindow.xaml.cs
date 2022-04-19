@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Npgsql;
 using System.Security.Cryptography;
+using System.Threading;
 
 namespace Projekt
 {
@@ -23,6 +24,8 @@ namespace Projekt
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static int id;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -33,7 +36,10 @@ namespace Projekt
 
             rejestracja.Visibility = Visibility.Hidden;
             program.Visibility = Visibility.Hidden;
+            dodajOgloszenie.Visibility = Visibility.Hidden;
             edycjaOgloszenia.Visibility = Visibility.Hidden;
+
+            rezultatEdycji.Visibility = Visibility.Hidden;
 
             // wypisz dosetpne konta uzytkownikow - roboczo
             TextBlock1.Text = "Dostepni uzytkownicy:\n";
@@ -87,7 +93,21 @@ namespace Projekt
                     int result = (int)cmd.ExecuteScalar();
 
                     if (result == 1) // logowanie powiodlo sie
-                    {   
+                    {
+                        // wez id zalogowanego uzytkownika
+                        string query2 = @"SELECT id FROM uzytkownicy WHERE login=:_login";
+                        NpgsqlCommand cmd2 = new NpgsqlCommand(query2, conn);
+
+                        cmd2.Parameters.AddWithValue("_login", LoginBox.Text);
+
+                        using (NpgsqlDataReader reader = cmd2.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                id = int.Parse(reader["id"].ToString());
+                            }
+                        }
+
                         // pokaz grid glownego layoutu
                         program.Visibility = (Visibility)0;
                         logowanie.Visibility = (Visibility)1;
@@ -119,23 +139,22 @@ namespace Projekt
                 List<string> ogloszenia = new List<string>();
                 ogloszenia = Connect.SelectRecordsOgloszenia();
 
-                string[] tmp = new string[7];
+                string[] tmp = new string[1000];
                 tmp = ogloszenia[int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()) - 1].Split(' ');
 
                 Tytul.Text = tmp[2];
                 Kategoria.Text = tmp[3];
-                Tresc.Text = tmp[4];
+                Tresc.Text = "";
+                for (int i = 8; i < tmp.Length; i++)
+                {
+                    Tresc.Text += tmp[i] + " ";
+                }
+                
             }
             catch (Exception err)
             {
                 MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-
-        private void PowrotButton_Click(object sender, RoutedEventArgs e)
-        {
-            edycjaOgloszenia.Visibility = Visibility.Hidden;
-            program.Visibility = Visibility.Visible;
         }
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
@@ -245,6 +264,89 @@ namespace Projekt
         private void PassBox2_PasswordChanged(object sender, RoutedEventArgs e)
         {
             LabelPass2.Visibility = (Visibility)1;
+        }
+
+        private void ZatwierdzButton_Click(object sender, RoutedEventArgs e)
+        {
+            using (NpgsqlConnection conn = Connect.GetConnection())
+            {
+                try
+                {
+                    conn.Open();
+                    string query = @"UPDATE ogloszenia SET tytul=:_tytul, kategoria=:_kategoria, tresc=:_tresc WHERE id_o=:_id_o";
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+
+                    cmd.Parameters.AddWithValue("_tytul", Tytul.Text);
+                    cmd.Parameters.AddWithValue("_kategoria", Kategoria.Text);
+                    cmd.Parameters.AddWithValue("_tresc", Tresc.Text);
+                    cmd.Parameters.AddWithValue("_id_o", int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()));
+
+                    int n = cmd.ExecuteNonQuery();
+                    if (n == 1)
+                    {
+                        rezultatEdycji.Visibility = Visibility.Visible;
+                        rezultatEdycji.Content = "Zedytowano ogłoszenie!";
+                    }
+                }
+                catch (Exception err)
+                {
+                    MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void PowrotButton_Click(object sender, RoutedEventArgs e)
+        {
+            rezultatEdycji.Visibility = Visibility.Hidden;
+
+            edycjaOgloszenia.Visibility = Visibility.Hidden;
+            program.Visibility = Visibility.Visible;
+        }
+
+        private void dodajOgoszenieButton_Click(object sender, RoutedEventArgs e)
+        {
+            program.Visibility = Visibility.Hidden;
+            dodajOgloszenie.Visibility = Visibility.Visible;
+        }
+
+        private void ZatwierdzButtonD_Click(object sender, RoutedEventArgs e)
+        {
+            using (NpgsqlConnection conn = Connect.GetConnection())
+            {
+                try
+                {
+                    conn.Open();
+                    string query = @"INSERT INTO ogloszenia VALUES(
+                                     nextval('increment_id_ogloszenia'), :_id_u, :_tytul, :_kategoria, now(), now(), :_tresc)";
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+
+                    cmd.Parameters.AddWithValue("_tytul", TytulD.Text);
+                    cmd.Parameters.AddWithValue("_kategoria", KategoriaD.Text);
+                    cmd.Parameters.AddWithValue("_tresc", TrescD.Text);
+                    cmd.Parameters.AddWithValue("_id_u", id);
+
+                    int n = cmd.ExecuteNonQuery();
+                    if (n == 1)
+                    {
+                        rezultatDodania.Visibility = Visibility.Visible;
+                        rezultatDodania.Content = "Dodano nowe ogłoszenie!";
+                    }
+                }
+                catch (Exception err)
+                {
+                    MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void PowrotButtonD_Click(object sender, RoutedEventArgs e)
+        {
+            rezultatDodania.Visibility = Visibility.Hidden;
+
+            dodajOgloszenie.Visibility = Visibility.Hidden;
+            program.Visibility = Visibility.Visible;
         }
     }
 }

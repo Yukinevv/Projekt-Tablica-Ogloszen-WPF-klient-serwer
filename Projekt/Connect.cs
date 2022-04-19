@@ -55,8 +55,8 @@ namespace Projekt
                 {
                     while (reader.Read())
                     {
-                        result.Add(reader["id_o"] + " " + reader["id_u"] + " " + reader["tytul"] + " " + reader["kategoria"] + " " + reader["tresc"] + " "
-                            + reader["data_utw"] + " " + reader["data_ed"]);
+                        result.Add(reader["id_o"] + " " + reader["id_u"] + " " + reader["tytul"] + " " + reader["kategoria"] + " "
+                            + reader["data_utw"] + " " + reader["data_ed"] + " " + reader["tresc"]);
                     }
                 }
             }
