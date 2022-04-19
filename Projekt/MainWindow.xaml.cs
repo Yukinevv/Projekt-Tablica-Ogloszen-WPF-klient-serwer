@@ -170,8 +170,8 @@ namespace Projekt
             program.Visibility = Visibility.Hidden;
             edycjaOgloszenia.Visibility = Visibility.Visible;
 
-            ZatwierdzButton.Visibility = Visibility.Visible;
-            UsunButton.Visibility = Visibility.Visible;
+            ZatwierdzButton.Visibility = Visibility.Hidden;
+            UsunButton.Visibility = Visibility.Hidden;
 
             try
             {
@@ -218,10 +218,10 @@ namespace Projekt
                         {
                             login = (string)reader["login"];
 
-                            if (login != LoginBox.Text)
+                            if (login == LoginBox.Text)
                             {
-                                ZatwierdzButton.Visibility = Visibility.Hidden;
-                                UsunButton.Visibility = Visibility.Hidden;
+                                ZatwierdzButton.Visibility = Visibility.Visible;
+                                UsunButton.Visibility = Visibility.Visible;
                                 break;
                             }
                         }
