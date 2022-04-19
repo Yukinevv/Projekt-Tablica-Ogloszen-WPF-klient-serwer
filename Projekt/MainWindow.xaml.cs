@@ -42,7 +42,7 @@ namespace Projekt
             rezultatEdycji.Visibility = Visibility.Hidden;
 
             // wypisz dosetpne konta uzytkownikow - roboczo
-            TextBlock1.Text = "Dostepni uzytkownicy:\n";
+            TextBlock1.Text = "Dostepni uzytkownicy: (hasło do jankowalski: qwerty123)\n";
             foreach (string elements in Connect.SelectRecords())
             {
                 TextBlock1.Text += elements + "\n";
@@ -108,6 +108,24 @@ namespace Projekt
                             }
                         }
 
+                        // policz ilosc dostepnych ogloszen
+                        string query3 = @"SELECT COUNT(*) AS ile FROM ogloszenia";
+                        NpgsqlCommand cmd3 = new NpgsqlCommand(query3, conn);
+
+                        int iloscOgloszen = 0;
+
+                        using (NpgsqlDataReader reader = cmd3.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                iloscOgloszen = int.Parse(reader["ile"].ToString());
+                            }
+                        }
+                        iloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
+
+                        // wypisz nazwe uzytkownika
+                        witajLabel.Content = $"Witaj {LoginBox.Text}!";
+
                         // pokaz grid glownego layoutu
                         program.Visibility = (Visibility)0;
                         logowanie.Visibility = (Visibility)1;
@@ -140,7 +158,7 @@ namespace Projekt
                 ogloszenia = Connect.SelectRecordsOgloszenia();
 
                 string[] tmp = new string[1000];
-                tmp = ogloszenia[int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()) - 1].Split(' ');
+                tmp = ogloszenia[ListBox1.SelectedIndex].Split(' ');
 
                 Tytul.Text = tmp[2];
                 Kategoria.Text = tmp[3];
@@ -149,7 +167,15 @@ namespace Projekt
                 {
                     Tresc.Text += tmp[i] + " ";
                 }
-                
+
+                // test
+                /*List<Ogloszenia> ogloszenia = new List<Ogloszenia>();
+                ogloszenia = Connect.SelectRecordsOgloszenia2();
+
+                Tytul.Text = ogloszenia[ListBox1.SelectedIndex].Tytul;
+                Kategoria.Text = ogloszenia[ListBox1.SelectedIndex].Kategoria;
+                Tresc.Text = ogloszenia[ListBox1.SelectedIndex].Tresc;*/
+
             }
             catch (Exception err)
             {
