@@ -35,6 +35,7 @@ namespace Projekt
             TextBlock1.Visibility = (Visibility)0;
 
             rejestracja.Visibility = Visibility.Hidden;
+            LabelPassError.Visibility = Visibility.Hidden;
             program.Visibility = Visibility.Hidden;
             dodajOgloszenie.Visibility = Visibility.Hidden;
             edycjaOgloszenia.Visibility = Visibility.Hidden;
@@ -43,17 +44,11 @@ namespace Projekt
             rezultatEdycji.Visibility = Visibility.Hidden;
 
             // wypisz dosetpne konta uzytkownikow - roboczo
-            TextBlock1.Text = "Dostepni uzytkownicy: (hasło do jankowalski: qwerty123)\n";
+            TextBlock1.Text = "Dostepni uzytkownicy:\n(hasło do jankowalski: qwerty123)\n";
             foreach (string elements in Connect.SelectRecords())
             {
                 TextBlock1.Text += elements + "\n";
             }
-        }
-
-        private void LoginBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            LoginBox.Text = "";
-            LoginBox.TextAlignment = 0;
         }
 
         private void BackToLogin_Click(object sender, RoutedEventArgs e)
@@ -179,12 +174,13 @@ namespace Projekt
                 ogloszenia = Connect.SelectRecordsOgloszenia();
 
                 string[] tmp = new string[1000];
-                tmp = ogloszenia[ListBox1.SelectedIndex].Split(' ');
+                //tmp = ogloszenia[ListBox1.SelectedIndex].Split(' ');
+                tmp = ogloszenia[ListBox1.SelectedIndex].Split('\t');
 
                 Tytul.Text = tmp[2];
                 Kategoria.Text = tmp[3];
                 Tresc.Text = "";
-                for (int i = 8; i < tmp.Length; i++)
+                for (int i = 6; i < tmp.Length; i++)
                 {
                     Tresc.Text += tmp[i] + " ";
                 }
@@ -204,7 +200,8 @@ namespace Projekt
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
                     string[] tmp2 = new string[1000];
-                    tmp2 = ListBox1.SelectedItem.ToString().Split(' ');
+                    //tmp2 = ListBox1.SelectedItem.ToString().Split(' ');
+                    tmp2 = ListBox1.SelectedItem.ToString().Split('\t');
                     cmd.Parameters.AddWithValue("_id_u", int.Parse(tmp2[1]));
                     //cmd.Parameters.AddWithValue("_id_u", int.Parse(ListBox1.SelectedItem.ToString()[2].ToString()));
 
@@ -277,7 +274,7 @@ namespace Projekt
                     if (PassBox1.Password.Length < 8 || PassBox1.Password.Length > 20)
                     {
                         LabelPassError.Visibility = (Visibility)0;
-                        LabelPassError.Content = "Niepoprawna dlugosc hasla!";
+                        LabelPassError.Content = "Niepoprawna długosc hasła!";
                         conn.Close();
                         return;
                     }
@@ -320,29 +317,6 @@ namespace Projekt
             return sBuilder.ToString();
         }
 
-        private void TextBoxImie_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            TextBoxImie.Text = "";
-            TextBoxImie.TextAlignment = 0;
-        }
-
-        private void TextBoxNazwisko_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            TextBoxNazwisko.Text = "";
-            TextBoxNazwisko.TextAlignment = 0;
-        }
-
-        private void TextBoxLogin_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            TextBoxLogin.Text = "";
-            TextBoxLogin.TextAlignment = 0;
-        }
-
-        private void PassBox2_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            LabelPass2.Visibility = (Visibility)1;
-        }
-
         private void ZatwierdzButton_Click(object sender, RoutedEventArgs e)
         {
             using (NpgsqlConnection conn = Connect.GetConnection())
@@ -359,7 +333,8 @@ namespace Projekt
                     cmd.Parameters.AddWithValue("_tresc", Tresc.Text);
                     
                     string[] tmp = new string[1000];
-                    tmp = ListBox1.SelectedItem.ToString().Split(' ');
+                    //tmp = ListBox1.SelectedItem.ToString().Split(' ');
+                    tmp = ListBox1.SelectedItem.ToString().Split('\t');
                     cmd.Parameters.AddWithValue("_id_o", int.Parse(tmp[0]));
                     //cmd.Parameters.AddWithValue("_id_o", int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()));
 
@@ -448,7 +423,8 @@ namespace Projekt
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
                     string[] tmp = new string[1000];
-                    tmp = ListBox1.SelectedItem.ToString().Split(' ');
+                    //tmp = ListBox1.SelectedItem.ToString().Split(' ');
+                    tmp = ListBox1.SelectedItem.ToString().Split('\t');
                     cmd.Parameters.AddWithValue("_id_o", int.Parse(tmp[0]));
                     //cmd.Parameters.AddWithValue("_id_o", int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()));   
 

@@ -55,8 +55,18 @@ namespace Projekt
                 {
                     while (reader.Read())
                     {
-                        result.Add(reader["id_o"] + " " + reader["id_u"] + " " + reader["tytul"] + " " + reader["kategoria"] + " "
-                            + reader["data_utw"] + " " + reader["data_ed"] + " " + reader["tresc"]);
+                        string[] tmp = reader["data_utw"].ToString().Split(' ');
+
+                        string[] tmp2 = reader["data_ed"].ToString().Split(' ');
+
+                        //result.Add(reader["id_o"] + " " + reader["id_u"] + " " + reader["tytul"] + " " + reader["kategoria"] + " "
+                        //    + reader["data_utw"] + " " + reader["data_ed"] + " " + reader["tresc"]);
+
+                        //result.Add(reader["id_o"] + " " + reader["id_u"] + " " + reader["tytul"] + " " + reader["kategoria"] + " "
+                        //    + tmp[0] + " " + tmp2[0] + " " + reader["tresc"]);
+
+                        result.Add(reader["id_o"] + "\t" + reader["id_u"] + "\t" + reader["tytul"] + "\t" + reader["kategoria"] + " \t"
+                            + tmp[0] + "\t" + tmp2[0] + "\t" + reader["tresc"]);
                     }
                 }
             }
