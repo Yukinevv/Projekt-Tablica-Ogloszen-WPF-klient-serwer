@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Title="Tablica ogłoszeń" Height="450" Width="800" MinWidth="800" MinHeight="450">
     <Grid>
-        <TextBlock x:Name="TextBlock1" Visibility="Visible" HorizontalAlignment="Left" Margin="10,0,0,0" Text="Tu pojawi się wynik zapytania..." VerticalAlignment="Center" Height="414" Width="260"/>
-        <Grid x:Name="logowanie" Visibility="Visible">
+        <TextBlock x:Name="TextBlock1" Visibility="Hidden" HorizontalAlignment="Left" Margin="10,0,0,0" Text="Tu pojawi się wynik zapytania..." VerticalAlignment="Center" Height="414" Width="260"/>
+        <Grid x:Name="logowanie" Visibility="Hidden">
             <TextBox x:Name="LoginBox" HorizontalAlignment="Center" Margin="0,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="166" Height="36" FontSize="16"/>
             <PasswordBox x:Name="PassBox" HorizontalAlignment="Center" Margin="0,185,0,0" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="166" Height="36" FontSize="16"/>
             <Label Content="Login" HorizontalAlignment="Left" Margin="317,69,0,0" VerticalAlignment="Top" Height="31" Width="59"/>
@@ -36,12 +36,15 @@
             <Label x:Name="LabelPassError" Content="Tu pojawi się informacja o błędzie..." HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="216,370,0,0" VerticalAlignment="Top" Height="35" Width="354" Foreground="Red" FontSize="16"/>
         </Grid>
 
-        <Grid x:Name="program" Visibility="Hidden">
+        <Grid x:Name="program" Visibility="Visible">
             <Button x:Name="LogoutButton" Content="Wyloguj" HorizontalAlignment="Center" Margin="0,355,0,0" VerticalAlignment="Top" Height="30" Width="188" Click="LogoutButton_Click"/>
             <ListBox x:Name="ListBox1" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="92,118,92,84" SelectionChanged="ListBox1_SelectionChanged"/>
             <Label x:Name="IloscOgloszenLabel" Content="Wyświetlono ? ogłoszeń" HorizontalAlignment="Left" Margin="92,75,0,0" VerticalAlignment="Top" Height="28" Width="183"/>
-            <Button x:Name="DodajOgoszenieButton" Content="Dodaj ogłoszenie" HorizontalAlignment="Left" Margin="591,69,0,0" VerticalAlignment="Top" Height="37" Width="117" Click="DodajOgoszenieButton_Click"/>
+            <Button x:Name="DodajOgoszenieButton" Content="Dodaj ogłoszenie" HorizontalAlignment="Left" Margin="591,69,0,0" VerticalAlignment="Top" Height="34" Width="117" Click="DodajOgoszenieButton_Click"/>
             <Label x:Name="WitajLabel" Content="Witaj nazwa!" HorizontalAlignment="Left" Margin="92,24,0,0" VerticalAlignment="Top" Height="36" Width="183"/>
+            <ComboBox x:Name="ComboBox1" Text="Jak sortować" HorizontalAlignment="Left" Margin="429,70,0,0" VerticalAlignment="Top" Width="131" Height="34" FontSize="16" IsEditable="True" SelectionChanged="ComboBox1_SelectionChanged"/>
+            <ComboBox x:Name="ComboBox2" Text="Sortuj według" HorizontalAlignment="Left" Margin="275,71,0,0" VerticalAlignment="Top" Width="131" Height="33" FontSize="16" IsEditable="True" SelectionChanged="ComboBox2_SelectionChanged"/>
+            <Button x:Name="OdswiezButton" Content="Odśwież" HorizontalAlignment="Left" Margin="591,355,0,0" VerticalAlignment="Top" Height="30" Width="117" Click="OdswiezButton_Click"/>
         </Grid>
 
         <Grid x:Name="dodajOgloszenie" Visibility="Hidden">

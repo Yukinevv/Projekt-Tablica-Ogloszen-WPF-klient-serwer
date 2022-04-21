@@ -25,6 +25,8 @@ namespace Projekt
     public partial class MainWindow : Window
     {
         public static int id;
+        public string[] ComboBox1Options { get; set; }
+        public string[] ComboBox2Options { get; set; }
 
         public MainWindow()
         {
@@ -49,6 +51,13 @@ namespace Projekt
             {
                 TextBlock1.Text += elements + "\n";
             }
+
+            // pokaz opcje comboboxa
+            ComboBox1Options = new string[] { "Rosnąco", "Malejąco" };
+            ComboBox1.ItemsSource = ComboBox1Options;
+
+            ComboBox2Options = new string[] { "Id", "Tytuł", "Kategoria" };
+            ComboBox2.ItemsSource = ComboBox2Options;
         }
 
         private void BackToLogin_Click(object sender, RoutedEventArgs e)
@@ -171,7 +180,8 @@ namespace Projekt
             try
             {
                 List<string> ogloszenia = new List<string>();
-                ogloszenia = Connect.SelectRecordsOgloszenia();
+                //ogloszenia = Connect.SelectRecordsOgloszenia();
+                ogloszenia = (List<string>)ListBox1.ItemsSource;
 
                 string[] tmp = new string[1000];
                 //tmp = ogloszenia[ListBox1.SelectedIndex].Split(' ');
@@ -179,11 +189,12 @@ namespace Projekt
 
                 Tytul.Text = tmp[2];
                 Kategoria.Text = tmp[3];
-                Tresc.Text = "";
-                for (int i = 6; i < tmp.Length; i++)
+                //Tresc.Text = "";
+                /*for (int i = 6; i < tmp.Length; i++)
                 {
                     Tresc.Text += tmp[i] + " ";
-                }
+                }*/
+                Tresc.Text = tmp[6];
 
                 // test
                 /*List<Ogloszenia> ogloszenia = new List<Ogloszenia>();
@@ -359,8 +370,33 @@ namespace Projekt
             edycjaOgloszenia.Visibility = Visibility.Hidden;
             program.Visibility = Visibility.Visible;
 
-            ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia();
-            PoliczOgloszenia();
+            /*try
+            {
+                ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia();
+                PoliczOgloszenia();
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak 2", MessageBoxButton.OK, MessageBoxImage.Error);
+            }*/
+        }
+
+        private void OdswiezButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia();
+                PoliczOgloszenia();
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak 2", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            ComboBox1.SelectedItem = null;
+            ComboBox2.SelectedItem = null;
+            ComboBox1.Text = "Jak sortować";
+            ComboBox2.Text = "Sortuj według";
         }
 
         private void DodajOgoszenieButton_Click(object sender, RoutedEventArgs e)
@@ -407,8 +443,15 @@ namespace Projekt
             dodajOgloszenie.Visibility = Visibility.Hidden;
             program.Visibility = Visibility.Visible;
 
-            ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia();
-            PoliczOgloszenia();
+            try
+            {
+                ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia();
+                PoliczOgloszenia();
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak 2", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void UsunButton_Click(object sender, RoutedEventArgs e)
@@ -440,6 +483,86 @@ namespace Projekt
                     MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        private int[] sortIndexes;
+
+        private void ComboBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            List<string> tmp = Connect.SelectRecordsOgloszenia();
+            
+            if(ComboBox2.SelectedItem == null)
+            {
+                tmp.Sort();
+                if ((string)ComboBox1.SelectedItem == "Rosnąco")
+                {
+                    ListBox1.ItemsSource = tmp;
+                }
+                else if ((string)ComboBox1.SelectedItem == "Malejąco")
+                {
+                    tmp.Reverse();
+                    ListBox1.ItemsSource = tmp;
+                }
+            }
+            else
+            {
+                List<string> copy = tmp;
+                for (int i = 0; i < tmp.Count; i++)
+                {
+                    tmp[i] = copy[sortIndexes[i]];
+                }
+                ListBox1.ItemsSource = tmp;
+            }
+        }
+
+        private void ComboBox2_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            List<string> tmp = Connect.SelectRecordsOgloszenia();
+            string[] tmp2 = new string[1000];
+
+            string[] sortElements = new string[1000];
+            int[] indeksy = new int[1000];
+
+            for(int i = 0; i < tmp.Count; i++)
+            {
+                tmp2 = tmp[i].Split('\t');
+                if((string)ComboBox2.SelectedItem == "Id")
+                {
+                    sortElements[i] = tmp2[0];                
+                }
+                else if((string)ComboBox2.SelectedItem == "Tytuł")
+                {
+                    sortElements[i] = tmp2[2];
+                }
+                else if ((string)ComboBox2.SelectedItem == "Kategoria")
+                {
+                    sortElements[i] = tmp2[3];
+                }
+                indeksy[i] = i;     
+            }
+            sortIndexes = BubbleSortWithIndexes(sortElements, indeksy);
+        }
+
+        private static int[] BubbleSortWithIndexes(string[] arr, int[] indeksy)
+        {
+            int n = arr.Length;
+            for (int i = 0; i < n - 1; i++)
+            {
+                for (int j = 0; j < n - i - 1; j++)
+                {
+                    if (string.Compare(arr[j], arr[j + 1]) < 0)
+                    {
+                        string temp = arr[j];
+                        arr[j] = arr[j + 1];
+                        arr[j + 1] = temp;
+
+                        int temp2 = indeksy[j];
+                        indeksy[j] = indeksy[j + 1];
+                        indeksy[j + 1] = temp2;
+                    }
+                }
+            }
+            return indeksy;
         }
     }
 }
