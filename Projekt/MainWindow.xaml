@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Tablica ogłoszeń" Height="450" Width="800" MinWidth="800" MinHeight="450">
     <Grid>
-        <TextBlock x:Name="TextBlock1" Visibility="Hidden" HorizontalAlignment="Left" Margin="10,0,0,0" Text="Tu pojawi się wynik zapytania..." VerticalAlignment="Center" Height="414" Width="260"/>
+        <TextBlock x:Name="TextBlock1" Visibility="Visible" HorizontalAlignment="Left" Margin="10,0,0,0" Text="Tu pojawi się wynik zapytania..." VerticalAlignment="Center" Height="414" Width="260"/>
         <Grid x:Name="logowanie" Visibility="Hidden">
             <TextBox x:Name="LoginBox" HorizontalAlignment="Center" Margin="0,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="166" Height="36" FontSize="16"/>
             <PasswordBox x:Name="PassBox" HorizontalAlignment="Center" Margin="0,185,0,0" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="166" Height="36" FontSize="16"/>

@@ -370,7 +370,7 @@ namespace Projekt
             edycjaOgloszenia.Visibility = Visibility.Hidden;
             program.Visibility = Visibility.Visible;
 
-            /*try
+            try
             {
                 ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia();
                 PoliczOgloszenia();
@@ -378,7 +378,7 @@ namespace Projekt
             catch (Exception err)
             {
                 MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak 2", MessageBoxButton.OK, MessageBoxImage.Error);
-            }*/
+            }
         }
 
         private void OdswiezButton_Click(object sender, RoutedEventArgs e)
@@ -507,11 +507,23 @@ namespace Projekt
             else
             {
                 List<string> copy = tmp;
-                for (int i = 0; i < tmp.Count; i++)
+
+                if ((string)ComboBox1.SelectedItem == "Rosnąco")
                 {
-                    tmp[i] = copy[sortIndexes[i]];
+                    for (int i = 0; i < tmp.Count; i++)
+                    {
+                        tmp[i] = copy[sortIndexes[i]];
+                    }
+                    ListBox1.ItemsSource = tmp;
                 }
-                ListBox1.ItemsSource = tmp;
+                else if ((string)ComboBox1.SelectedItem == "Malejąco")
+                {
+                    for (int i = tmp.Count - 1, j = 0; i >= 0; i--, j++)
+                    {
+                        tmp[j] = copy[sortIndexes[i]];
+                    }
+                    ListBox1.ItemsSource = tmp;
+                }
             }
         }
 
@@ -522,8 +534,9 @@ namespace Projekt
 
             string[] sortElements = new string[1000];
             int[] indeksy = new int[1000];
+            int i = 0;
 
-            for(int i = 0; i < tmp.Count; i++)
+            for(i = 0; i < tmp.Count; i++)
             {
                 tmp2 = tmp[i].Split('\t');
                 if((string)ComboBox2.SelectedItem == "Id")
@@ -538,9 +551,35 @@ namespace Projekt
                 {
                     sortElements[i] = tmp2[3];
                 }
-                indeksy[i] = i;     
+                indeksy[i] = i;   
             }
+
+            // test
+            TextBlock1.Visibility = Visibility.Visible;
+            TextBlock1.FontSize = 8;
+            TextBlock1.Text = "";
+            for (int j = 0; j < i; j++)
+            {
+                TextBlock1.Text += sortElements[j] + " Ind: " + indeksy[j] + "\n";
+            }
+
             sortIndexes = BubbleSortWithIndexes(sortElements, indeksy);
+            
+            // test
+            TextBlock1.Text += "\nPosortowane:\n";
+            for (int j = 0; j < i; j++)
+            {
+                TextBlock1.Text += sortElements[j] + " Ind: " + sortIndexes[j] + "\n";
+            }
+
+            //Array.Reverse(sortElements);
+            //Array.Reverse(sortIndexes);
+
+            //TextBlock1.Text += "\nPosortowane odwrocone:\n";
+            //for (int j = 0; j < i; j++)
+            //{
+            //    TextBlock1.Text += sortElements[j] + " Ind: " + sortIndexes[j] + "\n";
+            //}
         }
 
         private static int[] BubbleSortWithIndexes(string[] arr, int[] indeksy)
@@ -550,19 +589,29 @@ namespace Projekt
             {
                 for (int j = 0; j < n - i - 1; j++)
                 {
-                    if (string.Compare(arr[j], arr[j + 1]) < 0)
+                    try
                     {
-                        string temp = arr[j];
-                        arr[j] = arr[j + 1];
-                        arr[j + 1] = temp;
+                        if (string.Compare(arr[j], arr[j + 1]) < 0)
+                        //if (arr[j].CompareTo(arr[j + 1]) > 0)
+                        {
+                            string temp = arr[j];
+                            arr[j] = arr[j + 1];
+                            arr[j + 1] = temp;
 
-                        int temp2 = indeksy[j];
-                        indeksy[j] = indeksy[j + 1];
-                        indeksy[j + 1] = temp2;
+                            int temp2 = indeksy[j];
+                            indeksy[j] = indeksy[j + 1];
+                            indeksy[j + 1] = temp2;
+                        }
+                    }
+                    catch (Exception err)
+                    {
+                        MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Application.Current.Shutdown();
                     }
                 }
             }
             return indeksy;
         }
+
     }
 }
