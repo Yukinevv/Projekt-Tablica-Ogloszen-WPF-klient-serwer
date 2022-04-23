@@ -28,6 +28,8 @@ namespace Projekt
         public string[] ComboBox1Options { get; set; }
         public string[] ComboBox2Options { get; set; }
 
+        private int[] sortIndexes;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -485,8 +487,6 @@ namespace Projekt
             }
         }
 
-        private int[] sortIndexes;
-
         private void ComboBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             List<string> tmp = Connect.SelectRecordsOgloszenia();
@@ -506,23 +506,23 @@ namespace Projekt
             }
             else
             {
-                List<string> copy = tmp;
+                List<string> newList = new List<string>();
 
                 if ((string)ComboBox1.SelectedItem == "Rosnąco")
                 {
-                    for (int i = 0; i < tmp.Count; i++)
+                    for (int i = tmp.Count - 1; i >= 0; i--)
                     {
-                        tmp[i] = copy[sortIndexes[i]];
+                        newList.Add(tmp[sortIndexes[i]]);
                     }
-                    ListBox1.ItemsSource = tmp;
+                    ListBox1.ItemsSource = newList;
                 }
                 else if ((string)ComboBox1.SelectedItem == "Malejąco")
                 {
-                    for (int i = tmp.Count - 1, j = 0; i >= 0; i--, j++)
+                    for (int i = 0; i < tmp.Count; i++)
                     {
-                        tmp[j] = copy[sortIndexes[i]];
+                        newList.Add(tmp[sortIndexes[i]]);
                     }
-                    ListBox1.ItemsSource = tmp;
+                    ListBox1.ItemsSource = newList;
                 }
             }
         }
@@ -530,11 +530,11 @@ namespace Projekt
         private void ComboBox2_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             List<string> tmp = Connect.SelectRecordsOgloszenia();
-            string[] tmp2 = new string[1000];
+            string[] tmp2;
 
             string[] sortElements = new string[1000];
             int[] indeksy = new int[1000];
-            int i = 0;
+            int i;
 
             for(i = 0; i < tmp.Count; i++)
             {
@@ -551,35 +551,9 @@ namespace Projekt
                 {
                     sortElements[i] = tmp2[3];
                 }
-                indeksy[i] = i;   
+                indeksy[i] = i;
             }
-
-            // test
-            TextBlock1.Visibility = Visibility.Visible;
-            TextBlock1.FontSize = 8;
-            TextBlock1.Text = "";
-            for (int j = 0; j < i; j++)
-            {
-                TextBlock1.Text += sortElements[j] + " Ind: " + indeksy[j] + "\n";
-            }
-
             sortIndexes = BubbleSortWithIndexes(sortElements, indeksy);
-            
-            // test
-            TextBlock1.Text += "\nPosortowane:\n";
-            for (int j = 0; j < i; j++)
-            {
-                TextBlock1.Text += sortElements[j] + " Ind: " + sortIndexes[j] + "\n";
-            }
-
-            //Array.Reverse(sortElements);
-            //Array.Reverse(sortIndexes);
-
-            //TextBlock1.Text += "\nPosortowane odwrocone:\n";
-            //for (int j = 0; j < i; j++)
-            //{
-            //    TextBlock1.Text += sortElements[j] + " Ind: " + sortIndexes[j] + "\n";
-            //}
         }
 
         private static int[] BubbleSortWithIndexes(string[] arr, int[] indeksy)
@@ -592,15 +566,10 @@ namespace Projekt
                     try
                     {
                         if (string.Compare(arr[j], arr[j + 1]) < 0)
-                        //if (arr[j].CompareTo(arr[j + 1]) > 0)
                         {
-                            string temp = arr[j];
-                            arr[j] = arr[j + 1];
-                            arr[j + 1] = temp;
+                            (arr[j + 1], arr[j]) = (arr[j], arr[j + 1]);
 
-                            int temp2 = indeksy[j];
-                            indeksy[j] = indeksy[j + 1];
-                            indeksy[j + 1] = temp2;
+                            (indeksy[j + 1], indeksy[j]) = (indeksy[j], indeksy[j + 1]);
                         }
                     }
                     catch (Exception err)
