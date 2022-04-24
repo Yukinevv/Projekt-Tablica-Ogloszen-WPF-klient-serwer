@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using Npgsql;
 using System.Security.Cryptography;
 using System.Threading;
+using System.ComponentModel;
 
 namespace Projekt
 {
@@ -25,10 +26,6 @@ namespace Projekt
     public partial class MainWindow : Window
     {
         public static int id;
-        public string[] ComboBox1Options { get; set; }
-        public string[] ComboBox2Options { get; set; }
-
-        private int[] sortIndexes;
 
         public MainWindow()
         {
@@ -55,11 +52,114 @@ namespace Projekt
             }
 
             // pokaz opcje comboboxa
-            ComboBox1Options = new string[] { "Rosnąco", "Malejąco" };
-            ComboBox1.ItemsSource = ComboBox1Options;
+            ComboBox1.ItemsSource = new string[] { "Rosnąco", "Malejąco" };
+            ComboBox2.ItemsSource = new string[] { "Id_o", "Tytul", "Kategoria" };
+        }
 
-            ComboBox2Options = new string[] { "Id", "Tytuł", "Kategoria" };
-            ComboBox2.ItemsSource = ComboBox2Options;
+        private void ComboBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
+            if(ComboBox2.SelectedItem == null)
+            {
+                if ((string)ComboBox1.SelectedItem == "Rosnąco")
+                {
+                    ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
+                    ListView1.ItemsSource = ogloszenia;
+                }
+                else if ((string)ComboBox1.SelectedItem == "Malejąco")
+                {
+                    ogloszenia = ogloszenia.OrderByDescending(x => x.Id_o).ToList();
+                    ListView1.ItemsSource = ogloszenia;
+                }
+            }
+            else
+            {
+                if ((string)ComboBox1.SelectedItem == "Rosnąco")
+                {
+                    switch (ComboBox2.SelectedItem as string)
+                    {
+                        case "Id_o":
+                            ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
+                            break;
+
+                        case "Tytul":
+                            ogloszenia = ogloszenia.OrderBy(x => x.Tytul).ToList();
+                            break;
+
+                        case "Kategoria":
+                            ogloszenia = ogloszenia.OrderBy(x => x.Kategoria).ToList();
+                            break;
+                    }
+                    ListView1.ItemsSource = ogloszenia;
+                }
+                else if ((string)ComboBox1.SelectedItem == "Malejąco")
+                {
+                    switch (ComboBox2.SelectedItem as string)
+                    {
+                        case "Id_o":
+                            ogloszenia = ogloszenia.OrderByDescending(x => x.Id_o).ToList();
+                            break;
+
+                        case "Tytul":
+                            ogloszenia = ogloszenia.OrderByDescending(x => x.Tytul).ToList();
+                            break;
+
+                        case "Kategoria":
+                            ogloszenia = ogloszenia.OrderByDescending(x => x.Kategoria).ToList();
+                            break;
+                    }
+                    ListView1.ItemsSource = ogloszenia;
+                }
+            }  
+        }
+
+        public Predicate<object> GetFilter()
+        {
+            switch (ComboBox2.SelectedItem as string)
+            {
+                case "Id_o":
+                    return IdoFilter;
+                case "Tytul":
+                    return TytulFilter;
+                case "Kategoria":
+                    return KategoriaFilter;
+            }
+            return IdoFilter;
+        }
+
+        private bool IdoFilter(object obj)
+        {
+            var Filterobj = obj as Ogloszenia;
+            return Filterobj.Id_o.ToString().Contains(FilterTextBox.Text);
+        }
+
+        private bool TytulFilter(object obj)
+        {
+            var Filterobj = obj as Ogloszenia;
+            return Filterobj.Tytul.Contains(FilterTextBox.Text);
+        }
+
+        private bool KategoriaFilter(object obj)
+        {
+            var Filterobj = obj as Ogloszenia;
+            return Filterobj.Kategoria.Contains(FilterTextBox.Text);
+        }
+
+        private void FilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (FilterTextBox.Text == null)
+            {
+                ListView1.Items.Filter = null;
+            }
+            else
+            {
+                ListView1.Items.Filter = GetFilter();
+            }
+        }
+
+        private void ComboBox2_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ListView1.Items.Filter = GetFilter();
         }
 
         private void BackToLogin_Click(object sender, RoutedEventArgs e)
@@ -127,8 +227,9 @@ namespace Projekt
 
                         // wypisz dostepne ogloszenia
                         TextBlock1.Visibility = Visibility.Hidden;
-                        ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia();
-                        //ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia2();
+                        List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
+                        ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
+                        ListView1.ItemsSource = ogloszenia;
                     }
                     else
                     {
@@ -172,7 +273,7 @@ namespace Projekt
             }          
         }
 
-        private void ListBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ListView1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             program.Visibility = Visibility.Hidden;
             edycjaOgloszenia.Visibility = Visibility.Visible;
@@ -182,36 +283,11 @@ namespace Projekt
 
             try
             {
-                // sposob z dzieleniem stringa po \t
-                List<string> ogloszenia = new List<string>();
-                ogloszenia = (List<string>)ListBox1.ItemsSource;
+                List<Ogloszenia> ogloszenia = (List<Ogloszenia>)ListView1.ItemsSource;
 
-                string[] tmp = new string[1000];
-                tmp = ogloszenia[ListBox1.SelectedIndex].Split('\t');
-
-                Tytul.Text = tmp[2];
-                Kategoria.Text = tmp[3];
-                Tresc.Text = tmp[6];
-
-                // dzielenie stringa po ' '
-                //tmp = ogloszenia[ListBox1.SelectedIndex].Split(' ');
-                //Tresc.Text = "";
-                //for (int i = 6; i < tmp.Length; i++)
-                //{
-                //    Tresc.Text += tmp[i] + " ";
-                //}
-
-                // sposob z mapowaniem
-                //ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia2();
-                //List<Ogloszenia> ogloszenia = new List<Ogloszenia>();
-                //ogloszenia = (List<Ogloszenia>)ListBox1.ItemsSource;
-
-                //List<Ogloszenia> ogloszenia = new List<Ogloszenia>();
-                //ogloszenia = Connect.SelectRecordsOgloszenia2();
-
-                //Tytul.Text = ogloszenia[ListBox1.SelectedIndex].Tytul;
-                //Kategoria.Text = ogloszenia[ListBox1.SelectedIndex].Kategoria;
-                //Tresc.Text = ogloszenia[ListBox1.SelectedIndex].Tresc;
+                Tytul.Text = ogloszenia[ListView1.SelectedIndex].Tytul;
+                Kategoria.Text = ogloszenia[ListView1.SelectedIndex].Kategoria;
+                Tresc.Text = ogloszenia[ListView1.SelectedIndex].Tresc;
 
                 // sprawdzenie uprawnien zalogowanego uzytkownika do edycji i usuwania wybranego ogloszenia
                 using (NpgsqlConnection conn = Connect.GetConnection())
@@ -219,15 +295,7 @@ namespace Projekt
                     string query = @"SELECT U.login FROM uzytkownicy U JOIN ogloszenia O ON U.id=O.id_u WHERE O.id_u=:_id_u OR U.uprawnienia='admin'";
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
-                    string[] tmp2 = new string[1000];
-                    tmp2 = ListBox1.SelectedItem.ToString().Split('\t');
-                    cmd.Parameters.AddWithValue("_id_u", int.Parse(tmp2[1]));
-
-                    //tmp2 = ListBox1.SelectedItem.ToString().Split(' ');
-                    //cmd.Parameters.AddWithValue("_id_u", int.Parse(ListBox1.SelectedItem.ToString()[2].ToString()));
-
-                    // sposob z mapowaniem
-                    //cmd.Parameters.AddWithValue("_id_u", ogloszenia[ListBox1.SelectedIndex].Id_u);
+                    cmd.Parameters.AddWithValue("_id_u", ogloszenia[ListView1.SelectedIndex].Id_u);
 
                     string login = "";
 
@@ -356,16 +424,8 @@ namespace Projekt
                     cmd.Parameters.AddWithValue("_kategoria", Kategoria.Text);
                     cmd.Parameters.AddWithValue("_tresc", Tresc.Text);
 
-                    string[] tmp = new string[1000];
-                    tmp = ListBox1.SelectedItem.ToString().Split('\t');
-                    cmd.Parameters.AddWithValue("_id_o", int.Parse(tmp[0]));
-
-                    //tmp = ListBox1.SelectedItem.ToString().Split(' ');
-                    //cmd.Parameters.AddWithValue("_id_o", int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()));
-
-                    // sposob z mapowaniem
-                    //List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
-                    //cmd.Parameters.AddWithValue("_id_o", ogloszenia[ListBox1.SelectedIndex].Id_o);
+                    List<Ogloszenia> ogloszenia = (List<Ogloszenia>)ListView1.ItemsSource;
+                    cmd.Parameters.AddWithValue("_id_o", ogloszenia[ListView1.SelectedIndex].Id_o);
 
                     int n = cmd.ExecuteNonQuery();
                     if (n == 1)
@@ -390,27 +450,24 @@ namespace Projekt
 
             try
             {
-                ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia();
-                //ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia2();
+                //List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
+                //ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
+                //ListView1.ItemsSource = ogloszenia;
                 PoliczOgloszenia();
             }
             catch (Exception err)
             {
                 MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak 2", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            ComboBox1.SelectedItem = null;
-            ComboBox2.SelectedItem = null;
-            ComboBox1.Text = "Jak sortować";
-            ComboBox2.Text = "Sortuj według";
         }
 
         private void OdswiezButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia();
-                //ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia2();
+                List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
+                ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
+                ListView1.ItemsSource = ogloszenia;
                 PoliczOgloszenia();
             }
             catch (Exception err)
@@ -418,10 +475,8 @@ namespace Projekt
                 MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak 2", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            ComboBox1.SelectedItem = null;
-            ComboBox2.SelectedItem = null;
-            ComboBox1.Text = "Jak sortować";
-            ComboBox2.Text = "Sortuj według";
+            ComboBox1.SelectedIndex = 0;
+            ComboBox2.SelectedIndex = 0;
         }
 
         private void DodajOgoszenieButton_Click(object sender, RoutedEventArgs e)
@@ -470,19 +525,15 @@ namespace Projekt
 
             try
             {
-                ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia();
-                //ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia2();
+                //List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
+                //ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
+                //ListView1.ItemsSource = ogloszenia;
                 PoliczOgloszenia();
             }
             catch (Exception err)
             {
                 MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak 2", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            ComboBox1.SelectedItem = null;
-            ComboBox2.SelectedItem = null;
-            ComboBox1.Text = "Jak sortować";
-            ComboBox2.Text = "Sortuj według";
         }
 
         private void UsunButton_Click(object sender, RoutedEventArgs e)
@@ -496,16 +547,8 @@ namespace Projekt
 
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
-                    string[] tmp = new string[1000];
-                    tmp = ListBox1.SelectedItem.ToString().Split('\t');
-                    cmd.Parameters.AddWithValue("_id_o", int.Parse(tmp[0]));
-
-                    //tmp = ListBox1.SelectedItem.ToString().Split(' ');
-                    //cmd.Parameters.AddWithValue("_id_o", int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()));
-
-                    // sposob z mapowaniem
-                    //List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
-                    //cmd.Parameters.AddWithValue("_id_o", ogloszenia[ListBox1.SelectedIndex].Id_o);
+                    List<Ogloszenia> ogloszenia = (List<Ogloszenia>)ListView1.ItemsSource;
+                    cmd.Parameters.AddWithValue("_id_o", ogloszenia[ListView1.SelectedIndex].Id_o);
 
                     int n = cmd.ExecuteNonQuery();
                     if (n == 1)
@@ -519,115 +562,6 @@ namespace Projekt
                     MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-        }
-
-        private void ComboBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            List<string> tmp = Connect.SelectRecordsOgloszenia();
-            //List<Ogloszenia> tmp = Connect.SelectRecordsOgloszenia2();
-
-            try
-            {
-                if (ComboBox2.SelectedItem == null)
-                {
-                    tmp.Sort();
-                    if ((string)ComboBox1.SelectedItem == "Rosnąco")
-                    {
-                        ListBox1.ItemsSource = tmp;
-                    }
-                    else if ((string)ComboBox1.SelectedItem == "Malejąco")
-                    {
-                        tmp.Reverse();
-                        ListBox1.ItemsSource = tmp;
-                    }
-                }
-                else
-                {
-                    List<string> newList = new List<string>();
-                    //List<Ogloszenia> newList = new List<Ogloszenia>();
-
-                    if ((string)ComboBox1.SelectedItem == "Rosnąco")
-                    {
-                        for (int i = tmp.Count - 1; i >= 0; i--)
-                        {
-                            newList.Add(tmp[sortIndexes[i]]);
-                        }
-                        ListBox1.ItemsSource = newList;
-                    }
-                    else if ((string)ComboBox1.SelectedItem == "Malejąco")
-                    {
-                        for (int i = 0; i < tmp.Count; i++)
-                        {
-                            newList.Add(tmp[sortIndexes[i]]);
-                        }
-                        ListBox1.ItemsSource = newList;
-                    }
-                }
-            }
-            catch (Exception err)
-            {
-                MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void ComboBox2_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            List<string> tmp = Connect.SelectRecordsOgloszenia();
-            string[] tmp2;
-
-            //List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
-
-            string[] sortElements = new string[1000];
-            int[] indeksy = new int[1000];
-            int i;
-
-            for(i = 0; i < tmp.Count; i++)
-            {
-                tmp2 = tmp[i].Split('\t');
-                if((string)ComboBox2.SelectedItem == "Id")
-                {
-                    sortElements[i] = tmp2[0];
-                    //sortElements[i] = ogloszenia[i].Id_o.ToString();
-                }
-                else if((string)ComboBox2.SelectedItem == "Tytuł")
-                {
-                    sortElements[i] = tmp2[2];
-                    //sortElements[i] = ogloszenia[i].Tytul;
-                }
-                else if ((string)ComboBox2.SelectedItem == "Kategoria")
-                {
-                    sortElements[i] = tmp2[3];
-                    //sortElements[i] = ogloszenia[i].Kategoria;
-                }
-                indeksy[i] = i;
-            }
-            sortIndexes = BubbleSortWithIndexes(sortElements, indeksy);
-        }
-
-        private static int[] BubbleSortWithIndexes(string[] arr, int[] indeksy)
-        {
-            int n = arr.Length;
-            for (int i = 0; i < n - 1; i++)
-            {
-                for (int j = 0; j < n - i - 1; j++)
-                {
-                    try
-                    {
-                        if (string.Compare(arr[j], arr[j + 1]) < 0)
-                        {
-                            (arr[j + 1], arr[j]) = (arr[j], arr[j + 1]);
-
-                            (indeksy[j + 1], indeksy[j]) = (indeksy[j], indeksy[j + 1]);
-                        }
-                    }
-                    catch (Exception err)
-                    {
-                        MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
-                        Application.Current.Shutdown();
-                    }
-                }
-            }
-            return indeksy;
         }
 
     }
