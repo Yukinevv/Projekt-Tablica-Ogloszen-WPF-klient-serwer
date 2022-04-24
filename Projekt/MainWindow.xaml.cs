@@ -128,6 +128,7 @@ namespace Projekt
                         // wypisz dostepne ogloszenia
                         TextBlock1.Visibility = Visibility.Hidden;
                         ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia();
+                        //ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia2();
                     }
                     else
                     {
@@ -181,30 +182,36 @@ namespace Projekt
 
             try
             {
+                // sposob z dzieleniem stringa po \t
                 List<string> ogloszenia = new List<string>();
-                //ogloszenia = Connect.SelectRecordsOgloszenia();
                 ogloszenia = (List<string>)ListBox1.ItemsSource;
 
                 string[] tmp = new string[1000];
-                //tmp = ogloszenia[ListBox1.SelectedIndex].Split(' ');
                 tmp = ogloszenia[ListBox1.SelectedIndex].Split('\t');
 
                 Tytul.Text = tmp[2];
                 Kategoria.Text = tmp[3];
-                //Tresc.Text = "";
-                /*for (int i = 6; i < tmp.Length; i++)
-                {
-                    Tresc.Text += tmp[i] + " ";
-                }*/
                 Tresc.Text = tmp[6];
 
-                // test
-                /*List<Ogloszenia> ogloszenia = new List<Ogloszenia>();
-                ogloszenia = Connect.SelectRecordsOgloszenia2();
+                // dzielenie stringa po ' '
+                //tmp = ogloszenia[ListBox1.SelectedIndex].Split(' ');
+                //Tresc.Text = "";
+                //for (int i = 6; i < tmp.Length; i++)
+                //{
+                //    Tresc.Text += tmp[i] + " ";
+                //}
 
-                Tytul.Text = ogloszenia[ListBox1.SelectedIndex].Tytul;
-                Kategoria.Text = ogloszenia[ListBox1.SelectedIndex].Kategoria;
-                Tresc.Text = ogloszenia[ListBox1.SelectedIndex].Tresc;*/
+                // sposob z mapowaniem
+                //ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia2();
+                //List<Ogloszenia> ogloszenia = new List<Ogloszenia>();
+                //ogloszenia = (List<Ogloszenia>)ListBox1.ItemsSource;
+
+                //List<Ogloszenia> ogloszenia = new List<Ogloszenia>();
+                //ogloszenia = Connect.SelectRecordsOgloszenia2();
+
+                //Tytul.Text = ogloszenia[ListBox1.SelectedIndex].Tytul;
+                //Kategoria.Text = ogloszenia[ListBox1.SelectedIndex].Kategoria;
+                //Tresc.Text = ogloszenia[ListBox1.SelectedIndex].Tresc;
 
                 // sprawdzenie uprawnien zalogowanego uzytkownika do edycji i usuwania wybranego ogloszenia
                 using (NpgsqlConnection conn = Connect.GetConnection())
@@ -213,10 +220,14 @@ namespace Projekt
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
                     string[] tmp2 = new string[1000];
-                    //tmp2 = ListBox1.SelectedItem.ToString().Split(' ');
                     tmp2 = ListBox1.SelectedItem.ToString().Split('\t');
                     cmd.Parameters.AddWithValue("_id_u", int.Parse(tmp2[1]));
+
+                    //tmp2 = ListBox1.SelectedItem.ToString().Split(' ');
                     //cmd.Parameters.AddWithValue("_id_u", int.Parse(ListBox1.SelectedItem.ToString()[2].ToString()));
+
+                    // sposob z mapowaniem
+                    //cmd.Parameters.AddWithValue("_id_u", ogloszenia[ListBox1.SelectedIndex].Id_u);
 
                     string login = "";
 
@@ -236,7 +247,7 @@ namespace Projekt
                             }
                         }
                     }
-                }     
+                }
             }
             catch (Exception err)
             {
@@ -344,12 +355,17 @@ namespace Projekt
                     cmd.Parameters.AddWithValue("_tytul", Tytul.Text);
                     cmd.Parameters.AddWithValue("_kategoria", Kategoria.Text);
                     cmd.Parameters.AddWithValue("_tresc", Tresc.Text);
-                    
+
                     string[] tmp = new string[1000];
-                    //tmp = ListBox1.SelectedItem.ToString().Split(' ');
                     tmp = ListBox1.SelectedItem.ToString().Split('\t');
                     cmd.Parameters.AddWithValue("_id_o", int.Parse(tmp[0]));
+
+                    //tmp = ListBox1.SelectedItem.ToString().Split(' ');
                     //cmd.Parameters.AddWithValue("_id_o", int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()));
+
+                    // sposob z mapowaniem
+                    //List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
+                    //cmd.Parameters.AddWithValue("_id_o", ogloszenia[ListBox1.SelectedIndex].Id_o);
 
                     int n = cmd.ExecuteNonQuery();
                     if (n == 1)
@@ -375,12 +391,18 @@ namespace Projekt
             try
             {
                 ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia();
+                //ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia2();
                 PoliczOgloszenia();
             }
             catch (Exception err)
             {
                 MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak 2", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+            ComboBox1.SelectedItem = null;
+            ComboBox2.SelectedItem = null;
+            ComboBox1.Text = "Jak sortować";
+            ComboBox2.Text = "Sortuj według";
         }
 
         private void OdswiezButton_Click(object sender, RoutedEventArgs e)
@@ -388,6 +410,7 @@ namespace Projekt
             try
             {
                 ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia();
+                //ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia2();
                 PoliczOgloszenia();
             }
             catch (Exception err)
@@ -448,12 +471,18 @@ namespace Projekt
             try
             {
                 ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia();
+                //ListBox1.ItemsSource = Connect.SelectRecordsOgloszenia2();
                 PoliczOgloszenia();
             }
             catch (Exception err)
             {
                 MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak 2", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+            ComboBox1.SelectedItem = null;
+            ComboBox2.SelectedItem = null;
+            ComboBox1.Text = "Jak sortować";
+            ComboBox2.Text = "Sortuj według";
         }
 
         private void UsunButton_Click(object sender, RoutedEventArgs e)
@@ -468,10 +497,15 @@ namespace Projekt
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
                     string[] tmp = new string[1000];
-                    //tmp = ListBox1.SelectedItem.ToString().Split(' ');
                     tmp = ListBox1.SelectedItem.ToString().Split('\t');
                     cmd.Parameters.AddWithValue("_id_o", int.Parse(tmp[0]));
-                    //cmd.Parameters.AddWithValue("_id_o", int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()));   
+
+                    //tmp = ListBox1.SelectedItem.ToString().Split(' ');
+                    //cmd.Parameters.AddWithValue("_id_o", int.Parse(ListBox1.SelectedItem.ToString()[0].ToString()));
+
+                    // sposob z mapowaniem
+                    //List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
+                    //cmd.Parameters.AddWithValue("_id_o", ogloszenia[ListBox1.SelectedIndex].Id_o);
 
                     int n = cmd.ExecuteNonQuery();
                     if (n == 1)
@@ -490,40 +524,49 @@ namespace Projekt
         private void ComboBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             List<string> tmp = Connect.SelectRecordsOgloszenia();
-            
-            if(ComboBox2.SelectedItem == null)
+            //List<Ogloszenia> tmp = Connect.SelectRecordsOgloszenia2();
+
+            try
             {
-                tmp.Sort();
-                if ((string)ComboBox1.SelectedItem == "Rosnąco")
+                if (ComboBox2.SelectedItem == null)
                 {
-                    ListBox1.ItemsSource = tmp;
+                    tmp.Sort();
+                    if ((string)ComboBox1.SelectedItem == "Rosnąco")
+                    {
+                        ListBox1.ItemsSource = tmp;
+                    }
+                    else if ((string)ComboBox1.SelectedItem == "Malejąco")
+                    {
+                        tmp.Reverse();
+                        ListBox1.ItemsSource = tmp;
+                    }
                 }
-                else if ((string)ComboBox1.SelectedItem == "Malejąco")
+                else
                 {
-                    tmp.Reverse();
-                    ListBox1.ItemsSource = tmp;
+                    List<string> newList = new List<string>();
+                    //List<Ogloszenia> newList = new List<Ogloszenia>();
+
+                    if ((string)ComboBox1.SelectedItem == "Rosnąco")
+                    {
+                        for (int i = tmp.Count - 1; i >= 0; i--)
+                        {
+                            newList.Add(tmp[sortIndexes[i]]);
+                        }
+                        ListBox1.ItemsSource = newList;
+                    }
+                    else if ((string)ComboBox1.SelectedItem == "Malejąco")
+                    {
+                        for (int i = 0; i < tmp.Count; i++)
+                        {
+                            newList.Add(tmp[sortIndexes[i]]);
+                        }
+                        ListBox1.ItemsSource = newList;
+                    }
                 }
             }
-            else
+            catch (Exception err)
             {
-                List<string> newList = new List<string>();
-
-                if ((string)ComboBox1.SelectedItem == "Rosnąco")
-                {
-                    for (int i = tmp.Count - 1; i >= 0; i--)
-                    {
-                        newList.Add(tmp[sortIndexes[i]]);
-                    }
-                    ListBox1.ItemsSource = newList;
-                }
-                else if ((string)ComboBox1.SelectedItem == "Malejąco")
-                {
-                    for (int i = 0; i < tmp.Count; i++)
-                    {
-                        newList.Add(tmp[sortIndexes[i]]);
-                    }
-                    ListBox1.ItemsSource = newList;
-                }
+                MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -531,6 +574,8 @@ namespace Projekt
         {
             List<string> tmp = Connect.SelectRecordsOgloszenia();
             string[] tmp2;
+
+            //List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
 
             string[] sortElements = new string[1000];
             int[] indeksy = new int[1000];
@@ -541,15 +586,18 @@ namespace Projekt
                 tmp2 = tmp[i].Split('\t');
                 if((string)ComboBox2.SelectedItem == "Id")
                 {
-                    sortElements[i] = tmp2[0];                
+                    sortElements[i] = tmp2[0];
+                    //sortElements[i] = ogloszenia[i].Id_o.ToString();
                 }
                 else if((string)ComboBox2.SelectedItem == "Tytuł")
                 {
                     sortElements[i] = tmp2[2];
+                    //sortElements[i] = ogloszenia[i].Tytul;
                 }
                 else if ((string)ComboBox2.SelectedItem == "Kategoria")
                 {
                     sortElements[i] = tmp2[3];
+                    //sortElements[i] = ogloszenia[i].Kategoria;
                 }
                 indeksy[i] = i;
             }

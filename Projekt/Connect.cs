@@ -60,9 +60,6 @@ namespace Projekt
                         string[] tmp2 = reader["data_ed"].ToString().Split(' ');
 
                         //result.Add(reader["id_o"] + " " + reader["id_u"] + " " + reader["tytul"] + " " + reader["kategoria"] + " "
-                        //    + reader["data_utw"] + " " + reader["data_ed"] + " " + reader["tresc"]);
-
-                        //result.Add(reader["id_o"] + " " + reader["id_u"] + " " + reader["tytul"] + " " + reader["kategoria"] + " "
                         //    + tmp[0] + " " + tmp2[0] + " " + reader["tresc"]);
 
                         result.Add(reader["id_o"] + "\t" + reader["id_u"] + "\t" + reader["tytul"] + "\t" + reader["kategoria"] + " \t"
@@ -73,7 +70,7 @@ namespace Projekt
             return result;
         }
 
-        /*public static List<Ogloszenia> SelectRecordsOgloszenia2() // testowo
+        public static List<Ogloszenia> SelectRecordsOgloszenia2() // sposob z mapowaniem
         {
             List<Ogloszenia> result = new List<Ogloszenia>();
             using (NpgsqlConnection conn = GetConnection())
@@ -83,24 +80,54 @@ namespace Projekt
                 conn.Open();
                 using (NpgsqlDataReader reader = cmd.ExecuteReader())
                 {
-                    Ogloszenia tmp = new Ogloszenia();
-
                     while (reader.Read())
                     {
-                        tmp.Id_o = int.Parse(reader["id_o"].ToString());
-                        tmp.Id_u = int.Parse(reader["id_u"].ToString());
-                        tmp.Tytul = (string)reader["tytul"];
-                        tmp.Kategoria = (string)reader["kategoria"];
-                        tmp.Tresc = (string)reader["tresc"];
-                        tmp.Data_utw = (DateTime)reader["data_utw"];
-                        tmp.Data_ed = (DateTime)reader["data_ed"];
-
+                        Ogloszenia tmp = new Ogloszenia
+                        {
+                            Id_o = int.Parse(reader["id_o"].ToString()),
+                            Id_u = int.Parse(reader["id_u"].ToString()),
+                            Tytul = (string)reader["tytul"],
+                            Kategoria = (string)reader["kategoria"],
+                            Tresc = (string)reader["tresc"],
+                            Data_utw = (DateTime)reader["data_utw"],
+                            Data_ed = (DateTime)reader["data_ed"]
+                        };
                         result.Add(tmp);
                     }
                 }
             }
             return result;
-        }*/
+        }
+
+        public static List<Uzytkownicy> SelectRecordsUzytkownicy() // sposob z mapowaniem
+        {
+            List<Uzytkownicy> result = new List<Uzytkownicy>();
+            using (NpgsqlConnection conn = GetConnection())
+            {
+                string query = @"SELECT * FROM uzytkownicy";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+                conn.Open();
+                using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Uzytkownicy tmp = new Uzytkownicy
+                        {
+                            Id = int.Parse(reader["id"].ToString()),
+                            Login = (string)reader["login"],
+                            Haslo = (string)reader["haslo"],
+                            Imie = (string)reader["imie"],
+                            Nazwisko = (string)reader["nazwisko"],
+                            Email = (string)reader["email"],
+                            Data_ur = (DateTime)reader["data_ur"],
+                            Uprawnienia = (string)reader["uprawnienia"]
+                        };
+                        result.Add(tmp);
+                    }
+                }
+            }
+            return result;
+        }
 
         public static void TestConnection()
         {
