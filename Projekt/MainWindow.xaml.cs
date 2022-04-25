@@ -16,7 +16,6 @@ using System.Windows.Shapes;
 using Npgsql;
 using System.Security.Cryptography;
 using System.Threading;
-using System.ComponentModel;
 
 namespace Projekt
 {
@@ -185,7 +184,6 @@ namespace Projekt
                 try
                 {
                     conn.Open();
-                    //string query = @"SELECT * FROM uzytkownicy WHERE login = :_login AND haslo = :_haslo";
                     string query = @"SELECT * FROM login(:_login, :_haslo)"; //login() jest funkcja w postgresie
 
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
@@ -216,7 +214,8 @@ namespace Projekt
                         }
 
                         // policz ilosc dostepnych ogloszen
-                        PoliczOgloszenia();
+                        int iloscOgloszen = PoliczOgloszenia();
+                        IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
 
                         // wypisz nazwe uzytkownika
                         WitajLabel.Content = $"Witaj {LoginBox.Text}!";
@@ -225,7 +224,7 @@ namespace Projekt
                         program.Visibility = (Visibility)0;
                         logowanie.Visibility = (Visibility)1;
 
-                        // wypisz dostepne ogloszenia
+                        // wypisz dostepne ogloszenia posortowane rosnaco po id_o
                         TextBlock1.Visibility = Visibility.Hidden;
                         List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
                         ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
@@ -244,16 +243,15 @@ namespace Projekt
             }
         }
 
-        private void PoliczOgloszenia()
+        private int PoliczOgloszenia()
         {
+            int iloscOgloszen = 0;
             using (NpgsqlConnection conn = Connect.GetConnection())
             {
                 try
                 {
                     string query = @"SELECT COUNT(*) AS ile FROM ogloszenia";
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
-
-                    int iloscOgloszen = 0;
 
                     conn.Open();
 
@@ -264,17 +262,22 @@ namespace Projekt
                             iloscOgloszen = int.Parse(reader["ile"].ToString());
                         }
                     }
-                    IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
                 }
                 catch (Exception err)
                 {
                     MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-            }          
+            }
+            return iloscOgloszen;
         }
 
-        private void ListView1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ListView1_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            if (ListView1.SelectedItem == null)
+            {
+                return;
+            }    
+
             program.Visibility = Visibility.Hidden;
             edycjaOgloszenia.Visibility = Visibility.Visible;
 
@@ -284,12 +287,11 @@ namespace Projekt
             try
             {
                 List<Ogloszenia> ogloszenia = (List<Ogloszenia>)ListView1.ItemsSource;
-
                 Tytul.Text = ogloszenia[ListView1.SelectedIndex].Tytul;
                 Kategoria.Text = ogloszenia[ListView1.SelectedIndex].Kategoria;
                 Tresc.Text = ogloszenia[ListView1.SelectedIndex].Tresc;
 
-                // sprawdzenie uprawnien zalogowanego uzytkownika do edycji i usuwania wybranego ogloszenia
+                //sprawdzenie uprawnien zalogowanego uzytkownika do edycji i usuwania wybranego ogloszenia
                 using (NpgsqlConnection conn = Connect.GetConnection())
                 {
                     string query = @"SELECT U.login FROM uzytkownicy U JOIN ogloszenia O ON U.id=O.id_u WHERE O.id_u=:_id_u OR U.uprawnienia='admin'";
@@ -360,7 +362,8 @@ namespace Projekt
                     cmd.Parameters.AddWithValue("_imie", TextBoxImie.Text);
                     cmd.Parameters.AddWithValue("_nazwisko", TextBoxNazwisko.Text);
                     cmd.Parameters.AddWithValue("_email", TextBoxEmail.Text);
-                    cmd.Parameters.AddWithValue("_data_ur", DatePicker1.SelectedDate);
+                    //cmd.Parameters.AddWithValue("_data_ur", DatePicker1.SelectedDate);
+                    cmd.Parameters.AddWithValue("_data_ur", DatePicker1.SelectedDate.ToString());
 
                     // warunki poprawnosci hasla
                     if (PassBox1.Password.Length < 8 || PassBox1.Password.Length > 20)
@@ -416,13 +419,14 @@ namespace Projekt
                 try
                 {
                     conn.Open();
-                    string query = @"UPDATE ogloszenia SET tytul=:_tytul, kategoria=:_kategoria, tresc=:_tresc WHERE id_o=:_id_o";
+                    string query = @"UPDATE ogloszenia SET tytul=:_tytul, kategoria=:_kategoria, tresc=:_tresc, data_ed=:_data_ed WHERE id_o=:_id_o";
 
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
                     cmd.Parameters.AddWithValue("_tytul", Tytul.Text);
                     cmd.Parameters.AddWithValue("_kategoria", Kategoria.Text);
                     cmd.Parameters.AddWithValue("_tresc", Tresc.Text);
+                    cmd.Parameters.AddWithValue("_data_ed", DateTime.Now.ToString("yyyy-MM-dd"));
 
                     List<Ogloszenia> ogloszenia = (List<Ogloszenia>)ListView1.ItemsSource;
                     cmd.Parameters.AddWithValue("_id_o", ogloszenia[ListView1.SelectedIndex].Id_o);
@@ -450,10 +454,14 @@ namespace Projekt
 
             try
             {
-                //List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
-                //ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
-                //ListView1.ItemsSource = ogloszenia;
-                PoliczOgloszenia();
+                if (ComboBox1.SelectedIndex == 0 && ComboBox2.SelectedIndex == 0)
+                {
+                    List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
+                    ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
+                    ListView1.ItemsSource = ogloszenia;
+                }
+                int iloscOgloszen = PoliczOgloszenia();
+                IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
             }
             catch (Exception err)
             {
@@ -468,7 +476,9 @@ namespace Projekt
                 List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
                 ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
                 ListView1.ItemsSource = ogloszenia;
-                PoliczOgloszenia();
+
+                int iloscOgloszen = PoliczOgloszenia();
+                IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
             }
             catch (Exception err)
             {
@@ -492,8 +502,11 @@ namespace Projekt
                 try
                 {
                     conn.Open();
+                    //string query = @"INSERT INTO ogloszenia VALUES(
+                    //                 nextval('increment_id_ogloszenia'), :_id_u, :_tytul, :_kategoria, now(), now(), :_tresc)";
+
                     string query = @"INSERT INTO ogloszenia VALUES(
-                                     nextval('increment_id_ogloszenia'), :_id_u, :_tytul, :_kategoria, now(), now(), :_tresc)";
+                                     nextval('increment_id_ogloszenia'), :_id_u, :_tytul, :_kategoria, :_data_utw, :_data_ed, :_tresc)";
 
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
@@ -501,6 +514,8 @@ namespace Projekt
                     cmd.Parameters.AddWithValue("_kategoria", KategoriaD.Text);
                     cmd.Parameters.AddWithValue("_tresc", TrescD.Text);
                     cmd.Parameters.AddWithValue("_id_u", id);
+                    cmd.Parameters.AddWithValue("_data_utw", DateTime.Now.ToString("yyyy-MM-dd"));
+                    cmd.Parameters.AddWithValue("_data_ed", DateTime.Now.ToString("yyyy-MM-dd"));
 
                     int n = cmd.ExecuteNonQuery();
                     if (n == 1)
@@ -525,10 +540,14 @@ namespace Projekt
 
             try
             {
-                //List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
-                //ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
-                //ListView1.ItemsSource = ogloszenia;
-                PoliczOgloszenia();
+                if(ComboBox1.SelectedIndex == 0 && ComboBox2.SelectedIndex == 0)
+                {
+                    List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
+                    ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
+                    ListView1.ItemsSource = ogloszenia;
+                }
+                int iloscOgloszen = PoliczOgloszenia();
+                IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
             }
             catch (Exception err)
             {

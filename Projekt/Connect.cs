@@ -89,9 +89,12 @@ namespace Projekt
                             Tytul = (string)reader["tytul"],
                             Kategoria = (string)reader["kategoria"],
                             Tresc = (string)reader["tresc"],
-                            Data_utw = (DateTime)reader["data_utw"],
-                            Data_ed = (DateTime)reader["data_ed"]
+                            //Data_utw = (DateTime)reader["data_utw"],
+                            //Data_ed = (DateTime)reader["data_ed"]
+                            Data_utw = (string)reader["data_utw"],
+                            Data_ed = (string)reader["data_ed"]
                         };
+
                         result.Add(tmp);
                     }
                 }

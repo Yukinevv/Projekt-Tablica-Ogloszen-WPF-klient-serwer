@@ -13,8 +13,10 @@ namespace Projekt
         public string Tytul { get; set; }
         public string Kategoria { get; set; }
         public string Tresc { get; set; }
-        public DateTime Data_utw { get; set; }
-        public DateTime Data_ed { get; set; }
+        //public DateTime Data_utw { get; set; }
+        //public DateTime Data_ed { get; set; }
+        public string Data_utw { get; set; }
+        public string Data_ed { get; set; }
 
         public string Opis
         {
