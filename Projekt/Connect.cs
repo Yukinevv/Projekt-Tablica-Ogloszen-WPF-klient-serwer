@@ -9,20 +9,20 @@ namespace Projekt
 {
     class Connect
     {
-        public static void InsertRecord()
-        {
-            using (NpgsqlConnection conn = GetConnection())
-            {
-                string query = @"INSERT INTO public.test VALUES(1, 'Jan', 'Kowalski', 123456789)";
-                NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
-                conn.Open();
-                int n = cmd.ExecuteNonQuery();
-                if (n == 1)
-                {
-                    Console.WriteLine("Rekord zostal dodany do bazy");
-                }
-            }
-        }
+        //public static void InsertRecord()
+        //{
+        //    using (NpgsqlConnection conn = GetConnection())
+        //    {
+        //        string query = @"INSERT INTO public.test VALUES(1, 'Jan', 'Kowalski', 123456789)";
+        //        NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+        //        conn.Open();
+        //        int n = cmd.ExecuteNonQuery();
+        //        if (n == 1)
+        //        {
+        //            Console.WriteLine("Rekord zostal dodany do bazy");
+        //        }
+        //    }
+        //}
 
         public static List<string> SelectRecords()
         {
@@ -43,34 +43,34 @@ namespace Projekt
             return result;
         }
 
-        public static List<string> SelectRecordsOgloszenia()
-        {
-            List<string> result = new List<string>();
-            using (NpgsqlConnection conn = GetConnection())
-            {
-                string query = @"SELECT * FROM ogloszenia";
-                NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
-                conn.Open();
-                using (NpgsqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        string[] tmp = reader["data_utw"].ToString().Split(' ');
+        //public static List<string> SelectRecordsOgloszenia()
+        //{
+        //    List<string> result = new List<string>();
+        //    using (NpgsqlConnection conn = GetConnection())
+        //    {
+        //        string query = @"SELECT * FROM ogloszenia";
+        //        NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+        //        conn.Open();
+        //        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+        //        {
+        //            while (reader.Read())
+        //            {
+        //                string[] tmp = reader["data_utw"].ToString().Split(' ');
 
-                        string[] tmp2 = reader["data_ed"].ToString().Split(' ');
+        //                string[] tmp2 = reader["data_ed"].ToString().Split(' ');
 
-                        //result.Add(reader["id_o"] + " " + reader["id_u"] + " " + reader["tytul"] + " " + reader["kategoria"] + " "
-                        //    + tmp[0] + " " + tmp2[0] + " " + reader["tresc"]);
+        //                //result.Add(reader["id_o"] + " " + reader["id_u"] + " " + reader["tytul"] + " " + reader["kategoria"] + " "
+        //                //    + tmp[0] + " " + tmp2[0] + " " + reader["tresc"]);
 
-                        result.Add(reader["id_o"] + "\t" + reader["id_u"] + "\t" + reader["tytul"] + "\t" + reader["kategoria"] + " \t"
-                            + tmp[0] + "\t" + tmp2[0] + "\t" + reader["tresc"]);
-                    }
-                }
-            }
-            return result;
-        }
+        //                result.Add(reader["id_o"] + "\t" + reader["id_u"] + "\t" + reader["tytul"] + "\t" + reader["kategoria"] + " \t"
+        //                    + tmp[0] + "\t" + tmp2[0] + "\t" + reader["tresc"]);
+        //            }
+        //        }
+        //    }
+        //    return result;
+        //}
 
-        public static List<Ogloszenia> SelectRecordsOgloszenia2() // sposob z mapowaniem
+        public static List<Ogloszenia> SelectRecordsOgloszenia2()
         {
             List<Ogloszenia> result = new List<Ogloszenia>();
             using (NpgsqlConnection conn = GetConnection())
@@ -102,7 +102,7 @@ namespace Projekt
             return result;
         }
 
-        public static List<Uzytkownicy> SelectRecordsUzytkownicy() // sposob z mapowaniem
+        public static List<Uzytkownicy> SelectRecordsUzytkownicy()
         {
             List<Uzytkownicy> result = new List<Uzytkownicy>();
             using (NpgsqlConnection conn = GetConnection())
@@ -132,22 +132,22 @@ namespace Projekt
             return result;
         }
 
-        public static void TestConnection()
-        {
-            using (NpgsqlConnection conn = GetConnection())
-            {
-                conn.Open();
-                if (conn.State == System.Data.ConnectionState.Open)
-                {
-                    Console.WriteLine("Polaczono z baza danych");
-                }
-                conn.Close();
-            }
-        }
+        //public static void TestConnection()
+        //{
+        //    using (NpgsqlConnection conn = GetConnection())
+        //    {
+        //        conn.Open();
+        //        if (conn.State == System.Data.ConnectionState.Open)
+        //        {
+        //            Console.WriteLine("Polaczono z baza danych");
+        //        }
+        //        conn.Close();
+        //    }
+        //}
 
         public static NpgsqlConnection GetConnection()
         {
-            return new NpgsqlConnection(@"Server=sxterm;Port=5432;User ID=adrianrodzic;Password=ADrian8151!@#;Database=adrianrodzic");
+            return new NpgsqlConnection(@"Server=sxterm;Port=5432;User ID=adrianrodzic;Password=;Database=adrianrodzic");
         }
     }
 }
