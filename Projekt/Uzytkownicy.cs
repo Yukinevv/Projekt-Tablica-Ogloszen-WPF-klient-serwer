@@ -14,7 +14,8 @@ namespace Projekt
         public string Imie { get; set; }
         public string Nazwisko { get; set; }
         public string Email { get; set; }
-        public DateTime Data_ur { get; set; }
+        //public DateTime Data_ur { get; set; }
+        public string Data_ur { get; set; }
         public string Uprawnienia { get; set; }
     }
 }

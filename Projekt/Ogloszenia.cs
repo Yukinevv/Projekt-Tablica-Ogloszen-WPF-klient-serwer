@@ -11,7 +11,6 @@ namespace Projekt
         public int Id_o { get; set; }
         public int Id_u { get; set; }
         public string Tytul { get; set; }
-        public string Kategoria { get; set; }
         public string Tresc { get; set; }
         //public DateTime Data_utw { get; set; }
         //public DateTime Data_ed { get; set; }
@@ -22,7 +21,7 @@ namespace Projekt
         {
             get
             {
-                return Id_o.ToString() + " " + Id_u.ToString() + Tytul + " " + Kategoria + " " + Tresc + " " +
+                return Id_o.ToString() + " " + Id_u.ToString() + Tytul +  " " + Tresc + " " +
                     Data_utw.ToString() + " " + Data_ed.ToString();
             }
         }

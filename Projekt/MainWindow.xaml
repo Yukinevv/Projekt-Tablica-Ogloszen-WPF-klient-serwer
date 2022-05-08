@@ -45,7 +45,6 @@
                             <GridViewColumn Header="IdO" DisplayMemberBinding="{Binding Id_o}" Width="30"/>
                             <GridViewColumn Header="IdU" DisplayMemberBinding="{Binding Id_u}" Width="30"/>
                             <GridViewColumn Header="Tytuł" DisplayMemberBinding="{Binding Tytul}" Width="120"/>
-                            <GridViewColumn Header="Kategoria" DisplayMemberBinding="{Binding Kategoria}" Width="120"/>
                             <GridViewColumn Header="Data utworzenia" DisplayMemberBinding="{Binding Data_utw}" Width="140"/>
                             <GridViewColumn Header="Data edycji" DisplayMemberBinding="{Binding Data_ed}" Width="140"/>
                             <GridViewColumn Header="Treść" DisplayMemberBinding="{Binding Tresc}" Width="190"/>

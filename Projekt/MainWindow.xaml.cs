@@ -15,7 +15,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Npgsql;
 using System.Security.Cryptography;
-using System.Threading;
 
 namespace Projekt
 {
@@ -44,7 +43,7 @@ namespace Projekt
             rezultatEdycji.Visibility = Visibility.Hidden;
 
             // wypisz dosetpne konta uzytkownikow - roboczo
-            TextBlock1.Text = "Dostepni uzytkownicy:\n(hasło do jankowalski: qwerty123)\n";
+            TextBlock1.Text = "Dostepni uzytkownicy:\n(hasło do jank: qwerty123)\n";
             foreach (string elements in Connect.SelectRecords())
             {
                 TextBlock1.Text += elements + "\n";
@@ -57,7 +56,7 @@ namespace Projekt
 
         private void ComboBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
+            List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia();
             if(ComboBox2.SelectedItem == null)
             {
                 if ((string)ComboBox1.SelectedItem == "Rosnąco")
@@ -85,9 +84,9 @@ namespace Projekt
                             ogloszenia = ogloszenia.OrderBy(x => x.Tytul).ToList();
                             break;
 
-                        case "Kategoria":
-                            ogloszenia = ogloszenia.OrderBy(x => x.Kategoria).ToList();
-                            break;
+                        //case "Kategoria":
+                        //    ogloszenia = ogloszenia.OrderBy(x => x.Kategoria).ToList();
+                        //    break;
                     }
                     ListView1.ItemsSource = ogloszenia;
                 }
@@ -103,9 +102,9 @@ namespace Projekt
                             ogloszenia = ogloszenia.OrderByDescending(x => x.Tytul).ToList();
                             break;
 
-                        case "Kategoria":
-                            ogloszenia = ogloszenia.OrderByDescending(x => x.Kategoria).ToList();
-                            break;
+                        //case "Kategoria":
+                        //    ogloszenia = ogloszenia.OrderByDescending(x => x.Kategoria).ToList();
+                        //    break;
                     }
                     ListView1.ItemsSource = ogloszenia;
                 }
@@ -120,8 +119,8 @@ namespace Projekt
                     return IdoFilter;
                 case "Tytul":
                     return TytulFilter;
-                case "Kategoria":
-                    return KategoriaFilter;
+                //case "Kategoria":
+                //    return KategoriaFilter;
             }
             return IdoFilter;
         }
@@ -138,11 +137,11 @@ namespace Projekt
             return Filterobj.Tytul.Contains(FilterTextBox.Text);
         }
 
-        private bool KategoriaFilter(object obj)
-        {
-            var Filterobj = obj as Ogloszenia;
-            return Filterobj.Kategoria.Contains(FilterTextBox.Text);
-        }
+        //private bool KategoriaFilter(object obj)
+        //{
+        //    var Filterobj = obj as Ogloszenia;
+        //    return Filterobj.Kategoria.Contains(FilterTextBox.Text);
+        //}
 
         private void FilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -190,11 +189,11 @@ namespace Projekt
 
                     // hashowanie hasla w celu porownania zahashowanego znajdujacego sie w bazie
                     SHA256 sha256Hash = SHA256.Create();
-                    string hash = GetHash(sha256Hash, PassBox.Password);
+                    string hash = Operacje.GetHash(sha256Hash, PassBox.Password);
 
                     cmd.Parameters.AddWithValue("_login", LoginBox.Text);
                     cmd.Parameters.AddWithValue("_haslo", hash);
-                    
+
                     int result = (int)cmd.ExecuteScalar();
 
                     if (result == 1) // logowanie powiodlo sie
@@ -214,7 +213,7 @@ namespace Projekt
                         }
 
                         // policz ilosc dostepnych ogloszen
-                        int iloscOgloszen = PoliczOgloszenia();
+                        int iloscOgloszen = Operacje.PoliczOgloszenia();
                         IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
 
                         // wypisz nazwe uzytkownika
@@ -226,7 +225,7 @@ namespace Projekt
 
                         // wypisz dostepne ogloszenia posortowane rosnaco po id_o
                         TextBlock1.Visibility = Visibility.Hidden;
-                        List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
+                        List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia();
                         ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
                         ListView1.ItemsSource = ogloszenia;
                     }
@@ -241,34 +240,6 @@ namespace Projekt
                     MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-        }
-
-        private int PoliczOgloszenia()
-        {
-            int iloscOgloszen = 0;
-            using (NpgsqlConnection conn = Connect.GetConnection())
-            {
-                try
-                {
-                    string query = @"SELECT COUNT(*) AS ile FROM ogloszenia";
-                    NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
-
-                    conn.Open();
-
-                    using (NpgsqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            iloscOgloszen = int.Parse(reader["ile"].ToString());
-                        }
-                    }
-                }
-                catch (Exception err)
-                {
-                    MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-            return iloscOgloszen;
         }
 
         private void ListView1_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -288,7 +259,6 @@ namespace Projekt
             {
                 List<Ogloszenia> ogloszenia = (List<Ogloszenia>)ListView1.ItemsSource;
                 Tytul.Text = ogloszenia[ListView1.SelectedIndex].Tytul;
-                Kategoria.Text = ogloszenia[ListView1.SelectedIndex].Kategoria;
                 Tresc.Text = ogloszenia[ListView1.SelectedIndex].Tresc;
 
                 //sprawdzenie uprawnien zalogowanego uzytkownika do edycji i usuwania wybranego ogloszenia
@@ -355,7 +325,7 @@ namespace Projekt
 
                     // hashowanie hasla
                     SHA256 sha256Hash = SHA256.Create();
-                    string hash = GetHash(sha256Hash, PassBox1.Password);
+                    string hash = Operacje.GetHash(sha256Hash, PassBox1.Password);
 
                     cmd.Parameters.AddWithValue("_login", TextBoxLogin.Text);
                     cmd.Parameters.AddWithValue("_haslo", hash);
@@ -399,19 +369,6 @@ namespace Projekt
             }
         }
 
-        private static string GetHash(HashAlgorithm hashAlgorithm, string input)
-        {
-            byte[] data = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
-
-            var sBuilder = new StringBuilder();
-
-            for (int i = 0; i < data.Length; i++)
-            {
-                sBuilder.Append(data[i].ToString("x2"));
-            }
-            return sBuilder.ToString();
-        }
-
         private void ZatwierdzButton_Click(object sender, RoutedEventArgs e)
         {
             using (NpgsqlConnection conn = Connect.GetConnection())
@@ -419,12 +376,11 @@ namespace Projekt
                 try
                 {
                     conn.Open();
-                    string query = @"UPDATE ogloszenia SET tytul=:_tytul, kategoria=:_kategoria, tresc=:_tresc, data_ed=:_data_ed WHERE id_o=:_id_o";
+                    string query = @"UPDATE ogloszenia SET tytul=:_tytul, tresc=:_tresc, data_ed=:_data_ed WHERE id_o=:_id_o";
 
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
                     cmd.Parameters.AddWithValue("_tytul", Tytul.Text);
-                    cmd.Parameters.AddWithValue("_kategoria", Kategoria.Text);
                     cmd.Parameters.AddWithValue("_tresc", Tresc.Text);
                     cmd.Parameters.AddWithValue("_data_ed", DateTime.Now.ToString("yyyy-MM-dd"));
 
@@ -456,11 +412,11 @@ namespace Projekt
             {
                 if (ComboBox1.SelectedIndex == 0 && ComboBox2.SelectedIndex == 0)
                 {
-                    List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
+                    List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia();
                     ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
                     ListView1.ItemsSource = ogloszenia;
                 }
-                int iloscOgloszen = PoliczOgloszenia();
+                int iloscOgloszen = Operacje.PoliczOgloszenia();
                 IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
             }
             catch (Exception err)
@@ -473,11 +429,11 @@ namespace Projekt
         {
             try
             {
-                List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
+                List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia();
                 ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
                 ListView1.ItemsSource = ogloszenia;
 
-                int iloscOgloszen = PoliczOgloszenia();
+                int iloscOgloszen = Operacje.PoliczOgloszenia();
                 IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
             }
             catch (Exception err)
@@ -503,15 +459,14 @@ namespace Projekt
                 {
                     conn.Open();
                     //string query = @"INSERT INTO ogloszenia VALUES(
-                    //                 nextval('increment_id_ogloszenia'), :_id_u, :_tytul, :_kategoria, now(), now(), :_tresc)";
+                    //                 nextval('increment_id_ogloszenia'), :_id_u, :_tytul, now(), now(), :_tresc)";
 
                     string query = @"INSERT INTO ogloszenia VALUES(
-                                     nextval('increment_id_ogloszenia'), :_id_u, :_tytul, :_kategoria, :_data_utw, :_data_ed, :_tresc)";
+                                     nextval('increment_id_ogloszenia'), :_id_u, :_tytul, :_data_utw, :_data_ed, :_tresc)";
 
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
                     cmd.Parameters.AddWithValue("_tytul", TytulD.Text);
-                    cmd.Parameters.AddWithValue("_kategoria", KategoriaD.Text);
                     cmd.Parameters.AddWithValue("_tresc", TrescD.Text);
                     cmd.Parameters.AddWithValue("_id_u", id);
                     cmd.Parameters.AddWithValue("_data_utw", DateTime.Now.ToString("yyyy-MM-dd"));
@@ -542,11 +497,11 @@ namespace Projekt
             {
                 if(ComboBox1.SelectedIndex == 0 && ComboBox2.SelectedIndex == 0)
                 {
-                    List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2();
+                    List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia();
                     ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
                     ListView1.ItemsSource = ogloszenia;
                 }
-                int iloscOgloszen = PoliczOgloszenia();
+                int iloscOgloszen = Operacje.PoliczOgloszenia();
                 IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
             }
             catch (Exception err)
