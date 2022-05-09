@@ -118,6 +118,25 @@ namespace Projekt
             return result;
         }
 
+        public static List<string> SelectRecordsKategoria2()
+        {
+            List<string> result = new List<string>();
+            using (NpgsqlConnection conn = GetConnection())
+            {
+                string query = @"SELECT nazwa FROM kategoria";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+                conn.Open();
+                using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        result.Add((string)reader["nazwa"]);
+                    }
+                }
+            }
+            return result;
+        }
+
         public static NpgsqlConnection GetConnection()
         {
             return new NpgsqlConnection(@"Server=sxterm;Port=5432;User ID=adrianrodzic;Password=ADrian8151!@#;Database=adrianrodzic");

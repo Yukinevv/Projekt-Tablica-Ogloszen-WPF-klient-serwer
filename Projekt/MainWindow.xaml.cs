@@ -42,6 +42,9 @@ namespace Projekt
             rezultatDodania.Visibility = Visibility.Hidden;
             rezultatEdycji.Visibility = Visibility.Hidden;
 
+            DodajKategorieButtonD.Visibility = Visibility.Hidden;
+            DodajKategorieButton.Visibility = Visibility.Hidden;
+
             // wypisz dosetpne konta uzytkownikow - roboczo
             TextBlock1.Text = "Dostepni uzytkownicy:\n(hasło do jank: qwerty123)\n";
             foreach (string elements in Connect.SelectRecords())
@@ -242,12 +245,67 @@ namespace Projekt
             }
         }
 
+        private void KategorieBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //Dodawanie nowych kategorii
+            if ((string)KategorieBox.SelectedItem == "Dodaj nowa")
+            {
+                DodajKategorieButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                DodajKategorieButton.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void DodajKategorieButton_Click(object sender, RoutedEventArgs e)
+        {
+            using (NpgsqlConnection conn = Connect.GetConnection())
+            {
+                try
+                {
+                    conn.Open();
+
+                    string query = "INSERT INTO kategoria VALUES(nextval('increment_id_kategoria'), :_nazwa, :_id_u, :_data_utw)";
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+
+                    cmd.Parameters.AddWithValue("_nazwa", Kategoria.Text);
+                    cmd.Parameters.AddWithValue("_id_u", id);
+                    cmd.Parameters.AddWithValue("_data_utw", DateTime.Now.ToString("yyyy-MM-dd"));
+
+                    int n = cmd.ExecuteNonQuery();
+                    if (n == 1)
+                    {
+                        rezultatEdycji.Visibility = Visibility.Visible;
+                        rezultatEdycji.Content = "Dodano nowa kategorie!";
+                        KategorieBox.Items.Add(Kategoria.Text);
+                    }
+                }
+                catch (Exception err)
+                {
+                    MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
         private void ListView1_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (ListView1.SelectedItem == null)
             {
                 return;
-            }    
+            }
+
+            //Przypisanie elementow do comboboxa kategorii
+            KategorieBox.Items.Clear();
+            List<string> tmp = Connect.SelectRecordsKategoria2();
+
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                KategorieBox.Items.Add(tmp[i]);
+            }
+            KategorieBox.Items.Add("Dodaj nowa");
+            //--------------------------------------------
 
             program.Visibility = Visibility.Hidden;
             edycjaOgloszenia.Visibility = Visibility.Visible;
@@ -445,10 +503,63 @@ namespace Projekt
             ComboBox2.SelectedIndex = 0;
         }
 
-        private void DodajOgoszenieButton_Click(object sender, RoutedEventArgs e)
+        private void DodajOgloszenieButton_Click(object sender, RoutedEventArgs e)
         {
             program.Visibility = Visibility.Hidden;
             dodajOgloszenie.Visibility = Visibility.Visible;
+
+            KategorieBox.Items.Clear();
+            List<string> tmp = Connect.SelectRecordsKategoria2();
+
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                KategorieBoxD.Items.Add(tmp[i]);
+            }
+            KategorieBoxD.Items.Add("Dodaj nowa");
+        }
+
+        private void KategorieBoxD_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //Dodawanie nowych kategorii
+            if ((string)KategorieBoxD.SelectedItem == "Dodaj nowa")
+            {
+                DodajKategorieButtonD.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                DodajKategorieButtonD.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void DodajKategorieButtonD_Click(object sender, RoutedEventArgs e)
+        {
+            using (NpgsqlConnection conn = Connect.GetConnection())
+            {
+                try
+                {
+                    conn.Open();
+
+                    string query = "INSERT INTO kategoria VALUES(nextval('increment_id_kategoria'), :_nazwa, :_id_u, :_data_utw)";
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+
+                    cmd.Parameters.AddWithValue("_nazwa", KategoriaD.Text);
+                    cmd.Parameters.AddWithValue("_id_u", id);
+                    cmd.Parameters.AddWithValue("_data_utw", DateTime.Now.ToString("yyyy-MM-dd"));
+
+                    int n = cmd.ExecuteNonQuery();
+                    if (n == 1)
+                    {
+                        rezultatDodania.Visibility = Visibility.Visible;
+                        rezultatDodania.Content = "Dodano nowa kategorie!";
+                        KategorieBoxD.Items.Add(KategoriaD.Text);
+                    }      
+                }
+                catch (Exception err)
+                {
+                    MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }     
         }
 
         private void ZatwierdzButtonD_Click(object sender, RoutedEventArgs e)
@@ -457,6 +568,7 @@ namespace Projekt
             {
                 try
                 {
+                    //Dodawanie nowych ogloszen
                     conn.Open();
                     //string query = @"INSERT INTO ogloszenia VALUES(
                     //                 nextval('increment_id_ogloszenia'), :_id_u, :_tytul, now(), now(), :_tresc)";

@@ -36,7 +36,7 @@
             <Label x:Name="LabelPassError" Content="Tu pojawi się informacja o błędzie..." HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="216,370,0,0" VerticalAlignment="Top" Height="35" Width="354" Foreground="Red" FontSize="16"/>
         </Grid>
 
-        <Grid x:Name="program" Visibility="Visible">
+        <Grid x:Name="program" Visibility="Hidden">
             <Button x:Name="LogoutButton" Content="Wyloguj" HorizontalAlignment="Center" Margin="0,370,0,0" VerticalAlignment="Top" Height="30" Width="188" Click="LogoutButton_Click"/>
             <ListView x:Name="ListView1" Margin="0,124,0,69" MouseDoubleClick="ListView1_MouseDoubleClick" HorizontalContentAlignment="Center">
                 <ListView.View>
@@ -53,7 +53,7 @@
                 </ListView.View>
             </ListView>
             <Label x:Name="IloscOgloszenLabel" Content="Wyświetlono ? ogłoszeń" HorizontalAlignment="Left" Margin="41,73,0,0" VerticalAlignment="Top" Height="28" Width="183"/>
-            <Button x:Name="DodajOgoszenieButton" Content="Dodaj ogłoszenie" HorizontalAlignment="Left" Margin="591,69,0,0" VerticalAlignment="Top" Height="34" Width="117" Click="DodajOgoszenieButton_Click"/>
+            <Button x:Name="DodajOgloszenieButton" Content="Dodaj ogłoszenie" HorizontalAlignment="Left" Margin="591,69,0,0" VerticalAlignment="Top" Height="34" Width="117" Click="DodajOgloszenieButton_Click"/>
             <Label x:Name="WitajLabel" Content="Witaj nazwa!" HorizontalAlignment="Left" Margin="41,24,0,0" VerticalAlignment="Top" Height="36" Width="183"/>
             <ComboBox x:Name="ComboBox1" SelectedIndex="0" Text="Jak sortować" HorizontalAlignment="Left" Margin="429,70,0,0" VerticalAlignment="Top" Width="131" Height="34" FontSize="16" IsEditable="True" SelectionChanged="ComboBox1_SelectionChanged"/>
             <ComboBox x:Name="ComboBox2" SelectedIndex="0" SelectionChanged="ComboBox2_SelectionChanged" Text="Sortuj według" HorizontalAlignment="Left" Margin="275,71,0,0" VerticalAlignment="Top" Width="131" Height="33" FontSize="16" IsEditable="True"/>
@@ -73,9 +73,11 @@
             <Button x:Name="PowrotButtonD" Content="Powrót" HorizontalAlignment="Left" Margin="562,350,0,0" VerticalAlignment="Top" Height="41" Width="102" Click="PowrotButtonD_Click"/>
             <Label x:Name="rezultatDodania" Content="Rezultat" HorizontalAlignment="Left" Margin="400,32,0,0" VerticalAlignment="Top" Height="45" Width="203"/>
             <Label Content="Dodaj ogłoszenie" HorizontalAlignment="Left" Margin="51,32,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.342,-0.153" Height="40" Width="153"/>
+            <ComboBox x:Name="KategorieBoxD" Text="Wybierz kategorie" SelectionChanged="KategorieBoxD_SelectionChanged" HorizontalAlignment="Left" Margin="317,141,0,0" VerticalAlignment="Top" Width="143" IsEditable="True"/>
+            <Button x:Name="DodajKategorieButtonD" Content="Dodaj kategorie" HorizontalAlignment="Left" Margin="486,141,0,0" VerticalAlignment="Top" Height="23" Width="101" Click="DodajKategorieButtonD_Click"/>
         </Grid>
 
-        <Grid x:Name="edycjaOgloszenia" Visibility="Hidden">
+        <Grid x:Name="edycjaOgloszenia" Visibility="Visible">
             <TextBox x:Name="Tresc" HorizontalAlignment="Center" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="528" Height="149" Margin="0,183,0,0"/>
             <TextBox x:Name="Tytul" HorizontalAlignment="Left" Margin="136,94,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="148" Height="26"/>
             <TextBox x:Name="Kategoria" HorizontalAlignment="Left" Margin="136,143,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="148" Height="25"/>
@@ -87,6 +89,8 @@
             <Button x:Name="PowrotButton" Content="Powrót" HorizontalAlignment="Left" Margin="562,350,0,0" VerticalAlignment="Top" Height="41" Width="102" Click="PowrotButton_Click"/>
             <Label x:Name="rezultatEdycji" Content="Rezultat" HorizontalAlignment="Left" Margin="389,28,0,0" VerticalAlignment="Top" Height="45" Width="203"/>
             <Label Content="Edytuj ogłoszenie" HorizontalAlignment="Left" Margin="51,25,0,0" VerticalAlignment="Top" Height="41" Width="144"/>
+            <ComboBox x:Name="KategorieBox" Text="Wybierz kategorie" SelectionChanged="KategorieBox_SelectionChanged" HorizontalAlignment="Left" Margin="317,141,0,0" VerticalAlignment="Top" Width="143" IsEditable="True"/>
+            <Button x:Name="DodajKategorieButton" Content="Dodaj kategorie" HorizontalAlignment="Left" Margin="486,141,0,0" VerticalAlignment="Top" Height="23" Width="101" Click="DodajKategorieButton_Click"/>
         </Grid>
     </Grid>
 </Window>
