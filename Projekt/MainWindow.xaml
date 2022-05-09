@@ -36,17 +36,15 @@
             <Label x:Name="LabelPassError" Content="Tu pojawi się informacja o błędzie..." HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="216,370,0,0" VerticalAlignment="Top" Height="35" Width="354" Foreground="Red" FontSize="16"/>
         </Grid>
 
-        <Grid x:Name="program" Visibility="Hidden">
+        <Grid x:Name="program" Visibility="Visible">
             <Button x:Name="LogoutButton" Content="Wyloguj" HorizontalAlignment="Center" Margin="0,370,0,0" VerticalAlignment="Top" Height="30" Width="188" Click="LogoutButton_Click"/>
-            <ListView x:Name="ListView1" Margin="0,124,0,69" MouseDoubleClick="ListView1_MouseDoubleClick" HorizontalContentAlignment="Center">
+            <ListView x:Name="ListView1" Margin="100,124,100,69" MouseDoubleClick="ListView1_MouseDoubleClick" HorizontalContentAlignment="Center">
                 <ListView.View>
                     <GridView>
                         <GridView.Columns>
-                            <GridViewColumn Header="IdO" DisplayMemberBinding="{Binding Id_o}" Width="30"/>
-                            <GridViewColumn Header="IdU" DisplayMemberBinding="{Binding Id_u}" Width="30"/>
                             <GridViewColumn Header="Tytuł" DisplayMemberBinding="{Binding Tytul}" Width="120"/>
-                            <GridViewColumn Header="Data utworzenia" DisplayMemberBinding="{Binding Data_utw}" Width="140"/>
-                            <GridViewColumn Header="Data edycji" DisplayMemberBinding="{Binding Data_ed}" Width="140"/>
+                            <GridViewColumn Header="Data utworzenia" DisplayMemberBinding="{Binding Data_utw}" Width="90"/>
+                            <GridViewColumn Header="Data edycji" DisplayMemberBinding="{Binding Data_ed}" Width="90"/>
                             <GridViewColumn Header="Treść" DisplayMemberBinding="{Binding Tresc}" Width="190"/>
                         </GridView.Columns>
                     </GridView>
@@ -77,7 +75,7 @@
             <Button x:Name="DodajKategorieButtonD" Content="Dodaj kategorie" HorizontalAlignment="Left" Margin="486,141,0,0" VerticalAlignment="Top" Height="23" Width="101" Click="DodajKategorieButtonD_Click"/>
         </Grid>
 
-        <Grid x:Name="edycjaOgloszenia" Visibility="Visible">
+        <Grid x:Name="edycjaOgloszenia" Visibility="Hidden">
             <TextBox x:Name="Tresc" HorizontalAlignment="Center" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="528" Height="149" Margin="0,183,0,0"/>
             <TextBox x:Name="Tytul" HorizontalAlignment="Left" Margin="136,94,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="148" Height="26"/>
             <TextBox x:Name="Kategoria" HorizontalAlignment="Left" Margin="136,143,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="148" Height="25"/>

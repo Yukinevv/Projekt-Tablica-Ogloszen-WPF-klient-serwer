@@ -136,6 +136,29 @@ namespace Projekt
             }
             return result;
         }
+        public static List<KatToOgl> SelectRecordsKatToOgl()
+        {
+            List<KatToOgl> result = new List<KatToOgl>();
+            using (NpgsqlConnection conn = GetConnection())
+            {
+                string query = @"SELECT * FROM kattoogl";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+                conn.Open();
+                using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        KatToOgl tmp = new KatToOgl
+                        {
+                            Id_o= int.Parse(reader["id_o"].ToString()),
+                            Id_k = int.Parse(reader["id_k"].ToString())
+                        };
+                        result.Add(tmp);
+                    }
+                }
+            }
+            return result;
+        }
 
         public static NpgsqlConnection GetConnection()
         {

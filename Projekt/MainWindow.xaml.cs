@@ -318,6 +318,8 @@ namespace Projekt
                 List<Ogloszenia> ogloszenia = (List<Ogloszenia>)ListView1.ItemsSource;
                 Tytul.Text = ogloszenia[ListView1.SelectedIndex].Tytul;
                 Tresc.Text = ogloszenia[ListView1.SelectedIndex].Tresc;
+                Tytul.IsReadOnly = true;
+                Tresc.IsReadOnly = true;
 
                 //sprawdzenie uprawnien zalogowanego uzytkownika do edycji i usuwania wybranego ogloszenia
                 using (NpgsqlConnection conn = Connect.GetConnection())
@@ -341,6 +343,8 @@ namespace Projekt
                             {
                                 ZatwierdzButton.Visibility = Visibility.Visible;
                                 UsunButton.Visibility = Visibility.Visible;
+                                Tytul.IsReadOnly = false;
+                                Tresc.IsReadOnly = false;
                                 break;
                             }
                         }
@@ -508,7 +512,7 @@ namespace Projekt
             program.Visibility = Visibility.Hidden;
             dodajOgloszenie.Visibility = Visibility.Visible;
 
-            KategorieBox.Items.Clear();
+            KategorieBoxD.Items.Clear();
             List<string> tmp = Connect.SelectRecordsKategoria2();
 
             for (int i = 0; i < tmp.Count; i++)
