@@ -24,6 +24,7 @@ namespace Projekt
     public partial class MainWindow : Window
     {
         public static int id;
+        public static int id_wybranej_kategorii;
 
         public MainWindow()
         {
@@ -44,6 +45,7 @@ namespace Projekt
 
             DodajKategorieButtonD.Visibility = Visibility.Hidden;
             DodajKategorieButton.Visibility = Visibility.Hidden;
+            program_kategorie.Visibility = Visibility.Hidden;
 
             // wypisz dosetpne konta uzytkownikow - roboczo
             TextBlock1.Text = "Dostepni uzytkownicy:\n(hasło do jank: qwerty123)\n";
@@ -128,6 +130,11 @@ namespace Projekt
             return IdoFilter;
         }
 
+        public Predicate<object> GetFilterK()
+        {
+            return NazwaFilter;
+        }
+
         private bool IdoFilter(object obj)
         {
             var Filterobj = obj as Ogloszenia;
@@ -138,6 +145,11 @@ namespace Projekt
         {
             var Filterobj = obj as Ogloszenia;
             return Filterobj.Tytul.Contains(FilterTextBox.Text);
+        }
+        private bool NazwaFilter(object obj)
+        {
+            var Filterobj = obj as Kategoria;
+            return Filterobj.Nazwa.Contains(FilterTextBoxK.Text);
         }
 
         //private bool KategoriaFilter(object obj)
@@ -215,22 +227,39 @@ namespace Projekt
                             }
                         }
 
+                        //ogoloszenia sie beda liczyly po kategorii po kliknieciu w listbox2
                         // policz ilosc dostepnych ogloszen
-                        int iloscOgloszen = Operacje.PoliczOgloszenia();
-                        IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
+                        //int iloscOgloszen = Operacje.PoliczOgloszenia();
+                        //IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
 
                         // wypisz nazwe uzytkownika
                         WitajLabel.Content = $"Witaj {LoginBox.Text}!";
+                        WitajLabel_kat.Content = $"Witaj {LoginBox.Text}!";
 
                         // pokaz grid glownego layoutu
-                        program.Visibility = (Visibility)0;
+                        //tymczasowo w celach testowych listboxa kategorii
+                        //program.Visibility = (Visibility)0;
+                        program.Visibility = (Visibility)1;
                         logowanie.Visibility = (Visibility)1;
 
+                        //dodane
+                        program_kategorie.Visibility = (Visibility)0;
+
                         // wypisz dostepne ogloszenia posortowane rosnaco po id_o
-                        TextBlock1.Visibility = Visibility.Hidden;
-                        List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia();
-                        ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
-                        ListView1.ItemsSource = ogloszenia;
+                        //tymczasowo zakomentowane
+
+                        //TextBlock1.Visibility = Visibility.Hidden;
+                        //List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia();
+                        //ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
+                        //ListView1.ItemsSource = ogloszenia;
+
+                        //wypisz dostepne kategorie posortowane rosnaco po nazwie
+                        List<Kategoria> kategorie = Connect.SelectRecordsKategoria();
+                        kategorie = kategorie.OrderBy(x => x.Nazwa).ToList();
+                        ListView2.ItemsSource = kategorie;
+                        
+                        //ukrycie pomocniczych danych do logowania kont
+                        TextBlock1.Visibility= (Visibility)1;
                     }
                     else
                     {
@@ -362,6 +391,7 @@ namespace Projekt
             // pokaz grid logowania
             logowanie.Visibility = (Visibility)0;
             program.Visibility = (Visibility)1;
+            program_kategorie.Visibility = (Visibility)1;
 
             // wypisz dostepne konta uztykownikow - roboczo
             TextBlock1.Visibility = Visibility.Visible;
@@ -491,11 +521,11 @@ namespace Projekt
         {
             try
             {
-                List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia();
+                List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2(id_wybranej_kategorii);
                 ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
                 ListView1.ItemsSource = ogloszenia;
 
-                int iloscOgloszen = Operacje.PoliczOgloszenia();
+                int iloscOgloszen = Operacje.PoliczOgloszeniaK(id_wybranej_kategorii);
                 IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
             }
             catch (Exception err)
@@ -563,7 +593,7 @@ namespace Projekt
                 {
                     MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-            }     
+            }
         }
 
         private void ZatwierdzButtonD_Click(object sender, RoutedEventArgs e)
@@ -654,5 +684,115 @@ namespace Projekt
             }
         }
 
+        private void ListView2_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (ListView2.SelectedItem == null)
+            {
+                return;
+            }
+            List<Kategoria> kategorie = (List<Kategoria>)ListView2.ItemsSource;
+            //zapisuje sobie id_k w ktore kliknal uzytkownik, aby wyswietlic wszystkie ogloszenia z tej kategorii
+            id_wybranej_kategorii = kategorie[ListView2.SelectedIndex].Id_k;
+
+            List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2(id_wybranej_kategorii);
+            ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
+            ListView1.ItemsSource = ogloszenia;
+
+            program_kategorie.Visibility = Visibility.Hidden;
+            program.Visibility = Visibility.Visible;
+
+            int iloscOgloszen = Operacje.PoliczOgloszeniaK(id_wybranej_kategorii);
+            IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
+        }
+
+        private void OdswiezButton_kat_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                List<Kategoria> kategorie = Connect.SelectRecordsKategoria();
+                kategorie = kategorie.OrderBy(x => x.Nazwa).ToList();
+                ListView2.ItemsSource = kategorie;
+
+                rezultatDodania_kat.Content = "";
+                rezultatDodania_kat.Visibility = Visibility.Hidden;
+                TextBox_NazwaNowejKategorii.Text = "";
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak 2", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void DodajKategorie_Click(object sender, RoutedEventArgs e)
+        {
+            if (TextBox_NazwaNowejKategorii.Text != "")
+            {
+                //sprawdzenie czy jest juz kategoria o takiej nazwie(przeciwdzialam duplikacji)                                
+                rezultatDodania_kat.Visibility = Visibility.Visible;
+                if (Operacje.PoliczKategorie(TextBox_NazwaNowejKategorii.Text) == 0)
+                {
+                    using (NpgsqlConnection conn = Connect.GetConnection())
+                    {
+                        try
+                        {
+                            conn.Open();
+
+                            string query = "INSERT INTO kategoria VALUES(nextval('increment_id_kategoria'), :_nazwa, :_id_u, :_data_utw)";
+
+                            NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+
+                            cmd.Parameters.AddWithValue("_nazwa", TextBox_NazwaNowejKategorii.Text);
+                            cmd.Parameters.AddWithValue("_id_u", id);
+                            cmd.Parameters.AddWithValue("_data_utw", DateTime.Now.ToString("yyyy-MM-dd"));
+
+                            int n = cmd.ExecuteNonQuery();
+                        }
+                        catch (Exception err)
+                        {
+                            MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+
+                    rezultatDodania_kat.Foreground = new SolidColorBrush(Colors.Green);
+                    rezultatDodania_kat.Visibility = Visibility.Visible;
+                    rezultatDodania_kat.Content = "Brawo dodałeś/aś nową kategorię!";
+
+                    List<Kategoria> kategorie = Connect.SelectRecordsKategoria();
+                    kategorie = kategorie.OrderBy(x => x.Nazwa).ToList();
+                    ListView2.ItemsSource = kategorie;
+                }
+                else //jezeli textbox od wprowadzenia nowej nazwy kategorii jest pusty
+                {
+                    rezultatDodania_kat.Foreground = new SolidColorBrush(Colors.Red);
+                    rezultatDodania_kat.Visibility = Visibility.Visible;
+                    rezultatDodania_kat.Content = "Taka kategoria już istnieje!";
+                }
+
+            }
+            else
+            {
+                rezultatDodania_kat.Foreground = new SolidColorBrush(Colors.Red);
+                rezultatDodania_kat.Visibility = Visibility.Visible;
+                rezultatDodania_kat.Content = "Powyższe pole nie może być puste!";
+            }
+        }
+
+        private void FilterTextBoxK_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (FilterTextBox.Text == null)
+            {
+                ListView2.Items.Filter = null;
+            }
+            else
+            {
+                ListView2.Items.Filter = GetFilterK();
+            }
+        }
+
+        private void Wroc_Click(object sender, RoutedEventArgs e)
+        {
+            program.Visibility = Visibility.Hidden;
+            program_kategorie.Visibility = Visibility.Visible;
+        }
     }
 }

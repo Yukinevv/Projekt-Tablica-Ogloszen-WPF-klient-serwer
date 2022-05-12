@@ -59,6 +59,40 @@ namespace Projekt
             }
             return result;
         }
+        public static List<Ogloszenia> SelectRecordsOgloszenia2(int id_kategorii)
+        {
+            //metoda ktora wyswietla wszystkie ogloszenia ktore sa w id_k podanej jako parametr
+            List<Ogloszenia> result = new List<Ogloszenia>();
+            using (NpgsqlConnection conn = GetConnection())
+            {
+                string query = @"SELECT * FROM ogloszenia AS o WHERE o.id_o IN (SELECT k.id_o FROM kattoogl AS k WHERE k.id_k=:_idkategorii)";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("_idkategorii", id_kategorii);
+
+                conn.Open();
+                using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Ogloszenia tmp = new Ogloszenia
+                        {
+                            Id_o = int.Parse(reader["id_o"].ToString()),
+                            Id_u = int.Parse(reader["id_u"].ToString()),
+                            Tytul = (string)reader["tytul"],
+                            Tresc = (string)reader["tresc"],
+                            //Data_utw = (DateTime)reader["data_utw"],
+                            //Data_ed = (DateTime)reader["data_ed"]
+                            Data_utw = (string)reader["data_utw"],
+                            Data_ed = (string)reader["data_ed"]
+                        };
+
+                        result.Add(tmp);
+                    }
+                }
+            }
+            return result;
+        }
 
         public static List<Uzytkownicy> SelectRecordsUzytkownicy()
         {

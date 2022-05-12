@@ -58,6 +58,29 @@
             <Button x:Name="OdswiezButton" Content="Odśwież" HorizontalAlignment="Left" Margin="591,370,0,0" VerticalAlignment="Top" Height="30" Width="117" Click="OdswiezButton_Click"/>
             <TextBox x:Name="FilterTextBox" TextChanged="FilterTextBox_TextChanged" HorizontalAlignment="Left" Margin="429,28,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="131" Height="28"/>
             <Label Content="Szukaj:" HorizontalAlignment="Center" Margin="0,29,0,0" VerticalAlignment="Top" RenderTransformOrigin="0,0.348" Width="60"/>
+            <Button x:Name="Wroc" Content="Wróć" HorizontalAlignment="Left" Margin="83,370,0,0" VerticalAlignment="Top" Height="30" Width="117" Click="Wroc_Click"/>
+        </Grid>
+
+        <Grid x:Name="program_kategorie" Visibility="Hidden">
+            <Button x:Name="LogoutButton_kat" Content="Wyloguj" HorizontalAlignment="Center" Margin="0,370,0,0" VerticalAlignment="Top" Height="30" Width="188" Click="LogoutButton_Click"/>
+            <ListView x:Name="ListView2" Margin="100,124,100,69" MouseDoubleClick="ListView2_MouseDoubleClick" HorizontalContentAlignment="Center">
+                <ListView.View>
+                    <GridView>
+                        <GridView.Columns>
+                            <GridViewColumn Header="Nazwa" DisplayMemberBinding="{Binding Nazwa}" Width="120"/>
+                            <GridViewColumn Header="Data utworzenia" DisplayMemberBinding="{Binding Data_utw}" Width="90"/>
+                        </GridView.Columns>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <Label x:Name="WitajLabel_kat" Content="Witaj nazwa!" HorizontalAlignment="Left" Margin="41,24,0,0" VerticalAlignment="Top" Height="36" Width="183"/>
+            <Button x:Name="OdswiezButton_kat" Content="Odśwież" HorizontalAlignment="Left" Margin="591,370,0,0" VerticalAlignment="Top" Height="30" Width="117" Click="OdswiezButton_kat_Click"/>
+            <Button x:Name="DodajKategorie" Content="Dodaj kategorie" HorizontalAlignment="Left" Margin="591,64,0,0" VerticalAlignment="Top" Height="30" Width="117" Click="DodajKategorie_Click"/>
+            <TextBox x:Name="TextBox_NazwaNowejKategorii" Text="" Margin="381,65,221,0" VerticalAlignment="Top" Height="30" VerticalContentAlignment="Center"/>
+            <Label x:Name="LabelDodajKat" Content="Wprowadź nazwę nowej kategorii" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="190" Margin="183,65,0,0" VerticalContentAlignment="Center"/>
+            <Label x:Name="rezultatDodania_kat" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="216" Margin="388,94,0,0" Visibility="Hidden"/>
+            <TextBox x:Name="FilterTextBoxK" Text="" Margin="381,24,221,0" VerticalAlignment="Top" Height="30" VerticalContentAlignment="Center" TextChanged="FilterTextBoxK_TextChanged"/>
+            <Label x:Name="LabelDodajKat_Copy" Content="Szukaj" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="190" Margin="183,24,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
         </Grid>
 
         <Grid x:Name="dodajOgloszenie" Visibility="Hidden">
