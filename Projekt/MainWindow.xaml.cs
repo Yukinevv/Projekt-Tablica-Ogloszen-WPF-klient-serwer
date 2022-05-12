@@ -55,13 +55,13 @@ namespace Projekt
             }
 
             // pokaz opcje comboboxa
-            ComboBox1.ItemsSource = new string[] { "Rosnąco", "Malejąco" };
-            ComboBox2.ItemsSource = new string[] { "Id_o", "Tytul", "Kategoria" };
+            ComboBox1.ItemsSource = new string[] { "Malejąco", "Rosnąco" };
+            ComboBox2.ItemsSource = new string[] { "Tytul", "Data" };
         }
 
         private void ComboBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia();
+            List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2(id_wybranej_kategorii);
             if(ComboBox2.SelectedItem == null)
             {
                 if ((string)ComboBox1.SelectedItem == "Rosnąco")
@@ -81,8 +81,8 @@ namespace Projekt
                 {
                     switch (ComboBox2.SelectedItem as string)
                     {
-                        case "Id_o":
-                            ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
+                        case "Data":
+                            ogloszenia = ogloszenia.OrderBy(x => x.Data_utw).ToList();
                             break;
 
                         case "Tytul":
@@ -99,8 +99,8 @@ namespace Projekt
                 {
                     switch (ComboBox2.SelectedItem as string)
                     {
-                        case "Id_o":
-                            ogloszenia = ogloszenia.OrderByDescending(x => x.Id_o).ToList();
+                        case "Data":
+                            ogloszenia = ogloszenia.OrderByDescending(x => x.Data_utw).ToList();
                             break;
 
                         case "Tytul":
@@ -118,27 +118,12 @@ namespace Projekt
 
         public Predicate<object> GetFilter()
         {
-            switch (ComboBox2.SelectedItem as string)
-            {
-                case "Id_o":
-                    return IdoFilter;
-                case "Tytul":
-                    return TytulFilter;
-                //case "Kategoria":
-                //    return KategoriaFilter;
-            }
-            return IdoFilter;
+            return TytulFilter;
         }
 
         public Predicate<object> GetFilterK()
         {
             return NazwaFilter;
-        }
-
-        private bool IdoFilter(object obj)
-        {
-            var Filterobj = obj as Ogloszenia;
-            return Filterobj.Id_o.ToString().Contains(FilterTextBox.Text);
         }
 
         private bool TytulFilter(object obj)
@@ -168,11 +153,6 @@ namespace Projekt
             {
                 ListView1.Items.Filter = GetFilter();
             }
-        }
-
-        private void ComboBox2_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ListView1.Items.Filter = GetFilter();
         }
 
         private void BackToLogin_Click(object sender, RoutedEventArgs e)
@@ -535,6 +515,7 @@ namespace Projekt
 
             ComboBox1.SelectedIndex = 0;
             ComboBox2.SelectedIndex = 0;
+            FilterTextBox.Text = "";
         }
 
         private void DodajOgloszenieButton_Click(object sender, RoutedEventArgs e)
@@ -793,6 +774,7 @@ namespace Projekt
         {
             program.Visibility = Visibility.Hidden;
             program_kategorie.Visibility = Visibility.Visible;
+            FilterTextBox.Text = "";
         }
     }
 }
