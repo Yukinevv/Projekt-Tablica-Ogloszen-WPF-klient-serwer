@@ -151,6 +151,25 @@ namespace Projekt
             }
             return result;
         }
+        public static List<string> SelectRecordsKategoriaS()
+        {
+            List<string> result = new List<string>();
+            using (NpgsqlConnection conn = GetConnection())
+            {
+                string query = @"SELECT nazwa FROM kategoria";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+                conn.Open();
+                using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string tmp = (string)reader["nazwa"];
+                        result.Add(tmp);
+                    }
+                }
+            }
+            return result;
+        }
 
         public static List<string> SelectRecordsKategoria2()
         {

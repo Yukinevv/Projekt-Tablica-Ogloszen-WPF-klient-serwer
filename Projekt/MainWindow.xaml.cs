@@ -43,7 +43,7 @@ namespace Projekt
             rezultatDodania.Visibility = Visibility.Hidden;
             rezultatEdycji.Visibility = Visibility.Hidden;
 
-            DodajKategorieButtonD.Visibility = Visibility.Hidden;
+            //DodajKategorieButtonD.Visibility = Visibility.Hidden;
             DodajKategorieButton.Visibility = Visibility.Hidden;
             program_kategorie.Visibility = Visibility.Hidden;
 
@@ -523,92 +523,62 @@ namespace Projekt
             program.Visibility = Visibility.Hidden;
             dodajOgloszenie.Visibility = Visibility.Visible;
 
-            KategorieBoxD.Items.Clear();
-            List<string> tmp = Connect.SelectRecordsKategoria2();
-
-            for (int i = 0; i < tmp.Count; i++)
-            {
-                KategorieBoxD.Items.Add(tmp[i]);
-            }
-            KategorieBoxD.Items.Add("Dodaj nowa");
-        }
-
-        private void KategorieBoxD_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //Dodawanie nowych kategorii
-            if ((string)KategorieBoxD.SelectedItem == "Dodaj nowa")
-            {
-                DodajKategorieButtonD.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                DodajKategorieButtonD.Visibility = Visibility.Hidden;
-            }
-        }
-
-        private void DodajKategorieButtonD_Click(object sender, RoutedEventArgs e)
-        {
-            using (NpgsqlConnection conn = Connect.GetConnection())
-            {
-                try
-                {
-                    conn.Open();
-
-                    string query = "INSERT INTO kategoria VALUES(nextval('increment_id_kategoria'), :_nazwa, :_id_u, :_data_utw)";
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
-
-                    cmd.Parameters.AddWithValue("_nazwa", KategoriaD.Text);
-                    cmd.Parameters.AddWithValue("_id_u", id);
-                    cmd.Parameters.AddWithValue("_data_utw", DateTime.Now.ToString("yyyy-MM-dd"));
-
-                    int n = cmd.ExecuteNonQuery();
-                    if (n == 1)
-                    {
-                        rezultatDodania.Visibility = Visibility.Visible;
-                        rezultatDodania.Content = "Dodano nowa kategorie!";
-                        KategorieBoxD.Items.Add(KategoriaD.Text);
-                    }      
-                }
-                catch (Exception err)
-                {
-                    MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
+            List<string> kategorie = Connect.SelectRecordsKategoriaS();
+            ListBoxKategorie.ItemsSource = kategorie;
         }
 
         private void ZatwierdzButtonD_Click(object sender, RoutedEventArgs e)
         {
             using (NpgsqlConnection conn = Connect.GetConnection())
             {
-                try
+                if (TytulD.Text != "" && TrescD.Text != "" && ListBoxKategorie.SelectedItems.Count > 0)
                 {
-                    //Dodawanie nowych ogloszen
-                    conn.Open();
-                    //string query = @"INSERT INTO ogloszenia VALUES(
-                    //                 nextval('increment_id_ogloszenia'), :_id_u, :_tytul, now(), now(), :_tresc)";
+                    try
+                    {
+                        //Dodawanie nowych ogloszen
+                        conn.Open();
 
-                    string query = @"INSERT INTO ogloszenia VALUES(
+                        string query = @"INSERT INTO ogloszenia VALUES(
                                      nextval('increment_id_ogloszenia'), :_id_u, :_tytul, :_data_utw, :_data_ed, :_tresc)";
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+                        NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
-                    cmd.Parameters.AddWithValue("_tytul", TytulD.Text);
-                    cmd.Parameters.AddWithValue("_tresc", TrescD.Text);
-                    cmd.Parameters.AddWithValue("_id_u", id);
-                    cmd.Parameters.AddWithValue("_data_utw", DateTime.Now.ToString("yyyy-MM-dd"));
-                    cmd.Parameters.AddWithValue("_data_ed", DateTime.Now.ToString("yyyy-MM-dd"));
+                        cmd.Parameters.AddWithValue("_tytul", TytulD.Text);
+                        cmd.Parameters.AddWithValue("_tresc", TrescD.Text);
+                        cmd.Parameters.AddWithValue("_id_u", id);
+                        cmd.Parameters.AddWithValue("_data_utw", DateTime.Now.ToString("yyyy-MM-dd"));
+                        cmd.Parameters.AddWithValue("_data_ed", DateTime.Now.ToString("yyyy-MM-dd"));
 
-                    int n = cmd.ExecuteNonQuery();
-                    if (n == 1)
+                        int n = cmd.ExecuteNonQuery();
+
+                        int id_dodanego_ogloszenia = Operacje.IdOstatnioDodanegoOgloszenia(id);
+                        int zaznaczonych = ListBoxKategorie.SelectedItems.Count;
+
+                        //dodawanie do tabeli wiele do wielu ogloszenia do wybranych przez uzytkownika kategorii za pomoca listboxa
+                        foreach (object zaznaczono in ListBoxKategorie.SelectedItems)
+                        {
+                            Operacje.DodajOglDoKat(id_dodanego_ogloszenia, Operacje.IdKategorii(zaznaczono.ToString()));
+                        }
+
+                        if (n == 1)
+                        {
+                            rezultatDodania.Visibility = Visibility.Visible;
+                            rezultatDodania.Content = $"Dodano nowe ogłoszenie, do {zaznaczonych} kategorii!";
+                            //czyszczenie okienek, ktore beda gotowe do dodania nowego ogloszenia
+                            TytulD.Text = "";
+                            TrescD.Text = "";
+                            ListBoxKategorie.SelectedItems.Clear();
+                        }
+                    }
+                    catch (Exception err)
                     {
-                        rezultatDodania.Visibility = Visibility.Visible;
-                        rezultatDodania.Content = "Dodano nowe ogłoszenie!";
+                        MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
-                catch (Exception err)
+                else
                 {
-                    MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
+                    rezultatDodania.Visibility = Visibility.Visible;
+                    rezultatDodania.Content = "Podaj tytuł, nazwę oraz zaznacz conajmniej 1 kategorię!";
                 }
             }
         }
@@ -622,13 +592,11 @@ namespace Projekt
 
             try
             {
-                if(ComboBox1.SelectedIndex == 0 && ComboBox2.SelectedIndex == 0)
-                {
-                    List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia();
-                    ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
-                    ListView1.ItemsSource = ogloszenia;
-                }
-                int iloscOgloszen = Operacje.PoliczOgloszenia();
+                List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2(id_wybranej_kategorii);
+                ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
+                ListView1.ItemsSource = ogloszenia;
+
+                int iloscOgloszen = Operacje.PoliczOgloszeniaK(id_wybranej_kategorii);
                 IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
             }
             catch (Exception err)

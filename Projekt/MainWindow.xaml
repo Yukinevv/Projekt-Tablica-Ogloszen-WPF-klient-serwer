@@ -36,7 +36,7 @@
             <Label x:Name="LabelPassError" Content="Tu pojawi się informacja o błędzie..." HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="216,370,0,0" VerticalAlignment="Top" Height="35" Width="354" Foreground="Red" FontSize="16"/>
         </Grid>
 
-        <Grid x:Name="program" Visibility="Visible">
+        <Grid x:Name="program" Visibility="Hidden">
             <Button x:Name="LogoutButton" Content="Wyloguj" HorizontalAlignment="Center" Margin="0,370,0,0" VerticalAlignment="Top" Height="30" Width="188" Click="LogoutButton_Click"/>
             <ListView x:Name="ListView1" Margin="100,124,100,69" MouseDoubleClick="ListView1_MouseDoubleClick" HorizontalContentAlignment="Center">
                 <ListView.View>
@@ -83,19 +83,17 @@
             <Label x:Name="LabelDodajKat_Copy" Content="Szukaj" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="190" Margin="183,24,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
         </Grid>
 
-        <Grid x:Name="dodajOgloszenie" Visibility="Hidden">
+        <Grid x:Name="dodajOgloszenie" Visibility="Visible">
             <TextBox x:Name="TrescD" HorizontalAlignment="Center" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="528" Height="149" Margin="0,182,0,0"/>
-            <TextBox x:Name="TytulD" HorizontalAlignment="Left" Margin="136,99,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="148" Height="25"/>
-            <TextBox x:Name="KategoriaD" HorizontalAlignment="Left" Margin="137,139,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="148" Height="25"/>
-            <Label Content="Tytuł" HorizontalAlignment="Left" Margin="51,99,0,0" VerticalAlignment="Top" Height="25" Width="70"/>
-            <Label Content="Kategoria" HorizontalAlignment="Left" Margin="51,139,0,0" VerticalAlignment="Top" Height="25" Width="70"/>
-            <Label Content="Treść" HorizontalAlignment="Left" Margin="51,199,0,0" VerticalAlignment="Top" Height="28" Width="70"/>
-            <Button x:Name="ZatwierdzButtonD" Content="Zatwierdź" HorizontalAlignment="Left" Margin="137,350,0,0" VerticalAlignment="Top" Height="41" Width="102" Click="ZatwierdzButtonD_Click"/>
-            <Button x:Name="PowrotButtonD" Content="Powrót" HorizontalAlignment="Left" Margin="562,350,0,0" VerticalAlignment="Top" Height="41" Width="102" Click="PowrotButtonD_Click"/>
-            <Label x:Name="rezultatDodania" Content="Rezultat" HorizontalAlignment="Left" Margin="400,32,0,0" VerticalAlignment="Top" Height="45" Width="203"/>
-            <Label Content="Dodaj ogłoszenie" HorizontalAlignment="Left" Margin="51,32,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.342,-0.153" Height="40" Width="153"/>
-            <ComboBox x:Name="KategorieBoxD" Text="Wybierz kategorie" SelectionChanged="KategorieBoxD_SelectionChanged" HorizontalAlignment="Left" Margin="317,141,0,0" VerticalAlignment="Top" Width="143" IsEditable="True"/>
-            <Button x:Name="DodajKategorieButtonD" Content="Dodaj kategorie" HorizontalAlignment="Left" Margin="486,141,0,0" VerticalAlignment="Top" Height="23" Width="101" Click="DodajKategorieButtonD_Click"/>
+            <TextBox x:Name="TytulD" HorizontalAlignment="Left" Margin="132,60,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="148" Height="25"/>
+            <Label Content="Tytuł" HorizontalAlignment="Left" Margin="51,60,0,0" VerticalAlignment="Top" Height="25" Width="70"/>
+            <Label Content="Treść" HorizontalAlignment="Left" Margin="57,182,0,0" VerticalAlignment="Top" Height="28" Width="70"/>
+            <Button x:Name="ZatwierdzButtonD" Content="Zatwierdź" HorizontalAlignment="Left" Margin="132,350,0,0" VerticalAlignment="Top" Height="41" Width="102" Click="ZatwierdzButtonD_Click"/>
+            <Button x:Name="PowrotButtonD" Content="Powrót" HorizontalAlignment="Left" Margin="558,350,0,0" VerticalAlignment="Top" Height="41" Width="102" Click="PowrotButtonD_Click"/>
+            <Label x:Name="rezultatDodania" Content="Rezultat" HorizontalAlignment="Left" Margin="318,89,0,0" VerticalAlignment="Top" Height="45" Width="342"/>
+            <Label Content="Dodaj ogłoszenie" HorizontalAlignment="Left" Margin="51,14,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.342,-0.153" Height="40" Width="153"/>
+            <ListBox x:Name="ListBoxKategorie" HorizontalAlignment="Left" Height="87" Margin="132,90,0,0" VerticalAlignment="Top" Width="148" SelectionMode="Multiple">
+            </ListBox>
         </Grid>
 
         <Grid x:Name="edycjaOgloszenia" Visibility="Hidden">
