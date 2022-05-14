@@ -25,7 +25,6 @@ namespace Projekt
     {
         public static int id;
         public static int id_wybranej_kategorii;
-        PanelAdmina panelAdmina = new PanelAdmina();
 
         public MainWindow()
         {
@@ -130,12 +129,6 @@ namespace Projekt
             return Filterobj.Nazwa.Contains(FilterTextBoxK.Text);
         }
 
-        //private bool KategoriaFilter(object obj)
-        //{
-        //    var Filterobj = obj as Ogloszenia;
-        //    return Filterobj.Kategoria.Contains(FilterTextBox.Text);
-        //}
-
         private void FilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (FilterTextBox.Text == null)
@@ -190,6 +183,8 @@ namespace Projekt
 
                     if (result == 1) // logowanie powiodlo sie
                     {
+                        PassBox.Password = "";
+
                         // wez id zalogowanego uzytkownika
                         string query2 = @"SELECT id FROM uzytkownicy WHERE login=:_login";
                         NpgsqlCommand cmd2 = new NpgsqlCommand(query2, conn);
@@ -239,7 +234,7 @@ namespace Projekt
                         if (czy_admin == 1)
                         {
                             //otworz nowe okno
-                            //PanelAdmina panelAdmina = new PanelAdmina();
+                            PanelAdmina panelAdmina = new PanelAdmina();
                             panelAdmina.Show();
                             PokazPanelAdmina.Visibility = Visibility.Visible;
                         }
