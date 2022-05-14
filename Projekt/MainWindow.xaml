@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Projekt"
         mc:Ignorable="d"
-        Title="Tablica ogłoszeń" Height="450" Width="800" MinWidth="800" MinHeight="450">
+        Title="Tablica ogłoszeń" Height="450" Width="800" MinWidth="800" MinHeight="450" MaxHeight="450" MaxWidth="800" WindowStartupLocation="CenterScreen">
     <Grid>
         <TextBlock x:Name="TextBlock1" Visibility="Visible" HorizontalAlignment="Left" Margin="10,0,0,0" Text="Tu pojawi się wynik zapytania..." VerticalAlignment="Center" Height="414" Width="260"/>
-        <Grid x:Name="logowanie" Visibility="Hidden">
+        <Grid x:Name="logowanie" Visibility="Visible">
             <TextBox x:Name="LoginBox" HorizontalAlignment="Center" Margin="0,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="166" Height="36" FontSize="16"/>
             <PasswordBox x:Name="PassBox" HorizontalAlignment="Center" Margin="0,185,0,0" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="166" Height="36" FontSize="16"/>
             <Label Content="Login" HorizontalAlignment="Left" Margin="317,69,0,0" VerticalAlignment="Top" Height="31" Width="59"/>
@@ -83,7 +83,7 @@
             <Label x:Name="LabelDodajKat_Copy" Content="Szukaj" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="190" Margin="183,24,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
         </Grid>
 
-        <Grid x:Name="dodajOgloszenie" Visibility="Visible">
+        <Grid x:Name="dodajOgloszenie" Visibility="Hidden">
             <TextBox x:Name="TrescD" HorizontalAlignment="Center" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="528" Height="149" Margin="0,182,0,0"/>
             <TextBox x:Name="TytulD" HorizontalAlignment="Left" Margin="132,60,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="148" Height="25"/>
             <Label Content="Tytuł" HorizontalAlignment="Left" Margin="51,60,0,0" VerticalAlignment="Top" Height="25" Width="70"/>
@@ -97,19 +97,15 @@
         </Grid>
 
         <Grid x:Name="edycjaOgloszenia" Visibility="Hidden">
-            <TextBox x:Name="Tresc" HorizontalAlignment="Center" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="528" Height="149" Margin="0,183,0,0"/>
-            <TextBox x:Name="Tytul" HorizontalAlignment="Left" Margin="136,94,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="148" Height="26"/>
-            <TextBox x:Name="Kategoria" HorizontalAlignment="Left" Margin="136,143,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="148" Height="25"/>
-            <Label Content="Tytuł" HorizontalAlignment="Left" Margin="51,94,0,0" VerticalAlignment="Top" Height="25" Width="70"/>
-            <Label Content="Kategoria" HorizontalAlignment="Left" Margin="51,143,0,0" VerticalAlignment="Top" Height="25" Width="70"/>
-            <Label Content="Treść" HorizontalAlignment="Left" Margin="51,199,0,0" VerticalAlignment="Top" Height="28" Width="70"/>
-            <Button x:Name="ZatwierdzButton" Content="Zatwierdź" HorizontalAlignment="Left" Margin="137,350,0,0" VerticalAlignment="Top" Height="41" Width="102" Click="ZatwierdzButton_Click"/>
-            <Button x:Name="UsunButton" Content="Usuń" HorizontalAlignment="Left" Margin="298,350,0,0" VerticalAlignment="Top" Height="41" Width="102" Click="UsunButton_Click"/>
-            <Button x:Name="PowrotButton" Content="Powrót" HorizontalAlignment="Left" Margin="562,350,0,0" VerticalAlignment="Top" Height="41" Width="102" Click="PowrotButton_Click"/>
+            <TextBox x:Name="Tresc" HorizontalAlignment="Center" TextWrapping="Wrap" Text="" Width="528" Height="162" Margin="0,100,0,0"/>
+            <TextBox x:Name="Tytul" HorizontalAlignment="Center" Width="528" Height="30" TextWrapping="Wrap" Text="" Margin="0,0,0,100"/>
+            <Label Content="Tytuł" HorizontalAlignment="Left" Margin="51,144,0,0" VerticalAlignment="Top" Height="26" Width="70"/>
+            <Label Content="Treść" HorizontalAlignment="Left" Margin="51,178,0,0" VerticalAlignment="Top" Height="28" Width="70"/>
+            <Button x:Name="ZatwierdzButton" Content="Zatwierdź" Margin="0,315,425,0" Height="41" Width="102" Click="ZatwierdzButton_Click"/>
+            <Button x:Name="UsunButton" Content="Usuń" Margin="0,315,0,0" Height="41" Width="102" Click="UsunButton_Click"/>
+            <Button x:Name="PowrotButton" Content="Powrót" Height="40" Width="100" Click="PowrotButton_Click" Margin="425,315,0,0"/>
             <Label x:Name="rezultatEdycji" Content="Rezultat" HorizontalAlignment="Left" Margin="389,28,0,0" VerticalAlignment="Top" Height="45" Width="203"/>
             <Label Content="Edytuj ogłoszenie" HorizontalAlignment="Left" Margin="51,25,0,0" VerticalAlignment="Top" Height="41" Width="144"/>
-            <ComboBox x:Name="KategorieBox" Text="Wybierz kategorie" SelectionChanged="KategorieBox_SelectionChanged" HorizontalAlignment="Left" Margin="317,141,0,0" VerticalAlignment="Top" Width="143" IsEditable="True"/>
-            <Button x:Name="DodajKategorieButton" Content="Dodaj kategorie" HorizontalAlignment="Left" Margin="486,141,0,0" VerticalAlignment="Top" Height="23" Width="101" Click="DodajKategorieButton_Click"/>
         </Grid>
     </Grid>
 </Window>

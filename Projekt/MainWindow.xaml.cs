@@ -25,6 +25,7 @@ namespace Projekt
     {
         public static int id;
         public static int id_wybranej_kategorii;
+        PanelAdmina panelAdmina = new PanelAdmina();
 
         public MainWindow()
         {
@@ -44,7 +45,6 @@ namespace Projekt
             rezultatEdycji.Visibility = Visibility.Hidden;
 
             //DodajKategorieButtonD.Visibility = Visibility.Hidden;
-            DodajKategorieButton.Visibility = Visibility.Hidden;
             program_kategorie.Visibility = Visibility.Hidden;
 
             // wypisz dosetpne konta uzytkownikow - roboczo
@@ -88,10 +88,6 @@ namespace Projekt
                         case "Tytul":
                             ogloszenia = ogloszenia.OrderBy(x => x.Tytul).ToList();
                             break;
-
-                        //case "Kategoria":
-                        //    ogloszenia = ogloszenia.OrderBy(x => x.Kategoria).ToList();
-                        //    break;
                     }
                     ListView1.ItemsSource = ogloszenia;
                 }
@@ -106,14 +102,10 @@ namespace Projekt
                         case "Tytul":
                             ogloszenia = ogloszenia.OrderByDescending(x => x.Tytul).ToList();
                             break;
-
-                        //case "Kategoria":
-                        //    ogloszenia = ogloszenia.OrderByDescending(x => x.Kategoria).ToList();
-                        //    break;
                     }
                     ListView1.ItemsSource = ogloszenia;
                 }
-            }  
+            }
         }
 
         public Predicate<object> GetFilter()
@@ -168,6 +160,10 @@ namespace Projekt
             logowanie.Visibility = (Visibility)1;
             // pokaz grid rejestracji
             rejestracja.Visibility = (Visibility)0;
+            //mozliwosc wprowadzenia daty urodzenia do dzisiaj(zakladamy ze czlonek naszego poratlu mogl urodzic sie dzisiaj, ale nie w przyszlosci :D )
+            DatePicker1.DisplayDateEnd = DateTime.Today;
+            //zakladamy ze osoba majaca majaca wiecej niz 122 lata do nas nie bedzie chciala sie zarejestrowac :(
+            DatePicker1.DisplayDateStart = DateTime.Parse("1900-01-01");
             TextBlock1.Visibility = (Visibility)1;
         }
 
@@ -207,88 +203,49 @@ namespace Projekt
                             }
                         }
 
-                        //ogoloszenia sie beda liczyly po kategorii po kliknieciu w listbox2
-                        // policz ilosc dostepnych ogloszen
-                        //int iloscOgloszen = Operacje.PoliczOgloszenia();
-                        //IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
-
                         // wypisz nazwe uzytkownika
                         WitajLabel.Content = $"Witaj {LoginBox.Text}!";
                         WitajLabel_kat.Content = $"Witaj {LoginBox.Text}!";
 
                         // pokaz grid glownego layoutu
-                        //tymczasowo w celach testowych listboxa kategorii
-                        //program.Visibility = (Visibility)0;
                         program.Visibility = (Visibility)1;
                         logowanie.Visibility = (Visibility)1;
 
                         //dodane
                         program_kategorie.Visibility = (Visibility)0;
 
-                        // wypisz dostepne ogloszenia posortowane rosnaco po id_o
-                        //tymczasowo zakomentowane
-
-                        //TextBlock1.Visibility = Visibility.Hidden;
-                        //List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia();
-                        //ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
-                        //ListView1.ItemsSource = ogloszenia;
-
                         //wypisz dostepne kategorie posortowane rosnaco po nazwie
                         List<Kategoria> kategorie = Connect.SelectRecordsKategoria();
                         kategorie = kategorie.OrderBy(x => x.Nazwa).ToList();
                         ListView2.ItemsSource = kategorie;
-                        
+                      
                         //ukrycie pomocniczych danych do logowania kont
                         TextBlock1.Visibility= (Visibility)1;
+
+                        //wyswietlanie okna w ktorym bedzie panel administracyjny
+                        int czy_admin = 0;
+                        string query3 = @"SELECT COUNT(*) AS ile FROM uzytkownicy WHERE login=:_login AND uprawnienia='admin'";
+                        NpgsqlCommand cmd3 = new NpgsqlCommand(query3, conn);
+                        cmd3.Parameters.AddWithValue("_login", LoginBox.Text);
+                     
+                        using (NpgsqlDataReader reader2 = cmd3.ExecuteReader())
+                        {
+                            while (reader2.Read())
+                            {
+                                czy_admin = int.Parse(reader2["ile"].ToString());
+                            }
+                        }
+                        if (czy_admin == 1)
+                        {
+                            //otworz nowe okno
+                            //PanelAdmina panelAdmina = new PanelAdmina();
+                            panelAdmina.Show();
+                        }
                     }
                     else
                     {
                         MessageBox.Show("Sprawdz swoje dane logowania", "Blad logowania", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                         conn.Close();
-                    }
-                }
-                catch (Exception err)
-                {
-                    MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
-
-        private void KategorieBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //Dodawanie nowych kategorii
-            if ((string)KategorieBox.SelectedItem == "Dodaj nowa")
-            {
-                DodajKategorieButton.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                DodajKategorieButton.Visibility = Visibility.Hidden;
-            }
-        }
-
-        private void DodajKategorieButton_Click(object sender, RoutedEventArgs e)
-        {
-            using (NpgsqlConnection conn = Connect.GetConnection())
-            {
-                try
-                {
-                    conn.Open();
-
-                    string query = "INSERT INTO kategoria VALUES(nextval('increment_id_kategoria'), :_nazwa, :_id_u, :_data_utw)";
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
-
-                    cmd.Parameters.AddWithValue("_nazwa", Kategoria.Text);
-                    cmd.Parameters.AddWithValue("_id_u", id);
-                    cmd.Parameters.AddWithValue("_data_utw", DateTime.Now.ToString("yyyy-MM-dd"));
-
-                    int n = cmd.ExecuteNonQuery();
-                    if (n == 1)
-                    {
-                        rezultatEdycji.Visibility = Visibility.Visible;
-                        rezultatEdycji.Content = "Dodano nowa kategorie!";
-                        KategorieBox.Items.Add(Kategoria.Text);
                     }
                 }
                 catch (Exception err)
@@ -304,17 +261,6 @@ namespace Projekt
             {
                 return;
             }
-
-            //Przypisanie elementow do comboboxa kategorii
-            KategorieBox.Items.Clear();
-            List<string> tmp = Connect.SelectRecordsKategoria2();
-
-            for (int i = 0; i < tmp.Count; i++)
-            {
-                KategorieBox.Items.Add(tmp[i]);
-            }
-            KategorieBox.Items.Add("Dodaj nowa");
-            //--------------------------------------------
 
             program.Visibility = Visibility.Hidden;
             edycjaOgloszenia.Visibility = Visibility.Visible;
@@ -443,33 +389,41 @@ namespace Projekt
 
         private void ZatwierdzButton_Click(object sender, RoutedEventArgs e)
         {
-            using (NpgsqlConnection conn = Connect.GetConnection())
+            if (Tytul.Text != "" && Tresc.Text != "")
             {
-                try
+                using (NpgsqlConnection conn = Connect.GetConnection())
                 {
-                    conn.Open();
-                    string query = @"UPDATE ogloszenia SET tytul=:_tytul, tresc=:_tresc, data_ed=:_data_ed WHERE id_o=:_id_o";
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
-
-                    cmd.Parameters.AddWithValue("_tytul", Tytul.Text);
-                    cmd.Parameters.AddWithValue("_tresc", Tresc.Text);
-                    cmd.Parameters.AddWithValue("_data_ed", DateTime.Now.ToString("yyyy-MM-dd"));
-
-                    List<Ogloszenia> ogloszenia = (List<Ogloszenia>)ListView1.ItemsSource;
-                    cmd.Parameters.AddWithValue("_id_o", ogloszenia[ListView1.SelectedIndex].Id_o);
-
-                    int n = cmd.ExecuteNonQuery();
-                    if (n == 1)
+                    try
                     {
-                        rezultatEdycji.Visibility = Visibility.Visible;
-                        rezultatEdycji.Content = "Zedytowano ogłoszenie!";
+                        conn.Open();
+                        string query = @"UPDATE ogloszenia SET tytul=:_tytul, tresc=:_tresc, data_ed=:_data_ed WHERE id_o=:_id_o";
+
+                        NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+
+                        cmd.Parameters.AddWithValue("_tytul", Tytul.Text);
+                        cmd.Parameters.AddWithValue("_tresc", Tresc.Text);
+                        cmd.Parameters.AddWithValue("_data_ed", DateTime.Now.ToString("yyyy-MM-dd"));
+
+                        List<Ogloszenia> ogloszenia = (List<Ogloszenia>)ListView1.ItemsSource;
+                        cmd.Parameters.AddWithValue("_id_o", ogloszenia[ListView1.SelectedIndex].Id_o);
+
+                        int n = cmd.ExecuteNonQuery();
+                        if (n == 1)
+                        {
+                            rezultatEdycji.Visibility = Visibility.Visible;
+                            rezultatEdycji.Content = "Zedytowano ogłoszenie!";
+                        }
+                    }
+                    catch (Exception err)
+                    {
+                        MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
-                catch (Exception err)
-                {
-                    MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+            }
+            else
+            {
+                rezultatEdycji.Visibility = Visibility.Visible;
+                rezultatEdycji.Content = "Uzupełnij tytuł oraz treść!";
             }
         }
 
@@ -482,13 +436,11 @@ namespace Projekt
 
             try
             {
-                if (ComboBox1.SelectedIndex == 0 && ComboBox2.SelectedIndex == 0)
-                {
-                    List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia();
-                    ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
-                    ListView1.ItemsSource = ogloszenia;
-                }
-                int iloscOgloszen = Operacje.PoliczOgloszenia();
+                List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2(id_wybranej_kategorii);
+                ogloszenia = ogloszenia.OrderBy(x => x.Id_o).ToList();
+                ListView1.ItemsSource = ogloszenia;
+
+                int iloscOgloszen = Operacje.PoliczOgloszeniaK(id_wybranej_kategorii);
                 IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
             }
             catch (Exception err)
@@ -612,18 +564,35 @@ namespace Projekt
                 try
                 {
                     conn.Open();
+                    List<Ogloszenia> ogloszenia = (List<Ogloszenia>)ListView1.ItemsSource;
                     string query = @"DELETE FROM ogloszenia WHERE id_o = :_id_o";
 
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
-                    List<Ogloszenia> ogloszenia = (List<Ogloszenia>)ListView1.ItemsSource;
                     cmd.Parameters.AddWithValue("_id_o", ogloszenia[ListView1.SelectedIndex].Id_o);
 
+                    string query2 = @"DELETE FROM kattoogl WHERE id_o = :_id_o";
+
+                    NpgsqlCommand cmd2 = new NpgsqlCommand(query2, conn);
+                    cmd2.Parameters.AddWithValue("_id_o", ogloszenia[ListView1.SelectedIndex].Id_o);
+
+                    //najpierw musza zostac usuniete wiersze z tabeli wiele do wielu, bo sa tam klucze obce
+                    cmd2.ExecuteNonQuery();
                     int n = cmd.ExecuteNonQuery();
                     if (n == 1)
                     {
-                        rezultatEdycji.Visibility = Visibility.Visible;
-                        rezultatEdycji.Content = "Usunieto ogloszenie!";
+                        //przechodzenie do grida z ogloszeniami z wybranej kategorii
+                        Tytul.Text = "";
+                        Tresc.Text = "";
+                        edycjaOgloszenia.Visibility = Visibility.Hidden;
+                        program.Visibility = Visibility.Visible;
+                        //odswiezenie listview
+                        List<Ogloszenia> ogloszenia_new = Connect.SelectRecordsOgloszenia2(id_wybranej_kategorii);
+                        ogloszenia = ogloszenia_new.OrderBy(x => x.Id_o).ToList();
+                        ListView1.ItemsSource = ogloszenia_new;
+
+                        int iloscOgloszen = Operacje.PoliczOgloszeniaK(id_wybranej_kategorii);
+                        IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
                     }
                 }
                 catch (Exception err)

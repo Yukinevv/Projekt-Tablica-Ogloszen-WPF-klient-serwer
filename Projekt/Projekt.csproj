@@ -104,6 +104,9 @@
     <Compile Include="Kategoria.cs" />
     <Compile Include="KatToOgl.cs" />
     <Compile Include="Operacje.cs" />
+    <Compile Include="PanelAdmina.xaml.cs">
+      <DependentUpon>PanelAdmina.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Uzytkownicy.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -118,6 +121,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="PanelAdmina.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Ogloszenia.cs" />
