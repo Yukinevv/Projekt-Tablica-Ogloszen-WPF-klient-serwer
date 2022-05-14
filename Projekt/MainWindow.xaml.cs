@@ -46,6 +46,7 @@ namespace Projekt
 
             //DodajKategorieButtonD.Visibility = Visibility.Hidden;
             program_kategorie.Visibility = Visibility.Hidden;
+            PokazPanelAdmina.Visibility = Visibility.Hidden;
 
             // wypisz dosetpne konta uzytkownikow - roboczo
             TextBlock1.Text = "Dostepni uzytkownicy:\n(hasło do jank: qwerty123)\n";
@@ -240,6 +241,7 @@ namespace Projekt
                             //otworz nowe okno
                             //PanelAdmina panelAdmina = new PanelAdmina();
                             panelAdmina.Show();
+                            PokazPanelAdmina.Visibility = Visibility.Visible;
                         }
                     }
                     else
@@ -712,6 +714,17 @@ namespace Projekt
             program.Visibility = Visibility.Hidden;
             program_kategorie.Visibility = Visibility.Visible;
             FilterTextBox.Text = "";
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        private void PokazPanelAdmina_Click(object sender, RoutedEventArgs e)
+        {
+            PanelAdmina panelAdmina = new PanelAdmina();
+            panelAdmina.Show();
         }
     }
 }
