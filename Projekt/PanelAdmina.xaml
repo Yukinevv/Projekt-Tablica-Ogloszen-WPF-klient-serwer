@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Projekt"
         mc:Ignorable="d"
-        Title="PanelAdmina" Height="450" Width="400"
+        Title="PanelAdmina" Height="500" Width="400"
         WindowStartupLocation="Manual"
         Left="100" Top="280">
     <Grid>
-        <Grid x:Name="Start" Visibility="Hidden">
-            <ListView x:Name="uzytkownicyListView" Margin="0,0,0,0" MouseDoubleClick="uzytkownicyListView_MouseDoubleClick" HorizontalContentAlignment="Center">
+        <Grid x:Name="Start" Visibility="Visible">
+            <ListView x:Name="uzytkownicyListView" Margin="0,50,0,0" MouseDoubleClick="uzytkownicyListView_MouseDoubleClick" HorizontalContentAlignment="Center">
                 <ListView.View>
                     <GridView>
                         <GridView.Columns>
@@ -20,8 +20,10 @@
                     </GridView>
                 </ListView.View>
             </ListView>
+            <TextBox x:Name="FilterTextBoxU" HorizontalAlignment="Center" Margin="160,10,0,0" VerticalAlignment="Top" TextWrapping="Wrap" Width="120" Height="29" VerticalContentAlignment="Center" TextChanged="FilterTextBoxU_TextChanged"/>
+            <Label Content="Szukaj" HorizontalAlignment="Center" Margin="0,10,15,0" VerticalAlignment="Top" Width="50" HorizontalContentAlignment="Right"/>
         </Grid>
-        <Grid x:Name="Podglad" Visibility="Visible">
+        <Grid x:Name="Podglad" Visibility="Hidden">
             <Grid.RowDefinitions>
                 <RowDefinition Height="62*"/>
                 <RowDefinition Height="62*"/>

@@ -9,8 +9,7 @@ namespace Projekt
 {
     class Connect
     {
-
-        public static List<string> SelectRecords()
+        public static List<string> SelectRecords() // do wyswietlania loginow i hasel na panelu logowania - roboczo
         {
             List<string> result = new List<string>();
             using (NpgsqlConnection conn = GetConnection())
@@ -99,8 +98,9 @@ namespace Projekt
             List<Uzytkownicy> result = new List<Uzytkownicy>();
             using (NpgsqlConnection conn = GetConnection())
             {
-                string query = @"SELECT * FROM uzytkownicy";
+                string query = @"SELECT * FROM uzytkownicy WHERE id <> :_id";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("_id", MainWindow.id);
                 conn.Open();
                 using (NpgsqlDataReader reader = cmd.ExecuteReader())
                 {

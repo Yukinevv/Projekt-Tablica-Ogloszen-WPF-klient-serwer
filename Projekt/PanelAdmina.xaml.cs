@@ -28,8 +28,36 @@ namespace Projekt
             Podglad.Visibility = Visibility.Hidden;
         }
 
+        public Predicate<object> GetFilter()
+        {
+            return LoginFilter;
+        }
+
+        private bool LoginFilter(object obj)
+        {
+            var Filterobj = obj as Uzytkownicy;
+            return Filterobj.Login.Contains(FilterTextBoxU.Text);
+        }
+
+        private void FilterTextBoxU_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (FilterTextBoxU.Text == null)
+            {
+                uzytkownicyListView.Items.Filter = null;
+            }
+            else
+            {
+                uzytkownicyListView.Items.Filter = GetFilter();
+            }
+        }
+
         private void uzytkownicyListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            if (uzytkownicyListView.SelectedItem == null)
+            {
+                return;
+            }
+
             Start.Visibility = Visibility.Hidden;
             Podglad.Visibility = Visibility.Visible;
 
@@ -124,7 +152,6 @@ namespace Projekt
             Start.Visibility = Visibility.Visible;
             Podglad.Visibility = Visibility.Hidden;
             uzytkownicyListView.ItemsSource = Connect.SelectRecordsUzytkownicy();
-
         }
     }
 }

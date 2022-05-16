@@ -25,13 +25,13 @@ namespace Projekt
     {
         public static int id;
         public static int id_wybranej_kategorii;
-        PanelAdmina panelAdmina = new PanelAdmina();
+        private PanelAdmina panelAdmina;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            // pokaz i ukryj odpowiednie gridy - roboczo
+            // pokaz i ukryj odpowiednie gridy
             logowanie.Visibility = (Visibility)0;
             TextBlock1.Visibility = (Visibility)0;
 
@@ -44,9 +44,7 @@ namespace Projekt
             rezultatDodania.Visibility = Visibility.Hidden;
             rezultatEdycji.Visibility = Visibility.Hidden;
 
-            //DodajKategorieButtonD.Visibility = Visibility.Hidden;
             program_kategorie.Visibility = Visibility.Hidden;
-            PokazPanelAdmina.Visibility = Visibility.Hidden;
 
             // wypisz dosetpne konta uzytkownikow - roboczo
             TextBlock1.Text = "Dostepni uzytkownicy:\n(hasło do jank: qwerty123)\n";
@@ -130,12 +128,6 @@ namespace Projekt
             return Filterobj.Nazwa.Contains(FilterTextBoxK.Text);
         }
 
-        //private bool KategoriaFilter(object obj)
-        //{
-        //    var Filterobj = obj as Ogloszenia;
-        //    return Filterobj.Kategoria.Contains(FilterTextBox.Text);
-        //}
-
         private void FilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (FilterTextBox.Text == null)
@@ -190,6 +182,8 @@ namespace Projekt
 
                     if (result == 1) // logowanie powiodlo sie
                     {
+                        PassBox.Password = "";
+
                         // wez id zalogowanego uzytkownika
                         string query2 = @"SELECT id FROM uzytkownicy WHERE login=:_login";
                         NpgsqlCommand cmd2 = new NpgsqlCommand(query2, conn);
@@ -211,8 +205,6 @@ namespace Projekt
                         // pokaz grid glownego layoutu
                         program.Visibility = (Visibility)1;
                         logowanie.Visibility = (Visibility)1;
-
-                        //dodane
                         program_kategorie.Visibility = (Visibility)0;
 
                         //wypisz dostepne kategorie posortowane rosnaco po nazwie
@@ -221,7 +213,8 @@ namespace Projekt
                         ListView2.ItemsSource = kategorie;
                       
                         //ukrycie pomocniczych danych do logowania kont
-                        TextBlock1.Visibility= (Visibility)1;
+                        TextBlock1.Visibility= Visibility.Hidden;
+                        PokazPanelAdmina.Visibility = Visibility.Hidden;
 
                         //wyswietlanie okna w ktorym bedzie panel administracyjny
                         int czy_admin = 0;
@@ -239,7 +232,7 @@ namespace Projekt
                         if (czy_admin == 1)
                         {
                             //otworz nowe okno
-                            //PanelAdmina panelAdmina = new PanelAdmina();
+                            panelAdmina = new PanelAdmina();
                             panelAdmina.Show();
                             PokazPanelAdmina.Visibility = Visibility.Visible;
                         }
@@ -328,6 +321,7 @@ namespace Projekt
             {
                 TextBlock1.Text += elements + "\n";
             }
+            panelAdmina.Close();
         }
 
         private void Rejestruj_Click(object sender, RoutedEventArgs e)
@@ -723,7 +717,7 @@ namespace Projekt
 
         private void PokazPanelAdmina_Click(object sender, RoutedEventArgs e)
         {
-            PanelAdmina panelAdmina = new PanelAdmina();
+            panelAdmina = new PanelAdmina();
             panelAdmina.Show();
         }
     }
