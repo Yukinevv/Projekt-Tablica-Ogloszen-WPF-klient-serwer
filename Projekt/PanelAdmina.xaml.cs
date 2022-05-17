@@ -53,6 +53,11 @@ namespace Projekt
 
         private void uzytkownicyListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            if (uzytkownicyListView.SelectedItem == null)
+            {
+                return;
+            }
+
             Start.Visibility = Visibility.Hidden;
             Podglad.Visibility = Visibility.Visible;
 
@@ -147,7 +152,6 @@ namespace Projekt
             Start.Visibility = Visibility.Visible;
             Podglad.Visibility = Visibility.Hidden;
             uzytkownicyListView.ItemsSource = Connect.SelectRecordsUzytkownicy();
-
         }
     }
 }

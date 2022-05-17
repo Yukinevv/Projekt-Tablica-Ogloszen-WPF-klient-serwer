@@ -9,8 +9,7 @@ namespace Projekt
 {
     class Connect
     {
-
-        public static List<string> SelectRecords()
+        public static List<string> SelectRecords() // do wyswietlania loginow i hasel na panelu logowania - roboczo
         {
             List<string> result = new List<string>();
             using (NpgsqlConnection conn = GetConnection())
