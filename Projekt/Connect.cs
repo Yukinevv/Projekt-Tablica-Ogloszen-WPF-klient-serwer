@@ -58,6 +58,64 @@ namespace Projekt
             }
             return result;
         }
+        public static List<Ogloszenia> SelectRecordsMojeOgloszenia(int id)
+        {
+            List<Ogloszenia> result = new List<Ogloszenia>();
+            using (NpgsqlConnection conn = GetConnection())
+            {
+                string query = @"SELECT * FROM Ogloszenia WHERE id_u=:_id";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("_id", id);
+                conn.Open();
+                using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Ogloszenia tmp = new Ogloszenia
+                        {
+                            Id_o = int.Parse(reader["id_o"].ToString()),
+                            Id_u = int.Parse(reader["id_u"].ToString()),
+                            Tytul = (string)reader["tytul"],
+                            Tresc = (string)reader["tresc"],
+                            //Data_utw = (DateTime)reader["data_utw"],
+                            //Data_ed = (DateTime)reader["data_ed"]
+                            Data_utw = (string)reader["data_utw"],
+                            Data_ed = (string)reader["data_ed"]
+                        };
+
+                        result.Add(tmp);
+                    }
+                }
+            }
+            return result;
+        }
+        public static List<Kategoria> SelectRecordsMojeKategorie(int id)
+        {
+            List<Kategoria> result = new List<Kategoria>();
+            using (NpgsqlConnection conn = GetConnection())
+            {
+                string query = @"SELECT * FROM kategoria WHERE id_u=:_id";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("_id", id);
+                conn.Open();
+                using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Kategoria tmp = new Kategoria
+                        {
+                            Id_k = int.Parse(reader["id_k"].ToString()),
+                            Nazwa = (string)reader["nazwa"],
+                            Id_u = int.Parse(reader["id_u"].ToString()),
+                            //Data_utw = (DateTime)reader["data_utw"],
+                            Data_utw = (string)reader["data_utw"]
+                        };
+                        result.Add(tmp);
+                    }
+                }
+            }
+            return result;
+        }
         public static List<Ogloszenia> SelectRecordsOgloszenia2(int id_kategorii)
         {
             //metoda ktora wyswietla wszystkie ogloszenia ktore sa w id_k podanej jako parametr
@@ -101,6 +159,37 @@ namespace Projekt
                 string query = @"SELECT * FROM uzytkownicy WHERE id <> :_id";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("_id", MainWindow.id);
+                conn.Open();
+                using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Uzytkownicy tmp = new Uzytkownicy
+                        {
+                            Id = int.Parse(reader["id"].ToString()),
+                            Login = (string)reader["login"],
+                            Haslo = (string)reader["haslo"],
+                            Imie = (string)reader["imie"],
+                            Nazwisko = (string)reader["nazwisko"],
+                            Email = (string)reader["email"],
+                            //Data_ur = (DateTime)reader["data_ur"],
+                            Data_ur = (string)reader["data_ur"],
+                            Uprawnienia = (string)reader["uprawnienia"]
+                        };
+                        result.Add(tmp);
+                    }
+                }
+            }
+            return result;
+        }
+        public static List<Uzytkownicy> SelectMojProfil(int id)
+        {
+            List<Uzytkownicy> result = new List<Uzytkownicy>();
+            using (NpgsqlConnection conn = GetConnection())
+            {
+                string query = @"SELECT * FROM uzytkownicy WHERE id=:_id";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("_id", id);
                 conn.Open();
                 using (NpgsqlDataReader reader = cmd.ExecuteReader())
                 {

@@ -8,6 +8,7 @@
         Title="Tablica ogłoszeń" Height="450" Width="800" MinWidth="800" MinHeight="450" MaxHeight="450" MaxWidth="800" WindowStartupLocation="CenterScreen">
     <Grid>
         <TextBlock x:Name="TextBlock1" Visibility="Visible" HorizontalAlignment="Left" Margin="10,10,0,0" Text="Tu pojawi się wynik zapytania..." VerticalAlignment="Top" Height="261" Width="260"/>
+        <Button x:Name="MojProfilButton" Content="Mój profil" Margin="672,0,0,369" Height="30" Width="100" Click="MojProfilButton_Click"/>
         <Grid x:Name="logowanie" Visibility="Hidden">
             <TextBox x:Name="LoginBox" HorizontalAlignment="Center" Margin="0,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="166" Height="36" FontSize="16"/>
             <PasswordBox x:Name="PassBox" HorizontalAlignment="Center" Margin="0,185,0,0" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="166" Height="36" FontSize="16"/>
@@ -61,7 +62,7 @@
             <Button x:Name="Wroc" Content="Wróć" HorizontalAlignment="Left" Margin="83,370,0,0" VerticalAlignment="Top" Height="30" Width="117" Click="Wroc_Click"/>
         </Grid>
 
-        <Grid x:Name="program_kategorie" Visibility="Visible">
+        <Grid x:Name="program_kategorie" Visibility="Hidden">
             <Button x:Name="LogoutButton_kat" Content="Wyloguj" HorizontalAlignment="Center" Margin="0,370,0,0" VerticalAlignment="Top" Height="30" Width="188" Click="LogoutButton_Click"/>
             <ListView x:Name="ListView2" Margin="100,124,100,69" MouseDoubleClick="ListView2_MouseDoubleClick" HorizontalContentAlignment="Center">
                 <ListView.View>
@@ -107,6 +108,69 @@
             <Button x:Name="PowrotButton" Content="Powrót" Height="40" Width="100" Click="PowrotButton_Click" Margin="425,315,0,0"/>
             <Label x:Name="rezultatEdycji" Content="Rezultat" HorizontalAlignment="Left" Margin="389,28,0,0" VerticalAlignment="Top" Height="45" Width="203"/>
             <Label Content="Edytuj ogłoszenie" HorizontalAlignment="Left" Margin="51,25,0,0" VerticalAlignment="Top" Height="41" Width="144"/>
+        </Grid>
+        <Grid x:Name="MojProfil" Visibility="Visible">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="69*"/>
+                <RowDefinition Height="69*"/>
+                <RowDefinition Height="69*"/>
+                <RowDefinition Height="69*"/>
+                <RowDefinition Height="72*"/>
+                <RowDefinition Height="73*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Login" HorizontalAlignment="Right" Margin="0,0,123,0"/>
+            <TextBox x:Name="LoginText" Width="140" Height="25" HorizontalAlignment="Right" Text="Login" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,16,23,16" VerticalAlignment="Bottom"/>
+            <Label Content="Mail" HorizontalAlignment="Left" Margin="25,0,0,0" Grid.Column="1"/>
+            <TextBox x:Name="MailText" Width="140" Height="25" HorizontalAlignment="Left" Text="Mail" Grid.Column="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="23,16,0,16" VerticalAlignment="Bottom"/>
+            <Label Content="Imię" HorizontalAlignment="Right" Margin="0,0,129,0" Grid.Row="1"/>
+            <TextBox x:Name="ImieText" Width="140" Height="25" HorizontalAlignment="Right" Text="Imie" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Row="1" Margin="0,16,23,16" VerticalAlignment="Bottom"/>
+            <Label Content="Nazwisko" HorizontalAlignment="Left" Margin="25,0,0,0" Grid.Column="1" Grid.Row="1"/>
+            <TextBox x:Name="NazwiskoText" Width="140" Height="25" HorizontalAlignment="Left" Text="Nazwisko" Grid.Column="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Row="1" Margin="23,0,0,16" VerticalAlignment="Bottom"/>
+            <Label Content="Data urodzenia" HorizontalAlignment="Right" Margin="0,0,71,0" Grid.Row="2"/>
+            <TextBox x:Name="DataText" Width="140" Height="25" HorizontalAlignment="Right" Text="Data" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Row="2" Margin="0,16,23,16" VerticalAlignment="Bottom"/>
+            <Label Content="Uprawnienia" HorizontalAlignment="Left" Margin="25,0,0,0" Grid.Column="1" Grid.Row="2"/>
+            <TextBox x:Name="UprawnieniaText" Width="140" Height="25" HorizontalAlignment="Left" Text="Uprawnienia" Grid.Column="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Row="2" Margin="23,16,0,16" VerticalAlignment="Bottom"/>
+            
+            <Label Content="Nowe hasło" HorizontalAlignment="Right" Margin="0,0,89,0" Grid.Row="3"/>
+            <PasswordBox x:Name="NoweHaslo" Width="140" Height="25" HorizontalAlignment="Right" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Row="3" Margin="0,16,23,16" VerticalAlignment="Bottom"/>
+            <Label Content="Powtórz hasło" HorizontalAlignment="Left" Margin="25,0,0,0" Grid.Column="1" Grid.Row="3"/>
+            <PasswordBox x:Name="PowtorzNoweHaslo" Width="140" Height="25" HorizontalAlignment="Left" Grid.Column="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Row="3" Margin="23,16,0,16" VerticalAlignment="Bottom"/>
+            <Button x:Name="ZmienHaslo" Grid.Column="1" Grid.Row="4" Width="140" Content="Zmień hasło" HorizontalAlignment="Left" Margin="23,6,0,6" Click="ZmienHaslo_Click"/>
+            <Button x:Name="MojeOgloszeniaButton" Grid.Column="0" Grid.Row="4" Width="140" Height="25" Content="Moje ogłoszenia" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,6,23,0" Click="MojeOgloszeniaButton_Click"/>
+            <Button x:Name="MojekategorieButton" Grid.Column="0" Grid.Row="4" Width="140" Height="25" Content="Moje kategorie" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,23,6" Click="MojekategorieButton_Click"/>
+            <Button x:Name="PowrotMojProfil" Grid.Column="1" Grid.Row="5" Width="140" HorizontalAlignment="Left" Margin="23,6,0,6" Click="PowrotMojProfil_Click">
+                <TextBlock Text="Wróć do wyboru kategorii" TextWrapping="Wrap" TextAlignment="Center"/>
+            </Button>
+        </Grid>
+        <Grid x:Name="MojeOgloszenia" Visibility="Hidden">
+            <ListView x:Name="ListViewMojeOgloszenia" Margin="50,124,50,69" HorizontalContentAlignment="Center">
+                <ListView.View>
+                    <GridView>
+                        <GridView.Columns>
+                            <GridViewColumn Header="Tytuł" DisplayMemberBinding="{Binding Tytul}" Width="100"/>
+                            <GridViewColumn Header="Treść" DisplayMemberBinding="{Binding Tresc}" Width="300"/>
+                            <GridViewColumn Header="Data utworzenia" DisplayMemberBinding="{Binding Data_utw}" Width="130"/>
+                            <GridViewColumn Header="Ostatnia modyfikacja" DisplayMemberBinding="{Binding Data_ed}" Width="130"/>
+                        </GridView.Columns>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+        <Grid x:Name="MojeKategorie" Visibility="Hidden">
+            <ListView x:Name="ListViewMojeKategorie" Margin="50,124,50,69" HorizontalContentAlignment="Center">
+                <ListView.View>
+                    <GridView>
+                        <GridView.Columns>
+                            <GridViewColumn Header="Nazwa" DisplayMemberBinding="{Binding Nazwa}" Width="350"/>
+                            <GridViewColumn Header="Data utworzenia" DisplayMemberBinding="{Binding Data_utw}" Width="300"/>
+                        </GridView.Columns>
+                    </GridView>
+                </ListView.View>
+            </ListView>
         </Grid>
     </Grid>
 </Window>

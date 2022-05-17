@@ -26,6 +26,7 @@ namespace Projekt
         public static int id;
         public static int id_wybranej_kategorii;
         private PanelAdmina panelAdmina;
+        private int czy_admin;
 
         public MainWindow()
         {
@@ -45,6 +46,10 @@ namespace Projekt
             rezultatEdycji.Visibility = Visibility.Hidden;
 
             program_kategorie.Visibility = Visibility.Hidden;
+            MojProfil.Visibility = Visibility.Hidden;
+            MojProfilButton.Visibility = Visibility.Hidden;
+            MojeOgloszenia.Visibility = Visibility.Hidden;
+            MojeKategorie.Visibility = Visibility.Hidden;
 
             // wypisz dosetpne konta uzytkownikow - roboczo
             TextBlock1.Text = "Dostepni uzytkownicy:\n(hasło do jank: qwerty123)\n";
@@ -206,6 +211,8 @@ namespace Projekt
                         program.Visibility = (Visibility)1;
                         logowanie.Visibility = (Visibility)1;
                         program_kategorie.Visibility = (Visibility)0;
+                        //pokaz guzik moj profil
+                        MojProfilButton.Visibility = Visibility.Visible;
 
                         //wypisz dostepne kategorie posortowane rosnaco po nazwie
                         List<Kategoria> kategorie = Connect.SelectRecordsKategoria();
@@ -217,7 +224,7 @@ namespace Projekt
                         PokazPanelAdmina.Visibility = Visibility.Hidden;
 
                         //wyswietlanie okna w ktorym bedzie panel administracyjny
-                        int czy_admin = 0;
+                        czy_admin = 0;
                         string query3 = @"SELECT COUNT(*) AS ile FROM uzytkownicy WHERE login=:_login AND uprawnienia='admin'";
                         NpgsqlCommand cmd3 = new NpgsqlCommand(query3, conn);
                         cmd3.Parameters.AddWithValue("_login", LoginBox.Text);
@@ -258,6 +265,7 @@ namespace Projekt
             }
 
             program.Visibility = Visibility.Hidden;
+            MojProfilButton.Visibility = Visibility.Hidden;
             edycjaOgloszenia.Visibility = Visibility.Visible;
 
             ZatwierdzButton.Visibility = Visibility.Hidden;
@@ -311,6 +319,7 @@ namespace Projekt
         {
             // pokaz grid logowania
             logowanie.Visibility = (Visibility)0;
+            MojProfilButton.Visibility = Visibility.Hidden;
             program.Visibility = (Visibility)1;
             program_kategorie.Visibility = (Visibility)1;
 
@@ -321,7 +330,10 @@ namespace Projekt
             {
                 TextBlock1.Text += elements + "\n";
             }
-            panelAdmina.Close();
+            if (czy_admin == 1)
+            {
+                panelAdmina.Close();
+            }
         }
 
         private void Rejestruj_Click(object sender, RoutedEventArgs e)
@@ -429,6 +441,7 @@ namespace Projekt
 
             edycjaOgloszenia.Visibility = Visibility.Hidden;
             program.Visibility = Visibility.Visible;
+            MojProfilButton.Visibility = Visibility.Visible;
 
             try
             {
@@ -469,6 +482,7 @@ namespace Projekt
         private void DodajOgloszenieButton_Click(object sender, RoutedEventArgs e)
         {
             program.Visibility = Visibility.Hidden;
+            MojProfilButton.Visibility = Visibility.Hidden;
             dodajOgloszenie.Visibility = Visibility.Visible;
 
             List<string> kategorie = Connect.SelectRecordsKategoriaS();
@@ -537,6 +551,7 @@ namespace Projekt
 
             dodajOgloszenie.Visibility = Visibility.Hidden;
             program.Visibility = Visibility.Visible;
+            MojProfilButton.Visibility = Visibility.Visible;
 
             try
             {
@@ -581,6 +596,7 @@ namespace Projekt
                         Tytul.Text = "";
                         Tresc.Text = "";
                         edycjaOgloszenia.Visibility = Visibility.Hidden;
+                        MojProfilButton.Visibility = Visibility.Visible;
                         program.Visibility = Visibility.Visible;
                         //odswiezenie listview
                         List<Ogloszenia> ogloszenia_new = Connect.SelectRecordsOgloszenia2(id_wybranej_kategorii);
@@ -719,6 +735,103 @@ namespace Projekt
         {
             panelAdmina = new PanelAdmina();
             panelAdmina.Show();
+        }
+
+        private void MojProfilButton_Click(object sender, RoutedEventArgs e)
+        {
+            program.Visibility = Visibility.Hidden;
+            program_kategorie.Visibility = Visibility.Hidden;
+            MojProfil.Visibility = Visibility.Visible;
+            MojeOgloszenia.Visibility = Visibility.Hidden;
+            MojeKategorie.Visibility = Visibility.Hidden;
+            NoweHaslo.Password = "";
+            PowtorzNoweHaslo.Password = "";
+
+            List<Uzytkownicy> dane = Connect.SelectMojProfil(id);
+            LoginText.Text = dane[0].Login;
+            MailText.Text = dane[0].Email;
+            ImieText.Text = dane[0].Imie;
+            NazwiskoText.Text = dane[0].Nazwisko;
+            DataText.Text = dane[0].Data_ur;
+            UprawnieniaText.Text = dane[0].Uprawnienia;
+            LoginText.IsReadOnly = true;
+            MailText.IsReadOnly = true;
+            ImieText.IsReadOnly = true;
+            NazwiskoText.IsReadOnly = true;
+            DataText.IsReadOnly = true;
+            UprawnieniaText.IsReadOnly = true;
+        }
+
+        private void PowrotMojProfil_Click(object sender, RoutedEventArgs e)
+        {
+            NoweHaslo.Password = "";
+            PowtorzNoweHaslo.Password = "";
+            MojProfil.Visibility = Visibility.Hidden;
+            program_kategorie.Visibility = Visibility.Visible;
+        }
+
+        private void MojeOgloszeniaButton_Click(object sender, RoutedEventArgs e)
+        {
+            MojProfil.Visibility = Visibility.Hidden;
+            MojeOgloszenia.Visibility = Visibility.Visible;
+            List<Ogloszenia> moje_ogloszenia = Connect.SelectRecordsMojeOgloszenia(id);
+            moje_ogloszenia = moje_ogloszenia.OrderBy(x => x.Tytul).ToList();
+            ListViewMojeOgloszenia.ItemsSource = moje_ogloszenia;
+        }
+
+        private void MojekategorieButton_Click(object sender, RoutedEventArgs e)
+        {
+            MojProfil.Visibility = Visibility.Hidden;
+            MojeKategorie.Visibility = Visibility.Visible;
+            List<Kategoria> moje_kategorie = Connect.SelectRecordsMojeKategorie(id);
+            moje_kategorie = moje_kategorie.OrderBy(x => x.Nazwa).ToList();
+            ListViewMojeKategorie.ItemsSource = moje_kategorie;
+        }
+
+        private void ZmienHaslo_Click(object sender, RoutedEventArgs e)
+        {
+            if (NoweHaslo.Password == PowtorzNoweHaslo.Password && NoweHaslo.Password != "")
+            {
+                if (NoweHaslo.Password.Length < 8 || NoweHaslo.Password.Length > 20)
+                {
+                    MessageBox.Show("Hasło musi mieć conajmniej 8 znaków oraz maksymalnie 20 znaków!", "Sprawdź długość hasła!", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else
+                {
+                    SHA256 sha256Hash = SHA256.Create();
+                    string hash = Operacje.GetHash(sha256Hash, NoweHaslo.Password);
+                    using (NpgsqlConnection conn = Connect.GetConnection())
+                    {
+                        try
+                        {
+                            conn.Open();
+                            string query = @"UPDATE uzytkownicy SET haslo=:_nowe_haslo WHERE id=:_id";
+
+                            NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+
+                            cmd.Parameters.AddWithValue("_id", id);
+                            cmd.Parameters.AddWithValue("_nowe_haslo", hash);
+
+                            int n = cmd.ExecuteNonQuery();
+                            if (n == 1)
+                            {
+                                MessageBox.Show("Poprawnie zmieniono hasło!", "Sukces!", MessageBoxButton.OK, MessageBoxImage.Information);
+                                NoweHaslo.Password = "";
+                                PowtorzNoweHaslo.Password = "";
+                            }
+                        }
+                        catch (Exception err)
+                        {
+                            MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+
+                }
+            }
+            else 
+            {
+                MessageBox.Show("Hasło nie może być puste i hasła się muszą zgadzać!", "Sprawdź wprowadzone dane!", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }
