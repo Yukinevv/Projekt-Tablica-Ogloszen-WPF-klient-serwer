@@ -27,6 +27,7 @@ namespace Projekt
         public static int id_wybranej_kategorii;
         private PanelAdmina panelAdmina;
         private int czy_admin;
+        private bool mojeOgloszenia = false;
 
         public MainWindow()
         {
@@ -66,7 +67,7 @@ namespace Projekt
         private void ComboBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             List<Ogloszenia> ogloszenia = Connect.SelectRecordsOgloszenia2(id_wybranej_kategorii);
-            if(ComboBox2.SelectedItem == null)
+            if (ComboBox2.SelectedItem == null)
             {
                 if ((string)ComboBox1.SelectedItem == "Rosnąco")
                 {
@@ -218,9 +219,9 @@ namespace Projekt
                         List<Kategoria> kategorie = Connect.SelectRecordsKategoria();
                         kategorie = kategorie.OrderBy(x => x.Nazwa).ToList();
                         ListView2.ItemsSource = kategorie;
-                      
+
                         //ukrycie pomocniczych danych do logowania kont
-                        TextBlock1.Visibility= Visibility.Hidden;
+                        TextBlock1.Visibility = Visibility.Hidden;
                         PokazPanelAdmina.Visibility = Visibility.Hidden;
 
                         //wyswietlanie okna w ktorym bedzie panel administracyjny
@@ -228,7 +229,7 @@ namespace Projekt
                         string query3 = @"SELECT COUNT(*) AS ile FROM uzytkownicy WHERE login=:_login AND uprawnienia='admin'";
                         NpgsqlCommand cmd3 = new NpgsqlCommand(query3, conn);
                         cmd3.Parameters.AddWithValue("_login", LoginBox.Text);
-                     
+
                         using (NpgsqlDataReader reader2 = cmd3.ExecuteReader())
                         {
                             while (reader2.Read())
@@ -345,7 +346,7 @@ namespace Projekt
                     conn.Open();
                     string query = @"INSERT INTO uzytkownicy VALUES(
                                      nextval('increment_id_uzytkownicy'), :_login, :_haslo, :_imie, :_nazwisko, :_email, :_data_ur, 'user')";
-                                    //increment_id_uzytkownicy jest to sekwencja robiaca za AUTO INCREMENT w postgresie
+                    //increment_id_uzytkownicy jest to sekwencja robiaca za AUTO INCREMENT w postgresie
 
                     NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
 
@@ -412,8 +413,16 @@ namespace Projekt
                         cmd.Parameters.AddWithValue("_tresc", Tresc.Text);
                         cmd.Parameters.AddWithValue("_data_ed", DateTime.Now.ToString("yyyy-MM-dd"));
 
-                        List<Ogloszenia> ogloszenia = (List<Ogloszenia>)ListView1.ItemsSource;
-                        cmd.Parameters.AddWithValue("_id_o", ogloszenia[ListView1.SelectedIndex].Id_o);
+                        if (mojeOgloszenia == true)
+                        {
+                            List<Ogloszenia> mojeOgloszeniaList = (List<Ogloszenia>)ListViewMojeOgloszenia.ItemsSource;
+                            cmd.Parameters.AddWithValue("_id_o", mojeOgloszeniaList[ListViewMojeOgloszenia.SelectedIndex].Id_o);
+                        }
+                        else
+                        {
+                            List<Ogloszenia> ogloszenia = (List<Ogloszenia>)ListView1.ItemsSource;
+                            cmd.Parameters.AddWithValue("_id_o", ogloszenia[ListView1.SelectedIndex].Id_o);
+                        }
 
                         int n = cmd.ExecuteNonQuery();
                         if (n == 1)
@@ -437,6 +446,18 @@ namespace Projekt
 
         private void PowrotButton_Click(object sender, RoutedEventArgs e)
         {
+            if (mojeOgloszenia == true)
+            {
+                edycjaOgloszenia.Visibility = Visibility.Hidden;
+                MojeOgloszenia.Visibility = Visibility.Visible;
+                MojProfilButton.Visibility = Visibility.Visible;
+
+                List<Ogloszenia> mojeOgloszeniaList = Connect.SelectRecordsMojeOgloszenia(id);
+                mojeOgloszeniaList = mojeOgloszeniaList.OrderBy(x => x.Tytul).ToList();
+                ListViewMojeOgloszenia.ItemsSource = mojeOgloszeniaList;
+                return;
+            }
+
             rezultatEdycji.Visibility = Visibility.Hidden;
 
             edycjaOgloszenia.Visibility = Visibility.Hidden;
@@ -575,17 +596,23 @@ namespace Projekt
                 try
                 {
                     conn.Open();
-                    List<Ogloszenia> ogloszenia = (List<Ogloszenia>)ListView1.ItemsSource;
                     string query = @"DELETE FROM ogloszenia WHERE id_o = :_id_o";
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
-
-                    cmd.Parameters.AddWithValue("_id_o", ogloszenia[ListView1.SelectedIndex].Id_o);
-
                     string query2 = @"DELETE FROM kattoogl WHERE id_o = :_id_o";
-
+                    NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
                     NpgsqlCommand cmd2 = new NpgsqlCommand(query2, conn);
-                    cmd2.Parameters.AddWithValue("_id_o", ogloszenia[ListView1.SelectedIndex].Id_o);
+
+                    if (mojeOgloszenia == true)
+                    {
+                        List<Ogloszenia> mojeOgloszeniaList = (List<Ogloszenia>)ListViewMojeOgloszenia.ItemsSource;
+                        cmd.Parameters.AddWithValue("_id_o", mojeOgloszeniaList[ListViewMojeOgloszenia.SelectedIndex].Id_o);
+                        cmd2.Parameters.AddWithValue("_id_o", mojeOgloszeniaList[ListViewMojeOgloszenia.SelectedIndex].Id_o);
+                    }
+                    else
+                    {
+                        List<Ogloszenia> ogloszenia = (List<Ogloszenia>)ListView1.ItemsSource;
+                        cmd.Parameters.AddWithValue("_id_o", ogloszenia[ListView1.SelectedIndex].Id_o);
+                        cmd2.Parameters.AddWithValue("_id_o", ogloszenia[ListView1.SelectedIndex].Id_o);
+                    }
 
                     //najpierw musza zostac usuniete wiersze z tabeli wiele do wielu, bo sa tam klucze obce
                     cmd2.ExecuteNonQuery();
@@ -597,14 +624,25 @@ namespace Projekt
                         Tresc.Text = "";
                         edycjaOgloszenia.Visibility = Visibility.Hidden;
                         MojProfilButton.Visibility = Visibility.Visible;
-                        program.Visibility = Visibility.Visible;
-                        //odswiezenie listview
-                        List<Ogloszenia> ogloszenia_new = Connect.SelectRecordsOgloszenia2(id_wybranej_kategorii);
-                        ogloszenia = ogloszenia_new.OrderBy(x => x.Id_o).ToList();
-                        ListView1.ItemsSource = ogloszenia_new;
 
-                        int iloscOgloszen = Operacje.PoliczOgloszeniaK(id_wybranej_kategorii);
-                        IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
+                        if (mojeOgloszenia == true)
+                        {
+                            MojeOgloszenia.Visibility = Visibility.Visible;
+                            //odswiezenie listview
+                            List<Ogloszenia> mojeOgloszenia_new = Connect.SelectRecordsMojeOgloszenia(id);
+                            mojeOgloszenia_new = mojeOgloszenia_new.OrderBy(x => x.Tytul).ToList();
+                            ListViewMojeOgloszenia.ItemsSource = mojeOgloszenia_new;
+                        }
+                        else
+                        {
+                            program.Visibility = Visibility.Visible;  
+                            List<Ogloszenia> ogloszenia_new = Connect.SelectRecordsOgloszenia2(id_wybranej_kategorii);
+                            ogloszenia_new = ogloszenia_new.OrderBy(x => x.Id_o).ToList();
+                            ListView1.ItemsSource = ogloszenia_new;
+
+                            int iloscOgloszen = Operacje.PoliczOgloszeniaK(id_wybranej_kategorii);
+                            IloscOgloszenLabel.Content = $"Wyświetlono {iloscOgloszen} ogłoszeń/nia";
+                        } 
                     }
                 }
                 catch (Exception err)
@@ -764,6 +802,7 @@ namespace Projekt
 
         private void PowrotMojProfil_Click(object sender, RoutedEventArgs e)
         {
+            mojeOgloszenia = false;
             NoweHaslo.Password = "";
             PowtorzNoweHaslo.Password = "";
             MojProfil.Visibility = Visibility.Hidden;
@@ -828,9 +867,34 @@ namespace Projekt
 
                 }
             }
-            else 
+            else
             {
                 MessageBox.Show("Hasło nie może być puste i hasła się muszą zgadzać!", "Sprawdź wprowadzone dane!", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ListViewMojeOgloszenia_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (ListViewMojeOgloszenia.SelectedItem == null)
+            {
+                return;
+            }
+
+            mojeOgloszenia = true;
+            MojProfilButton.Visibility = Visibility.Hidden;
+            MojeOgloszenia.Visibility = Visibility.Hidden;
+            edycjaOgloszenia.Visibility = Visibility.Visible;
+
+            try
+            {
+                List<Ogloszenia> ogloszenia = Connect.SelectRecordsMojeOgloszenia(id);
+                ogloszenia = ogloszenia.OrderBy(x => x.Tytul).ToList();
+                Tytul.Text = ogloszenia[ListViewMojeOgloszenia.SelectedIndex].Tytul;
+                Tresc.Text = ogloszenia[ListViewMojeOgloszenia.SelectedIndex].Tresc;
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show("Blad: " + err.Message, "Cos poszlo nie tak", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

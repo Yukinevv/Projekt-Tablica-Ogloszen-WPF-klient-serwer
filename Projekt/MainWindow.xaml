@@ -147,7 +147,7 @@
             </Button>
         </Grid>
         <Grid x:Name="MojeOgloszenia" Visibility="Hidden">
-            <ListView x:Name="ListViewMojeOgloszenia" Margin="50,124,50,69" HorizontalContentAlignment="Center">
+            <ListView x:Name="ListViewMojeOgloszenia" Margin="50,124,50,69" HorizontalContentAlignment="Center" MouseDoubleClick="ListViewMojeOgloszenia_MouseDoubleClick">
                 <ListView.View>
                     <GridView>
                         <GridView.Columns>
