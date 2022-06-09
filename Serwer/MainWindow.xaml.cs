@@ -48,7 +48,10 @@ namespace Serwer
             using (var context = new MyContext())
             {
                 var uzyt = context.Uzytkownicy.ToArray();
-                WynikBox.Text = $"Mamy {uzyt.Length} użytkowników" + "\n"+uzyt[1]+"\nMa ogłoszeń: "+uzyt[2].OgloszeniaUzytkownika.Count.ToString();
+                WynikBox.Text = $"Mamy {uzyt.Length} użytkowników" + "\n" + uzyt[1] + "\nMa ogłoszeń: " + uzyt[1].OgloszeniaUzytkownika.Count.ToString()
+                + "\nPierwsze ogloszenie tego uzytkownika ma tytul: " + uzyt[1].OgloszeniaUzytkownika[0].tytul;
+                //aktualnie nie ma przypisywania do odpowiednich kolumn listview, wiec przypisuje sie to co jest zdefiniowane w Ogloszenia overide ToString()
+                PrzykladLista.ItemsSource = uzyt[1].OgloszeniaUzytkownika;
             }
         }
     }

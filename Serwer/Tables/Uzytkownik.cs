@@ -20,8 +20,7 @@ namespace Serwer
         public string email { get; set; }
         public string data_ur { get; set; }
         public string uprawnienia { get; set; }
-        [ForeignKey("id_u")]
-        public virtual ICollection<Ogloszenie> OgloszeniaUzytkownika { get; set; }
+        public virtual IList<Ogloszenie> OgloszeniaUzytkownika { get; set; }
         public override string ToString()
         {
             return "Uzytkownik - " + imie + " " + nazwisko;

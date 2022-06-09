@@ -10,6 +10,13 @@
         <TextBox x:Name="WynikBox" HorizontalAlignment="Left" Height="118" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBox służący do testowania ORM'a" VerticalAlignment="Top" Width="284"/>
         <Button x:Name="TestButton" Content="Ogloszen" HorizontalAlignment="Left" Margin="10,133,0,0" VerticalAlignment="Top" Width="118" Click="TestButton_Click"/>
         <Button x:Name="TestButton2" Content="Uzytkownikow" HorizontalAlignment="Left" Margin="176,133,0,0" VerticalAlignment="Top" Width="118" Click="TestButton2_Click"/>
+        <ListView x:Name="PrzykladLista" HorizontalAlignment="Left" Height="143" Margin="378,10,0,0" VerticalAlignment="Top" Width="404">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn/>
+                </GridView>
+            </ListView.View>
+        </ListView>
 
     </Grid>
 </Window>
