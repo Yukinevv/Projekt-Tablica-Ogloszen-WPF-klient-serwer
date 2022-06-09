@@ -13,7 +13,10 @@
         <ListView x:Name="PrzykladLista" HorizontalAlignment="Left" Height="143" Margin="378,10,0,0" VerticalAlignment="Top" Width="404">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn/>
+                    <GridViewColumn Header="Id" Width="30" DisplayMemberBinding="{Binding id_o}" />
+                    <GridViewColumn Header="Id u" Width="30" DisplayMemberBinding="{Binding id_u}" />
+                    <GridViewColumn Header="Tytul" Width="80" DisplayMemberBinding="{Binding tytul}" />
+                    <GridViewColumn Header="Tresc" Width="280" DisplayMemberBinding="{Binding tresc}" />
                 </GridView>
             </ListView.View>
         </ListView>

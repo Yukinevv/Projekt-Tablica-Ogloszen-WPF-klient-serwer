@@ -50,7 +50,7 @@ namespace Serwer
                 var uzyt = context.Uzytkownicy.ToArray();
                 WynikBox.Text = $"Mamy {uzyt.Length} użytkowników" + "\n" + uzyt[1] + "\nMa ogłoszeń: " + uzyt[1].OgloszeniaUzytkownika.Count.ToString()
                 + "\nPierwsze ogloszenie tego uzytkownika ma tytul: " + uzyt[1].OgloszeniaUzytkownika[0].tytul;
-                //aktualnie nie ma przypisywania do odpowiednich kolumn listview, wiec przypisuje sie to co jest zdefiniowane w Ogloszenia overide ToString()
+                //Jezeli nie ma zdefiniowanych GridViewColumn to przypisuje override ToString() danej klasy, a jeżeli jest to wszystko ładnie przypisuje
                 PrzykladLista.ItemsSource = uzyt[1].OgloszeniaUzytkownika;
             }
         }
