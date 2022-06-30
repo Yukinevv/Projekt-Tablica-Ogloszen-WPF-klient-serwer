@@ -20,6 +20,7 @@ namespace Serwer
         public string tresc { get; set; }
         [ForeignKey("id_u")]
         public virtual Uzytkownik Uzytkownik { get; set; }
+        public virtual IList<Kattoogl> KategorieOgloszenia { get; set; }
         public override string ToString()
         {
             return "Ogloszenie \"" + tytul + "\"";

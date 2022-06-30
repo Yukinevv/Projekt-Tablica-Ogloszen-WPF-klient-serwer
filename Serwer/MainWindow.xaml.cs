@@ -33,7 +33,8 @@ namespace Serwer
                 {
                     var ogl = context.Ogloszenia.ToArray();
                     //działa jeden do wielu - pole typu Uzytkownik o nazwie Uzytkownik z ktorego mozemy odczytac od razu login imie autora itd.
-                    WynikBox.Text = $"Mamy {ogl.Length} ogłoszeń\n" + "Autor imie: " + ogl[0].Uzytkownik.imie + " o nicku: " + ogl[0].Uzytkownik.login;
+                    WynikBox.Text = $"Mamy {ogl.Length} ogłoszeń\n" + "Autor imie: " + ogl[2].Uzytkownik.imie + " o nicku: " + ogl[2].Uzytkownik.login + "\nOgloszenie o nazwie " + ogl[2].tytul
+                        + " ktore jest w " + ogl[2].KategorieOgloszenia.Count.ToString() + " kategoriach";
                     //Console.WriteLine($"Mamy {cars[2].data_utw} ogłoszeń");
                 }
                 catch (Exception err)
@@ -59,10 +60,17 @@ namespace Serwer
         {
             using (var context = new MyContext())
             {
-                var kat = context.Kategorie.ToArray();
-                WynikBox.Text = $"Mamy {kat.Length} kategorii\n"+kat[11]+"\nprzez uzytkownika o id: "+kat[0].Uzytkownik.id+" o loginie "+kat[0].Uzytkownik.login;
-                //Jezeli nie ma zdefiniowanych GridViewColumn to przypisuje override ToString() danej klasy, a jeżeli jest to wszystko ładnie przypisuje
-                //PrzykladLista.ItemsSource = uzyt[1].OgloszeniaUzytkownika;
+                try
+                {
+                    var kat = context.Kategorie.ToArray();
+                    WynikBox.Text = $"Mamy {kat.Length} kategorii\n" + kat[1] + "\nprzez uzytkownika o id: " + kat[1].Uzytkownik.id + " o loginie " + kat[1].Uzytkownik.login + "\nMamy " + kat[1].KategorieOgloszenia.Count.ToString() + " ogloszenia w tej kategorii";
+                    //Jezeli nie ma zdefiniowanych GridViewColumn to przypisuje override ToString() danej klasy, a jeżeli jest to wszystko ładnie przypisuje
+                    //PrzykladLista.ItemsSource = uzyt[1].OgloszeniaUzytkownika;
+                }
+                catch (Exception err)
+                {
+                    WynikBox.Text = err.Message;
+                }
             }
         }
     }

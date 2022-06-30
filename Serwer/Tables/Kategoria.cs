@@ -18,6 +18,7 @@ namespace Serwer
         public string data_utw { get; set; }
         [ForeignKey("id_u")]
         public virtual Uzytkownik Uzytkownik { get; set; }
+        public virtual IList<Kattoogl> KategorieOgloszenia { get; set; }
         public override string ToString()
         {
             return "Kategoria: \"" + nazwa + "\"" + " utworzona - " + data_utw;
