@@ -20,6 +20,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <Button x:Name="TestButton3" Content="Kategorii" HorizontalAlignment="Left" Margin="10,171,0,0" VerticalAlignment="Top" Width="118" Click="TestButton3_Click"/>
 
     </Grid>
 </Window>

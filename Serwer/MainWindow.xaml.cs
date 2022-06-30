@@ -54,5 +54,16 @@ namespace Serwer
                 PrzykladLista.ItemsSource = uzyt[1].OgloszeniaUzytkownika;
             }
         }
+
+        private void TestButton3_Click(object sender, RoutedEventArgs e)
+        {
+            using (var context = new MyContext())
+            {
+                var kat = context.Kategorie.ToArray();
+                WynikBox.Text = $"Mamy {kat.Length} kategorii\n"+kat[11]+"\nprzez uzytkownika o id: "+kat[0].Uzytkownik.id+" o loginie "+kat[0].Uzytkownik.login;
+                //Jezeli nie ma zdefiniowanych GridViewColumn to przypisuje override ToString() danej klasy, a jeżeli jest to wszystko ładnie przypisuje
+                //PrzykladLista.ItemsSource = uzyt[1].OgloszeniaUzytkownika;
+            }
+        }
     }
 }
