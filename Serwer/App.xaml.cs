@@ -9,7 +9,7 @@ using System.Windows;
 namespace Serwer
 {
     /// <summary>
-    /// Logika interakcji dla klasy App.xaml
+    /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application
     {

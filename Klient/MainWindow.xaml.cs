@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -9,23 +8,28 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Serwer
+namespace Klient
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static Frame rama;
+
         public MainWindow()
         {
             InitializeComponent();
-            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+            rama = Ramka;
+            rama.Content = new StronaGlowna();
+
+            OperacjeKlient.PolaczZSerwerem();
         }
 
-        private void SerwerONButton_Click(object sender, RoutedEventArgs e)
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            OperacjeSerwer.SerwerOperacje(ListBox1);
+            OperacjeKlient.clientSocket.Close();
         }
-
     }
 }

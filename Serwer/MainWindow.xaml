@@ -5,22 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Serwer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Serwer" Height="450" Width="800">
     <Grid>
-        <TextBox x:Name="WynikBox" HorizontalAlignment="Left" Height="118" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBox służący do testowania ORM'a" VerticalAlignment="Top" Width="284"/>
-        <Button x:Name="TestButton" Content="Ogloszen" HorizontalAlignment="Left" Margin="10,133,0,0" VerticalAlignment="Top" Width="118" Click="TestButton_Click"/>
-        <Button x:Name="TestButton2" Content="Uzytkownikow" HorizontalAlignment="Left" Margin="176,133,0,0" VerticalAlignment="Top" Width="118" Click="TestButton2_Click"/>
-        <ListView x:Name="PrzykladLista" HorizontalAlignment="Left" Height="143" Margin="378,10,0,0" VerticalAlignment="Top" Width="404">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Id" Width="30" DisplayMemberBinding="{Binding id_o}" />
-                    <GridViewColumn Header="Id u" Width="30" DisplayMemberBinding="{Binding id_u}" />
-                    <GridViewColumn Header="Tytul" Width="80" DisplayMemberBinding="{Binding tytul}" />
-                    <GridViewColumn Header="Tresc" Width="280" DisplayMemberBinding="{Binding tresc}" />
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <Button x:Name="TestButton3" Content="Kategorii" HorizontalAlignment="Left" Margin="10,171,0,0" VerticalAlignment="Top" Width="118" Click="TestButton3_Click"/>
-
+        <ListBox x:Name="ListBox1" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="132,10,132,172"/>
+        <Button x:Name="SerwerONButton" Content="Serwer ON" HorizontalAlignment="Center" Margin="0,276,0,0" VerticalAlignment="Top" Width="120" Height="42" Click="SerwerONButton_Click"/>
     </Grid>
 </Window>
