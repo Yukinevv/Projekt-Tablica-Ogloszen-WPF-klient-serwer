@@ -52,12 +52,5 @@ namespace Klient
             byte[] buffer = Encoding.ASCII.GetBytes(text);
             clientSocket.Send(buffer, 0, buffer.Length, SocketFlags.None); // wyslanie rzadania do serwera
         }
-
-        //public void WyswietlenieOgloszen()
-        //{
-        //    string oglSerialized = OdbiorInformacji();
-        //    var ogloszenia = JsonConvert.DeserializeObject<Ogloszenie[]>(oglSerialized);
-        //    //ListView1.ItemsSource = ogloszenia;
-        //}
     }
 }

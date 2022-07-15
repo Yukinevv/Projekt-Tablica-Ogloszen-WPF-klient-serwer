@@ -9,17 +9,17 @@
       Title="StronaGlowna">
 
     <Grid>
-        <ListView x:Name="ListViewKategorie" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="68,10,68,61">
+        <ListView x:Name="ListViewKategorie" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="68,10,68,155" MouseDoubleClick="ListViewKategorie_MouseDoubleClick" >
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
                         <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" Width="50"/>
                         <GridViewColumn Header="Nazwa kategorii" DisplayMemberBinding="{Binding Nazwa}" Width="250"/>
-                        <GridViewColumn Header="Data utworzenia" DisplayMemberBinding="{Binding UzytkownikId}" Width="200"/>
+                        <GridViewColumn Header="Data utworzenia" DisplayMemberBinding="{Binding Data_utw}" Width="200"/>
                     </GridView.Columns>
                 </GridView>
             </ListView.View>
         </ListView>
-
+        <Button x:Name="WylogujButton" Content="Wyloguj" HorizontalAlignment="Center" Margin="0,311,0,0" VerticalAlignment="Top" Height="42" Width="164" Click="WylogujButton_Click"/>
     </Grid>
 </Page>

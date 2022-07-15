@@ -18,8 +18,8 @@
             <RowDefinition Height="77*"/>
         </Grid.RowDefinitions>
         <TextBox x:Name="TextBoxInformacyjny" HorizontalAlignment="Left" Margin="40,21,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="222" Height="59"/>
-        <TextBox x:Name="TextBoxLogin" HorizontalAlignment="Left" Margin="189,141,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="148" Height="34" RenderTransformOrigin="0.128,0.479"/>
-        <TextBox x:Name="TextBoxHaslo" HorizontalAlignment="Left" Margin="53,141,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="148" Height="34" RenderTransformOrigin="0.128,0.479" Grid.Column="1"/>
+        <TextBox x:Name="TextBoxLogin" Text="jank" HorizontalAlignment="Left" Margin="189,141,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="148" Height="34" RenderTransformOrigin="0.128,0.479"/>
+        <TextBox x:Name="TextBoxHaslo" Text="qwerty123" HorizontalAlignment="Left" Margin="53,141,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="148" Height="34" RenderTransformOrigin="0.128,0.479" Grid.Column="1"/>
         <Button x:Name="LogowanieButton" Content="Zaloguj sie" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Height="47" Width="151" Margin="189,0,0,0" Click="LogowanieButton_Click"/>
         <Button x:Name="RejestracjaButton" Content="Zarejestruj sie" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Height="47" Width="151" Grid.Column="1" Click="RejestracjaButton_Click" Margin="53,0,0,0"/>
         <Label Content="Login" HorizontalAlignment="Left" Margin="189,0,0,0" VerticalAlignment="Center" Width="148"/>

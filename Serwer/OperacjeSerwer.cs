@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Threading;
 
 namespace Serwer
 {
@@ -65,19 +66,7 @@ namespace Serwer
                     {
                         string odKlienta = Odbierz();
 
-                        if (odKlienta == "Ogloszenia")
-                        {
-                            using (var context = new MyDbContext())
-                            {
-                                StartoweDane dane = new StartoweDane(context);
-                                dane.DodajStartoweDane(); // jezeli juz jakies sa w bazie to nie doda
-
-                                var ogloszenia = context.Ogloszenia.ToList();
-                                string oglSerialized = JsonConvert.SerializeObject(ogloszenia);
-                                Wyslij(oglSerialized);
-                            }
-                        }
-                        else if (odKlienta == "REJESTRACJA")
+                        if (odKlienta == "REJESTRACJA")
                         {
                             string zserializowanyObiekt = Odbierz();
                             var obiekt = JsonConvert.DeserializeObject<Uzytkownik>(zserializowanyObiekt);
@@ -116,6 +105,28 @@ namespace Serwer
                                 Wyslij(katSerialized);
                             }
                         }
+                        else if (odKlienta == "OGLOSZENIA")
+                        {
+                            string wiadomosc = Odbierz();
+                            int idKategorii = int.Parse(wiadomosc);
+                            using (var context = new MyDbContext())
+                            {
+                                var pomocnicza = context.OgloszeniaKategorie.Where(ok => ok.KategoriaId == idKategorii).ToList();
+                                var ogloszenia = new List<Ogloszenie>();
+                                foreach (var oglkat in pomocnicza)
+                                {
+                                    var ogl = context.Ogloszenia.Where(o => o.Id == oglkat.OgloszenieId);
+                                    ogloszenia.AddRange(ogl);
+                                }
+
+                                string oglSerialized = JsonConvert.SerializeObject(ogloszenia, Formatting.Indented,
+                                new JsonSerializerSettings()
+                                {
+                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                });
+                                Wyslij(oglSerialized);
+                            }
+                        }
                         else
                         {
                             gniazdoPolaczenia.Close();
@@ -132,6 +143,5 @@ namespace Serwer
                 }
             });
         }
-
     }
 }

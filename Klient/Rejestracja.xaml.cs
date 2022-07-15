@@ -50,9 +50,7 @@ namespace Klient
                 Uprawnienia = "uzytkownik"
             };
             string uzytkownikSerialized = JsonConvert.SerializeObject(uzytkownik);
-
-            byte[] buffer = Encoding.ASCII.GetBytes(uzytkownikSerialized);
-            OperacjeKlient.clientSocket.Send(buffer, 0, buffer.Length, SocketFlags.None); // wyslanie rzadania do serwera
+            OperacjeKlient.Wyslij(uzytkownikSerialized);
 
             MainWindow.rama.Content = new Logowanie();
             Logowanie.textBoxInfo.Text = "Udana rejestracja!\n Teraz mozesz sie zalogowac.";
