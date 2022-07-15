@@ -22,7 +22,7 @@ namespace Klient
             InitializeComponent();
 
             rama = Ramka;
-            rama.Content = new StronaGlowna();
+            rama.Content = new Logowanie();
 
             OperacjeKlient.PolaczZSerwerem();
         }

@@ -70,7 +70,7 @@ namespace Serwer
                             using (var context = new MyDbContext())
                             {
                                 StartoweDane dane = new StartoweDane(context);
-                                dane.DodajStartoweOgloszenia(); // jezeli juz jakies sa w bazie to nie doda
+                                dane.DodajStartoweDane(); // jezeli juz jakies sa w bazie to nie doda
 
                                 var ogloszenia = context.Ogloszenia.ToList();
                                 string oglSerialized = JsonConvert.SerializeObject(ogloszenia);
@@ -105,6 +105,15 @@ namespace Serwer
                                 {
                                     Wyslij("false");
                                 }
+                            }
+                        }
+                        else if (odKlienta == "KATEGORIE")
+                        {
+                            using (var context = new MyDbContext())
+                            {
+                                var kategorie = context.Kategorie.ToList();
+                                string katSerialized = JsonConvert.SerializeObject(kategorie);
+                                Wyslij(katSerialized);
                             }
                         }
                         else

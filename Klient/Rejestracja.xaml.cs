@@ -54,13 +54,13 @@ namespace Klient
             byte[] buffer = Encoding.ASCII.GetBytes(uzytkownikSerialized);
             OperacjeKlient.clientSocket.Send(buffer, 0, buffer.Length, SocketFlags.None); // wyslanie rzadania do serwera
 
-            MainWindow.rama.Content = new StronaGlowna();
-            StronaGlowna.textBoxInfo.Text = "Udana rejestracja!\n Teraz mozesz sie zalogowac.";
+            MainWindow.rama.Content = new Logowanie();
+            Logowanie.textBoxInfo.Text = "Udana rejestracja!\n Teraz mozesz sie zalogowac.";
         }
 
         private void PowrotButton_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow.rama.Content = new StronaGlowna();
+            MainWindow.rama.Content = new Logowanie();
         }
     }
 }
