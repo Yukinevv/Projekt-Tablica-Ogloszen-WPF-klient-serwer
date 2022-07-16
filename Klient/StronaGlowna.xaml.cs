@@ -24,6 +24,8 @@ namespace Klient
     {
         public static ListView ListViewKat;
 
+        public static int idKategorii;
+
         public StronaGlowna()
         {
             InitializeComponent();
@@ -35,7 +37,7 @@ namespace Klient
         {
             MainWindow.rama.Content = new StronaOgloszenia();
 
-            int idKategorii = ListViewKat.SelectedIndex + 1;
+            idKategorii = ListViewKat.SelectedIndex + 1;
             OperacjeKlient.Wyslij("OGLOSZENIA");
             OperacjeKlient.Wyslij(idKategorii.ToString());
 

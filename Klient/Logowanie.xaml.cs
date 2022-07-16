@@ -20,11 +20,14 @@ namespace Klient
     {
         public static TextBox textBoxInfo;
 
+        public static TextBox TextBoxLogowanie;
+
         public Logowanie()
         {
             InitializeComponent();
 
             textBoxInfo = TextBoxInformacyjny;
+            TextBoxLogowanie = TextBoxLogin;
         }
 
         private void RejestracjaButton_Click(object sender, RoutedEventArgs e)

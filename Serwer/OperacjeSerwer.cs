@@ -127,6 +127,76 @@ namespace Serwer
                                 Wyslij(oglSerialized);
                             }
                         }
+                        else if (odKlienta == "DODANIE OGLOSZENIA")
+                        {
+                            try
+                            {
+                                string login = Odbierz();
+                                using (var context = new MyDbContext())
+                                {
+                                    int idUzytkownika = context.Uzytkownicy.Where(u => u.Login == login).Select(u => u.Id).FirstOrDefault();
+                                    Wyslij(idUzytkownika.ToString());
+
+                                    // dodanie samego ogloszenia
+                                    string zserializowanyObiekt = Odbierz();
+                                    var ogloszenie = JsonConvert.DeserializeObject<Ogloszenie>(zserializowanyObiekt);
+                                    bool czyTytulUnikalny = context.Ogloszenia.Any(o => o.Tytul == ogloszenie.Tytul);
+                                    if (!czyTytulUnikalny)
+                                    {
+                                        context.Ogloszenia.Add(ogloszenie);
+                                        context.SaveChanges();
+
+                                        Wyslij("Dodano");
+
+                                        // dodanie relacji do tabeli OgloszeniaKategorie
+                                        int idOgloszenia = context.Ogloszenia.OrderBy(o => o.Id).Select(o => o.Id).LastOrDefault();
+
+                                        string nazwyKategoriiSerialized = Odbierz();
+                                        var nazwyKategorii = JsonConvert.DeserializeObject<List<string>>(nazwyKategoriiSerialized);
+                                        var idKategorii = new List<int>();
+
+                                        foreach (var item in nazwyKategorii)
+                                        {
+                                            idKategorii.Add(context.Kategorie.Where(k => k.Nazwa == item).Select(k => k.Id).FirstOrDefault());
+                                        }
+                                        foreach (var item in idKategorii)
+                                        {
+                                            context.OgloszeniaKategorie.Add(new OgloszenieKategoria() { OgloszenieId = idOgloszenia, KategoriaId = item });
+                                        }
+                                        context.SaveChanges();
+
+                                        Wyslij("zakonczono dodawanie");
+                                    }
+                                    else
+                                    {
+                                        string komunikat = "Ogloszenie o podanym tytule juz istnieje. Prosze nadac inny tytul.";
+                                        Wyslij(komunikat);    
+                                    }                       
+                                }
+                            }
+                            catch (Exception err)
+                            {
+                                MessageBox.Show(err.Message);
+                            }     
+                        }
+                        else if (odKlienta == "USUNIECIE OGLOSZENIA")
+                        {
+                            string tytulOgloszenia = Odbierz();
+                            using (var context = new MyDbContext())
+                            {
+                                // usuniecie samego ogloszenia
+                                var ogloszenie = context.Ogloszenia.Where(o => o.Tytul == tytulOgloszenia).FirstOrDefault();
+                                context.Ogloszenia.Remove(ogloszenie);
+
+                                // usuniecie relacji pomiedzy Ogloszeniami a Kategoriami
+                                var idOgloszenia = context.Ogloszenia.Where(o => o.Tytul == tytulOgloszenia).Select(o => o.Id).FirstOrDefault();
+                                var relacje = context.OgloszeniaKategorie.Where(ok => ok.OgloszenieId == idOgloszenia);
+                                context.OgloszeniaKategorie.RemoveRange(relacje);
+                                context.SaveChanges();
+
+                                Wyslij("Usunieto");
+                            }
+                        }
                         else
                         {
                             gniazdoPolaczenia.Close();

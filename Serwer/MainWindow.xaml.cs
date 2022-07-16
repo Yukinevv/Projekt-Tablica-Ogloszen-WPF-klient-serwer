@@ -26,6 +26,11 @@ namespace Serwer
             {
                 StartoweDane startoweDane = new StartoweDane(context);
                 startoweDane.DodajStartoweDane();
+
+                // roboczo
+                //var ogloszenie = context.Ogloszenia.OrderBy(o => o.Id).Last();
+                //context.Ogloszenia.Remove(ogloszenie);
+                //context.SaveChanges();
             }
 
             // roboczo
