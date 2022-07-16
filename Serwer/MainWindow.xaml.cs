@@ -28,6 +28,11 @@ namespace Serwer
                 startoweDane.DodajStartoweDane();
 
                 // roboczo
+                //var uzytkownik = context.Uzytkownicy.Where(u => u.Login == "arturn").FirstOrDefault();
+                //uzytkownik.Uprawnienia = "admin";
+                //context.SaveChanges();
+
+                // roboczo
                 //var ogloszenie = context.Ogloszenia.OrderBy(o => o.Id).Last();
                 //context.Ogloszenia.Remove(ogloszenie);
                 //context.SaveChanges();

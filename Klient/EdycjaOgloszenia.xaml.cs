@@ -26,12 +26,19 @@ namespace Klient
 
         public static TextBox TextBoxTrescOgl;
 
+        public static Button UsunOgloszenieButton;
+
+        public static Button ZatwierdzEdycjeOgloszeniaButton;
+
         public EdycjaOgloszenia()
         {
             InitializeComponent();
 
             TextBoxTytulOgl = TextBoxTytul;
             TextBoxTrescOgl = TextBoxTresc;
+
+            UsunOgloszenieButton = UsunButton;
+            ZatwierdzEdycjeOgloszeniaButton = ZatwierdzButton;
         }
 
         private void PowrótButton_Click(object sender, RoutedEventArgs e)
@@ -49,11 +56,47 @@ namespace Klient
         private void UsunButton_Click(object sender, RoutedEventArgs e)
         {
             OperacjeKlient.Wyslij("USUNIECIE OGLOSZENIA");
-            OperacjeKlient.Wyslij(TextBoxTytulOgl.Text);
+            OperacjeKlient.Wyslij(StronaOgloszenia.idWybranegoOgloszenia.ToString());
             string odpowiedz = OperacjeKlient.Odbierz();
             if (odpowiedz == "Usunieto")
             {
                 MessageBox.Show("Ogloszenie zostalo usuniete (ze wszystkich kategorii)!");
+                MainWindow.rama.Content = new StronaOgloszenia();
+
+                OperacjeKlient.Wyslij("OGLOSZENIA");
+                OperacjeKlient.Wyslij(StronaGlowna.idKategorii.ToString());
+
+                string oglSerialized = OperacjeKlient.Odbierz();
+                var ogloszenia = JsonConvert.DeserializeObject<List<Ogloszenie>>(oglSerialized);
+                StronaOgloszenia.ListViewOgl.ItemsSource = ogloszenia;
+            }
+        }
+
+        private void ZatwierdzButton_Click(object sender, RoutedEventArgs e)
+        {
+            OperacjeKlient.Wyslij("EDYCJA OGLOSZENIA");
+            // potrzebuje przeslac id, tytul i tresc ogloszenia, ale zeby nie wysylac trzech danych oddzielnie to wysylam jeden obiekt
+            // a reszte danych podaje byle byly np. UzytkownikId = 9999
+            var ogloszenie = new Ogloszenie()
+            {
+                Id = StronaOgloszenia.idWybranegoOgloszenia,
+                Tytul = TextBoxTytulOgl.Text,
+                Data_utw = DateTime.Now,
+                Data_ed = DateTime.Now,
+                Tresc = TextBoxTrescOgl.Text,
+                UzytkownikId = 9999
+            };
+            string ogloszenieSerialized = JsonConvert.SerializeObject(ogloszenie, Formatting.Indented,
+            new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+            OperacjeKlient.Wyslij(ogloszenieSerialized);
+
+            string odpowiedz = OperacjeKlient.Odbierz();
+            if (odpowiedz == "zedytowano ogloszenie")
+            {
+                MessageBox.Show("Ogloszenie zostalo zedytowane!");
                 MainWindow.rama.Content = new StronaOgloszenia();
 
                 OperacjeKlient.Wyslij("OGLOSZENIA");

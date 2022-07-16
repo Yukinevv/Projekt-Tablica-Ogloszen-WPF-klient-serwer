@@ -48,15 +48,13 @@ namespace Klient
             // wyslanie ogloszenia do dodania
             OperacjeKlient.Wyslij("DODANIE OGLOSZENIA");
             OperacjeKlient.Wyslij(Logowanie.TextBoxLogowanie.Text);
-            string wiadomosc = OperacjeKlient.Odbierz();
-            int idUzytkownika = int.Parse(wiadomosc);
             var ogloszenie = new Ogloszenie()
             {
                 Tytul = TextBoxTytul.Text,
                 Data_utw = DateTime.Now,
                 Data_ed = DateTime.Now,
                 Tresc = TextBoxTresc.Text,
-                UzytkownikId = idUzytkownika
+                UzytkownikId = 9999 // podaje byle jakie, bo wlasciwe serwer sobie pobierze na podstawie loginu
             };
             string oglSerialized = JsonConvert.SerializeObject(ogloszenie, Formatting.Indented,
             new JsonSerializerSettings()
@@ -95,10 +93,6 @@ namespace Klient
                     var ogloszenia = JsonConvert.DeserializeObject<List<Ogloszenie>>(oglSerialized2);
                     StronaOgloszenia.ListViewOgl.ItemsSource = ogloszenia;
                 }
-            }
-            else
-            {
-                MessageBox.Show(odpowiedz);
             }
         }
     }

@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,8 @@ namespace Klient
     public partial class StronaOgloszenia : Page
     {
         public static ListView ListViewOgl;
+
+        public static int idWybranegoOgloszenia;
 
         public StronaOgloszenia()
         {
@@ -53,13 +56,31 @@ namespace Klient
             var ogloszenia = JsonConvert.DeserializeObject<List<Ogloszenie>>(oglSerialized);
             EdycjaOgloszenia.TextBoxTytulOgl.Text = ogloszenia[ListViewOgl.SelectedIndex].Tytul;
             EdycjaOgloszenia.TextBoxTrescOgl.Text = ogloszenia[ListViewOgl.SelectedIndex].Tresc;
+
+            // potrzebne do usuniecia wybranego ogloszenia
+            idWybranegoOgloszenia = ogloszenia[ListViewOgl.SelectedIndex].Id;
+
+            // sprawdzenie czy uzytkownik jest wlascicielem wybranego ogloszenia lub czy jest adminem
+            // jezeli NIE to ukrywam przyciski odpowiadajace za edycje i usuniecie ogloszenia
+            int idUzytkownika = ogloszenia[ListViewOgl.SelectedIndex].UzytkownikId;
+            OperacjeKlient.Wyslij("CZY MOZE EDYTOWAC");
+            OperacjeKlient.Wyslij(Logowanie.TextBoxLogowanie.Text);
+            OperacjeKlient.Odbierz();
+            OperacjeKlient.Wyslij(idUzytkownika.ToString());
+
+            string odpowiedz = OperacjeKlient.Odbierz();
+            if (odpowiedz == "NIE")
+            {
+                EdycjaOgloszenia.ZatwierdzEdycjeOgloszeniaButton.Visibility = Visibility.Hidden;
+                EdycjaOgloszenia.UsunOgloszenieButton.Visibility = Visibility.Hidden;
+            }
         }
 
         private void DodajOgloszenieButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow.rama.Content = new DodawanieOgloszen();
 
-            // wyswietlanie dostepnych kategorii w comboboxie
+            // wyswietlanie dostepnych kategorii w listboxie
             OperacjeKlient.Wyslij("KATEGORIE");
             string katSerialized = OperacjeKlient.Odbierz();
             var kategorie = JsonConvert.DeserializeObject<List<Kategoria>>(katSerialized);
