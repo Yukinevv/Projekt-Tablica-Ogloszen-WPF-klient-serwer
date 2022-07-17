@@ -26,18 +26,25 @@ namespace Klient
 
         public static int idKategorii;
 
+        public static Button UsunKatButton;
+
         public StronaGlowna()
         {
             InitializeComponent();
 
             ListViewKat = ListViewKategorie;
+            UsunKatButton = UsunKategorieButton;
         }
 
         private void ListViewKategorie_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             MainWindow.rama.Content = new StronaOgloszenia();
 
-            idKategorii = ListViewKat.SelectedIndex + 1;
+            OperacjeKlient.Wyslij("KATEGORIE");
+            string katSerialized = OperacjeKlient.Odbierz();
+            var kategorie = JsonConvert.DeserializeObject<List<Kategoria>>(katSerialized);
+
+            idKategorii = kategorie[ListViewKat.SelectedIndex].Id;
             OperacjeKlient.Wyslij("OGLOSZENIA");
             OperacjeKlient.Wyslij(idKategorii.ToString());
 
@@ -50,6 +57,77 @@ namespace Klient
         private void WylogujButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow.rama.Content = new Logowanie();
+        }
+
+        private void DodajKategorieButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (TextBoxNazwaNowejKategorii.Text == string.Empty)
+            {
+                MessageBox.Show("Nie wpisales nazwy kategorii!");
+                return;
+            }
+
+            OperacjeKlient.Wyslij("DODANIE KATEGORII");
+            var nowaKategoria = new Kategoria()
+            {
+                Id = 9999, // wlasciwe Id zostanie utworzone przy insercie do bazy
+                Nazwa = TextBoxNazwaNowejKategorii.Text,
+                Data_utw = DateTime.Now,
+                UzytkownikId = 9999 // serwer pobierze sobie wlasciwe na podstawie loginu zalogowanego uzytkownika, ktory wysylam
+            };
+            string kategoriaSerialized = JsonConvert.SerializeObject(nowaKategoria, Formatting.Indented,
+            new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+            OperacjeKlient.Wyslij(kategoriaSerialized);
+            OperacjeKlient.Wyslij(Logowanie.TextBoxLogowanie.Text);
+
+            string odpowiedz = OperacjeKlient.Odbierz();
+            if (odpowiedz == "Dodano")
+            {
+                MessageBox.Show("Dodano nowa kategorie o nazwie: " + TextBoxNazwaNowejKategorii.Text);
+
+                OperacjeKlient.Wyslij("KATEGORIE");
+                string katSerialized = OperacjeKlient.Odbierz();
+                var kategorie = JsonConvert.DeserializeObject<List<Kategoria>>(katSerialized);
+                ListViewKat.ItemsSource = kategorie;
+            }
+            else
+            {
+                MessageBox.Show(odpowiedz);
+            }
+        }
+
+        private void UsunKategorieButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (TextBoxNazwaNowejKategorii.Text == string.Empty)
+            {
+                MessageBox.Show("Nie wpisales nazwy kategorii!");
+                return;
+            }
+
+            OperacjeKlient.Wyslij("USUNIECIE KATEGORII");
+            OperacjeKlient.Wyslij(TextBoxNazwaNowejKategorii.Text);
+
+            string odpowiedz = OperacjeKlient.Odbierz();
+            if (odpowiedz == "usunieto")
+            {
+                MessageBox.Show("Kategoria zostala usunieta!");
+
+                OperacjeKlient.Wyslij("KATEGORIE");
+                string katSerialized = OperacjeKlient.Odbierz();
+                var kategorie = JsonConvert.DeserializeObject<List<Kategoria>>(katSerialized);
+                ListViewKat.ItemsSource = kategorie;
+            }
+            else if (odpowiedz == "nie usunieto")
+            {
+                MessageBox.Show("W kategorii znajduja sie ogloszenia. Nie moze zostac usunieta!");
+            }
+            else
+            {
+                MessageBox.Show("Taka kategoria nie istnieje! Prosze sprawdzic poprawnosc wpisanej nazwy.");
+            }
         }
     }
 }

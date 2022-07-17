@@ -96,6 +96,22 @@ namespace Serwer
                                 }
                             }
                         }
+                        else if (odKlienta == "CZY ADMIN")
+                        {
+                            string login = Odbierz();
+                            using (var context = new MyDbContext())
+                            {
+                                bool czyAdmin = context.Uzytkownicy.Any(u => u.Login == login && u.Uprawnienia == "admin");
+                                if (czyAdmin)
+                                {
+                                    Wyslij("admin");
+                                }
+                                else
+                                {
+                                    Wyslij("nie admin");
+                                }
+                            }
+                        }
                         else if (odKlienta == "KATEGORIE")
                         {
                             using (var context = new MyDbContext())
@@ -103,6 +119,70 @@ namespace Serwer
                                 var kategorie = context.Kategorie.ToList();
                                 string katSerialized = JsonConvert.SerializeObject(kategorie);
                                 Wyslij(katSerialized);
+                            }
+                        }
+                        else if (odKlienta == "DODANIE KATEGORII")
+                        {
+                            string kategoriaSerialized = Odbierz();
+                            var kategoriaOdKlienta = JsonConvert.DeserializeObject<Kategoria>(kategoriaSerialized);
+                            string login = Odbierz();
+
+                            using (var context = new MyDbContext())
+                            {
+                                bool czyDodac = context.Kategorie.Any(k => k.Nazwa == kategoriaOdKlienta.Nazwa);
+                                if (!czyDodac)
+                                {
+                                    int idUzytkownika = context.Uzytkownicy.Where(u => u.Login == login).Select(u => u.Id).FirstOrDefault();
+                                    var nowaKategoria = new Kategoria()
+                                    {
+                                        Nazwa = kategoriaOdKlienta.Nazwa,
+                                        Data_utw = DateTime.Now,
+                                        UzytkownikId = idUzytkownika
+                                    };
+                                    context.Kategorie.Add(nowaKategoria);
+                                    context.SaveChanges();
+
+                                    Wyslij("Dodano");
+                                }
+                                else
+                                {
+                                    string komunikat = "Kategoria o podanej nazwie juz istnieje! Prosze podac inna nazwe.";
+                                    Wyslij(komunikat);
+                                }             
+                            }
+                        }
+                        else if (odKlienta == "USUNIECIE KATEGORII")
+                        {
+                            string nazwaKategorii = Odbierz();
+
+                            using (var context = new MyDbContext())
+                            {
+                                // sprawdzam czy kategoria o podanej przez klienta nazwie znajduje sie w bazie
+                                bool czyKategoriaIstnieje = context.Kategorie.Any(k => k.Nazwa == nazwaKategorii);
+
+                                if (czyKategoriaIstnieje)
+                                {
+                                    int idKategorii = context.Kategorie.Where(k => k.Nazwa == nazwaKategorii).Select(k => k.Id).FirstOrDefault();
+                                    // sprawdzam czy w usuwanej kategorii znajduja sie jakies ogloszenia, jezeli nie to usuwam kategorie
+                                    bool czyMogeUsunac = context.OgloszeniaKategorie.Any(ok => ok.KategoriaId == idKategorii);
+
+                                    if (!czyMogeUsunac)
+                                    {
+                                        var kategoria = context.Kategorie.Where(k => k.Nazwa == nazwaKategorii).FirstOrDefault();
+                                        context.Kategorie.Remove(kategoria);
+                                        context.SaveChanges();
+
+                                        Wyslij("usunieto");
+                                    }
+                                    else
+                                    {
+                                        Wyslij("nie usunieto");
+                                    }
+                                }
+                                else
+                                {
+                                    Wyslij("nie ma takiej kategorii");
+                                } 
                             }
                         }
                         else if (odKlienta == "OGLOSZENIA")

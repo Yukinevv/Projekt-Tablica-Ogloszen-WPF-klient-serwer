@@ -9,7 +9,7 @@
       Title="StronaGlowna">
 
     <Grid>
-        <ListView x:Name="ListViewKategorie" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="68,10,68,155" MouseDoubleClick="ListViewKategorie_MouseDoubleClick" >
+        <ListView x:Name="ListViewKategorie" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="68,61,68,104" MouseDoubleClick="ListViewKategorie_MouseDoubleClick" >
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
@@ -20,6 +20,10 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button x:Name="WylogujButton" Content="Wyloguj" HorizontalAlignment="Center" Margin="0,311,0,0" VerticalAlignment="Top" Height="42" Width="164" Click="WylogujButton_Click"/>
+        <Button x:Name="WylogujButton" Content="Wyloguj" HorizontalAlignment="Center" Margin="0,351,0,0" VerticalAlignment="Top" Height="42" Width="164" Click="WylogujButton_Click"/>
+        <Button x:Name="DodajKategorieButton" Content="Dodaj kategorie" HorizontalAlignment="Left" Margin="598,10,0,0" VerticalAlignment="Top" Height="42" Width="134" Click="DodajKategorieButton_Click"/>
+        <Button x:Name="UsunKategorieButton" Content="Usun kategorie" HorizontalAlignment="Left" Margin="598,351,0,0" VerticalAlignment="Top" Height="42" Width="134" Click="UsunKategorieButton_Click"/>
+        <TextBox x:Name="TextBoxNazwaNowejKategorii" HorizontalAlignment="Left" Margin="395,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="172" Height="42"/>
+        <Label Content="Wpisz nazwę kategorii:" HorizontalAlignment="Left" Margin="254,10,0,0" VerticalAlignment="Top" Height="42" Width="141"/>
     </Grid>
 </Page>

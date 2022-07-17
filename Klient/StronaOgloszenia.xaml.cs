@@ -42,6 +42,12 @@ namespace Klient
             string katSerialized = OperacjeKlient.Odbierz();
             var kategorie = JsonConvert.DeserializeObject<List<Kategoria>>(katSerialized);
             StronaGlowna.ListViewKat.ItemsSource = kategorie;
+
+            // sprawdzenie czy uzytkownik ma uprawnienia administratora
+            if (Logowanie.czyAdmin == "nie admin")
+            {
+                StronaGlowna.UsunKatButton.Visibility = Visibility.Hidden;
+            }
         }
 
         private void ListViewOgloszenia_MouseDoubleClick(object sender, MouseButtonEventArgs e)
