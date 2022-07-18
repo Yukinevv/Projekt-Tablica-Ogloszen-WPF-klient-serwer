@@ -28,38 +28,15 @@ namespace Klient
             rama.Content = new Logowanie();
 
             OperacjeKlient.PolaczZSerwerem();
-
-            // --------------------------roboczo------------------------------
-
-            //OperacjeKlient.Wyslij("UZYTKOWNICY");
-
-            // wszyscy na raz
-            //string uzytkownicySerialized = OperacjeKlient.Odbierz();
-            //var uzytkownicy = JsonConvert.DeserializeObject<List<Uzytkownik>>(uzytkownicySerialized);
-            //foreach (var item in uzytkownicy)
-            //{
-            //    Logowanie.TextBoxInfo.Text += "Login: " + item.Login + "  Hasło: " + item.Haslo + "\n";
-            //}   
-
-            // pojedynczo kazdy uzytkownik
-            //string odpowiedz = OperacjeKlient.Odbierz();
-            //int ileUzytkownikow = int.Parse(odpowiedz);
-            //for (int i = 0; i < ileUzytkownikow; i++)
-            //{
-            //    string uzytkownikSerialized = OperacjeKlient.Odbierz();
-            //    var uzytkownik = JsonConvert.DeserializeObject<Uzytkownik>(uzytkownikSerialized);
-            //    Logowanie.TextBoxInfo.Text += "Login: " + uzytkownik.Login + "  Hasło: " + uzytkownik.Haslo + "\n";
-            //}
-
-            // tylko jeden
-            //string uzytkownikSerialized = OperacjeKlient.Odbierz();
-            //var uzytkownik = JsonConvert.DeserializeObject<Uzytkownik>(uzytkownikSerialized);
-            //Logowanie.TextBoxInfo.Text += "Login: " + uzytkownik.Login + "  Hasło: " + uzytkownik.Haslo + "\n";
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             OperacjeKlient.clientSocket.Close();
+            if (StronaGlowna.CzyPanelAdminaOtwarty)
+            {
+                StronaGlowna.PanelAdmina.Close();
+            } 
         }
     }
 }

@@ -26,7 +26,13 @@ namespace Klient
 
         public static int idKategorii;
 
-        public static Button UsunKatButton;
+        public static PanelAdmina PanelAdmina;
+
+        public static bool CzyPanelAdminaOtwarty;
+
+        public static string czyAdmin;
+
+        private static List<Kategoria> Kategorie_kopia;
 
         private static bool posortowano = false;
 
@@ -35,7 +41,22 @@ namespace Klient
             InitializeComponent();
 
             ListViewKat = ListViewKategorie;
-            UsunKatButton = UsunKategorieButton;
+
+            // sprawdzenie czy uzytkownik ma uprawnienia administratora
+            OperacjeKlient.Wyslij("CZY ADMIN");
+            OperacjeKlient.Wyslij(Logowanie.TextBoxLogowanie.Text);
+            czyAdmin = OperacjeKlient.Odbierz();
+            if (czyAdmin == "nie admin")
+            {
+                UsunKategorieButton.Visibility = Visibility.Hidden;
+                PanelAdministracyjnyButton.Visibility = Visibility.Hidden;
+            }
+
+            OperacjeKlient.Wyslij("KATEGORIE");
+            string katSerialized = OperacjeKlient.Odbierz();
+            var kategorie = JsonConvert.DeserializeObject<List<Kategoria>>(katSerialized);
+            ListViewKat.ItemsSource = kategorie;
+            Kategorie_kopia = kategorie;
         }
 
         private void ListViewKategorie_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -45,22 +66,20 @@ namespace Klient
                 return;
             }
 
-            MainWindow.rama.Content = new StronaOgloszenia();
-
             var kategorie = (List<Kategoria>)ListViewKat.ItemsSource;
             idKategorii = kategorie[ListViewKat.SelectedIndex].Id;
 
-            OperacjeKlient.Wyslij("OGLOSZENIA");
-            OperacjeKlient.Wyslij(idKategorii.ToString());
-            string oglSerialized = OperacjeKlient.Odbierz();
-            var ogloszenia = JsonConvert.DeserializeObject<List<Ogloszenie>>(oglSerialized);
-
-            StronaOgloszenia.ListViewOgl.ItemsSource = ogloszenia;
+            MainWindow.rama.Content = new StronaOgloszenia();
         }
 
         private void WylogujButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow.rama.Content = new Logowanie();
+            if (CzyPanelAdminaOtwarty)
+            {
+                PanelAdmina.Close();
+                CzyPanelAdminaOtwarty = false;
+            }
         }
 
         private void DodajKategorieButton_Click(object sender, RoutedEventArgs e)
@@ -154,6 +173,7 @@ namespace Klient
                     kategorie = kategorie.OrderBy(k => k.Data_utw).ToList();
                 }
                 ListViewKat.ItemsSource = kategorie;
+                Kategorie_kopia = kategorie;
                 posortowano = true;
             }
             else
@@ -171,6 +191,7 @@ namespace Klient
                     kategorie = kategorie.OrderByDescending(k => k.Data_utw).ToList();
                 }
                 ListViewKat.ItemsSource = kategorie;
+                Kategorie_kopia = kategorie;
                 posortowano = false;
             }
         }
@@ -180,9 +201,7 @@ namespace Klient
             var kategorie = (List<Kategoria>)ListViewKat.ItemsSource;
             if (TextBoxFilter.Text == string.Empty)
             {
-                OperacjeKlient.Wyslij("KATEGORIE");
-                string katSerialized = OperacjeKlient.Odbierz();
-                kategorie = JsonConvert.DeserializeObject<List<Kategoria>>(katSerialized);
+                kategorie = Kategorie_kopia;
             }
             else
             {
@@ -204,6 +223,13 @@ namespace Klient
             //        return filterObject.Nazwa.Contains(TextBoxFilter.Text);
             //    };
             //}
+        }
+
+        private void PanelAdministracyjnyButton_Click(object sender, RoutedEventArgs e)
+        {
+            PanelAdmina = new PanelAdmina();
+            PanelAdmina.Show();
+            CzyPanelAdminaOtwarty = true;
         }
     }
 }

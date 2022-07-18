@@ -34,17 +34,16 @@ namespace Klient
         private void PowrotButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow.rama.Content = new StronaOgloszenia();
-
-            OperacjeKlient.Wyslij("OGLOSZENIA");
-            OperacjeKlient.Wyslij(StronaGlowna.idKategorii.ToString());
-
-            string oglSerialized = OperacjeKlient.Odbierz();
-            var ogloszenia = JsonConvert.DeserializeObject<List<Ogloszenie>>(oglSerialized);
-            StronaOgloszenia.ListViewOgl.ItemsSource = ogloszenia;
         }
 
         private void ZatwierdzButton_Click(object sender, RoutedEventArgs e)
         {
+            if (TextBoxTytul.Text == string.Empty || TextBoxTresc.Text == string.Empty || ListBoxKat.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Uzupełnij wszystkie pola!");
+                return;
+            }
+
             // wyslanie ogloszenia do dodania
             OperacjeKlient.Wyslij("DODANIE OGLOSZENIA");
             OperacjeKlient.Wyslij(Logowanie.TextBoxLogowanie.Text);

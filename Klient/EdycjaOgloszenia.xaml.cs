@@ -44,13 +44,6 @@ namespace Klient
         private void PowrótButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow.rama.Content = new StronaOgloszenia();
-
-            OperacjeKlient.Wyslij("OGLOSZENIA");
-            OperacjeKlient.Wyslij(StronaGlowna.idKategorii.ToString());
-
-            string oglSerialized = OperacjeKlient.Odbierz();
-            var ogloszenia = JsonConvert.DeserializeObject<List<Ogloszenie>>(oglSerialized);
-            StronaOgloszenia.ListViewOgl.ItemsSource = ogloszenia;
         }
 
         private void UsunButton_Click(object sender, RoutedEventArgs e)
@@ -62,18 +55,23 @@ namespace Klient
             {
                 MessageBox.Show("Ogloszenie zostalo usuniete (ze wszystkich kategorii)!");
                 MainWindow.rama.Content = new StronaOgloszenia();
-
-                OperacjeKlient.Wyslij("OGLOSZENIA");
-                OperacjeKlient.Wyslij(StronaGlowna.idKategorii.ToString());
-
-                string oglSerialized = OperacjeKlient.Odbierz();
-                var ogloszenia = JsonConvert.DeserializeObject<List<Ogloszenie>>(oglSerialized);
-                StronaOgloszenia.ListViewOgl.ItemsSource = ogloszenia;
             }
         }
 
         private void ZatwierdzButton_Click(object sender, RoutedEventArgs e)
         {
+            if (TextBoxTytulOgl.Text == string.Empty || TextBoxTrescOgl.Text == string.Empty)
+            {
+                MessageBox.Show("Uzupełnij wszystkie pola!");
+                return;
+            }
+            else if (TextBoxTytulOgl.Text == StronaOgloszenia.TytulWybranegoOgloszenia &&
+                TextBoxTrescOgl.Text == StronaOgloszenia.TrescWybranegoOgloszenia)
+            {
+                MessageBox.Show("Nie zostały dokonane żadne zmiany!");
+                return;
+            }
+
             OperacjeKlient.Wyslij("EDYCJA OGLOSZENIA");
             // potrzebuje przeslac id, tytul i tresc ogloszenia, ale zeby nie wysylac trzech danych oddzielnie to wysylam jeden obiekt
             // a reszte danych podaje byle byly np. UzytkownikId = 9999
@@ -98,13 +96,6 @@ namespace Klient
             {
                 MessageBox.Show("Ogloszenie zostalo zedytowane!");
                 MainWindow.rama.Content = new StronaOgloszenia();
-
-                OperacjeKlient.Wyslij("OGLOSZENIA");
-                OperacjeKlient.Wyslij(StronaGlowna.idKategorii.ToString());
-
-                string oglSerialized = OperacjeKlient.Odbierz();
-                var ogloszenia = JsonConvert.DeserializeObject<List<Ogloszenie>>(oglSerialized);
-                StronaOgloszenia.ListViewOgl.ItemsSource = ogloszenia;
             }
         }
     }

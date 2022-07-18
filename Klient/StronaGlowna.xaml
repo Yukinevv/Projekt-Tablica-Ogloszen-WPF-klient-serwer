@@ -39,5 +39,6 @@
         <Label Content="Wpisz nazwę kategorii:" HorizontalAlignment="Left" Margin="254,10,0,0" VerticalAlignment="Top" Height="42" Width="141"/>
         <TextBox x:Name="TextBoxFilter" HorizontalAlignment="Left" Margin="101,12,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" Height="38" TextChanged="TextBoxFilter_TextChanged"/>
         <Label Content="Szukaj:" HorizontalAlignment="Left" Margin="48,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.484,-0.069" Height="38" Width="48"/>
+        <Button x:Name="PanelAdministracyjnyButton" Content="Panel administracyjny" HorizontalAlignment="Left" Margin="68,351,0,0" VerticalAlignment="Top" Height="42" Width="144" Click="PanelAdministracyjnyButton_Click"/>
     </Grid>
 </Page>

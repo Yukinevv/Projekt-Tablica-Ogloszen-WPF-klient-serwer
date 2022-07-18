@@ -66,46 +66,7 @@ namespace Serwer
                     {
                         string odKlienta = Odbierz();
 
-                        if (odKlienta == "UZYTKOWNICY")
-                        {
-                            using (var context = new MyDbContext())
-                            {
-                                var uzytkownicy = context.Uzytkownicy.Where(u => u.Id <= 7).ToList();
-
-                                // wszyscy na raz
-                                string uzytkownicySerialized = JsonConvert.SerializeObject(uzytkownicy, Formatting.Indented,
-                                new JsonSerializerSettings()
-                                {
-                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                                });
-                                Wyslij(uzytkownicySerialized);
-
-                                // --------------------------roboczo------------------------------
-
-                                //pojedynczo kazdy uzytkownik
-                                //int ileUzytkownikow = context.Uzytkownicy.Count();
-                                //Wyslij(ileUzytkownikow.ToString());
-                                //for (int i = 0; i < ileUzytkownikow; i++)
-                                //{
-                                //    string uzytkownikSerialized = JsonConvert.SerializeObject(uzytkownicy[i], Formatting.Indented,
-                                //    new JsonSerializerSettings()
-                                //    {
-                                //        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                                //    });
-                                //    Wyslij(uzytkownikSerialized);
-                                //}
-
-                                // tylko jeden
-                                //var uzytkownik = context.Uzytkownicy.FirstOrDefault(u => u.Login == "kamal");
-                                //string uzytkownikSerialized = JsonConvert.SerializeObject(uzytkownik, Formatting.Indented,
-                                //new JsonSerializerSettings()
-                                //{
-                                //    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                                //});
-                                //Wyslij(uzytkownikSerialized);
-                            }
-                        }
-                        else if (odKlienta == "REJESTRACJA")
+                        if (odKlienta == "REJESTRACJA")
                         {
                             string zserializowanyObiekt = Odbierz();
                             var obiekt = JsonConvert.DeserializeObject<Uzytkownik>(zserializowanyObiekt);
@@ -345,6 +306,64 @@ namespace Serwer
                                 else
                                 {
                                     Wyslij("NIE");
+                                }
+                            }
+                        }
+                        else if (odKlienta == "UZYTKOWNICY")
+                        {
+                            string login = Odbierz();
+                            using (var context = new MyDbContext())
+                            {
+                                var uzytkownicy = context.Uzytkownicy.Where(u => u.Login != login).ToList();
+                                string uzytkownicySerialized = JsonConvert.SerializeObject(uzytkownicy, Formatting.Indented,
+                                new JsonSerializerSettings()
+                                {
+                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                });
+                                Wyslij(uzytkownicySerialized);
+                            }
+                        }
+                        else if (odKlienta == "AWANS UZYTKOWNIKA")
+                        {
+                            string login = Odbierz();
+
+                            using (var context = new MyDbContext())
+                            {
+                                var uzytkownik = context.Uzytkownicy.FirstOrDefault(u => u.Login == login);
+
+                                if (uzytkownik.Uprawnienia == "uzytkownik")
+                                {
+                                    uzytkownik.Uprawnienia = "admin";
+                                    context.SaveChanges();
+
+                                    Wyslij("awansowano");
+                                }
+                                else
+                                {
+                                    string komunikat = "Uzytkownik juz jest administratorem!";
+                                    Wyslij(komunikat);
+                                }
+                            } 
+                        }
+                        else if (odKlienta == "ZDEGRADOWANIE UZYTKOWNIKA")
+                        {
+                            string login = Odbierz();
+
+                            using (var context = new MyDbContext())
+                            {
+                                var uzytkownik = context.Uzytkownicy.FirstOrDefault(u => u.Login == login);
+
+                                if (uzytkownik.Uprawnienia == "admin")
+                                {
+                                    uzytkownik.Uprawnienia = "uzytkownik";
+                                    context.SaveChanges();
+
+                                    Wyslij("zdegradowano");
+                                }
+                                else
+                                {
+                                    string komunikat = "Uzytkownik jest juz zwyklym uzytkownikiem!";
+                                    Wyslij(komunikat);
                                 }
                             }
                         }

@@ -14,14 +14,14 @@
             <ColumnDefinition Width="403*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="73*"/>
             <RowDefinition Height="77*"/>
+            <RowDefinition Height="73*"/>
         </Grid.RowDefinitions>
-        <TextBox x:Name="TextBoxLogin" Text="jank2" HorizontalAlignment="Left" Margin="326,110,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="148" Height="34" Grid.ColumnSpan="2"/>
-        <PasswordBox x:Name="PassBoxHaslo" Password="qwerty123" HorizontalAlignment="Left" Margin="326,208,0,0" VerticalAlignment="Top" Width="148" Height="34" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
-        <Button x:Name="LogowanieButton" Content="Zaloguj sie" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Height="47" Width="151" Margin="189,0,0,0" Click="LogowanieButton_Click"/>
-        <Button x:Name="RejestracjaButton" Content="Zarejestruj sie" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Height="47" Width="151" Grid.Column="1" Click="RejestracjaButton_Click" Margin="53,0,0,0"/>
-        <Label Content="Login" HorizontalAlignment="Left" Margin="326,66,0,0" VerticalAlignment="Top" Width="148" Grid.ColumnSpan="2"/>
-        <Label Content="Hasło" HorizontalAlignment="Left" Margin="326,170,0,0" VerticalAlignment="Top" Width="148" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="TextBoxLogin" Text="jank2" HorizontalAlignment="Left" Margin="326,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="148" Height="34" Grid.ColumnSpan="2"/>
+        <PasswordBox x:Name="PassBoxHaslo" Password="qwerty123" HorizontalAlignment="Left" Margin="326,169,0,0" VerticalAlignment="Top" Width="148" Height="34" Grid.ColumnSpan="2"/>
+        <Button x:Name="LogowanieButton" Content="Zaloguj sie" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Height="48" Width="152" Margin="198,27,0,0" Click="LogowanieButton_Click"/>
+        <Button x:Name="RejestracjaButton" Content="Zarejestruj sie" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Height="47" Width="150" Grid.Column="1" Click="RejestracjaButton_Click" Margin="51,28,0,0"/>
+        <Label Content="Login" HorizontalAlignment="Left" Margin="326,49,0,0" VerticalAlignment="Top" Width="148" Grid.ColumnSpan="2" Height="26"/>
+        <Label Content="Hasło" HorizontalAlignment="Left" Margin="326,138,0,0" VerticalAlignment="Top" Width="148" Grid.ColumnSpan="2" Height="26"/>
     </Grid>
 </Page>

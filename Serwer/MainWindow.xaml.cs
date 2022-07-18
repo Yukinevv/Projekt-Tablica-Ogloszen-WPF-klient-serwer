@@ -26,25 +26,7 @@ namespace Serwer
             {
                 StartoweDane startoweDane = new StartoweDane(context);
                 startoweDane.DodajStartoweDane();
-
-                // roboczo
-                //var uzytkownik = context.Uzytkownicy.Where(u => u.Login == "arturn").FirstOrDefault();
-                //uzytkownik.Uprawnienia = "admin";
-                //context.SaveChanges();
-
-                // roboczo
-                //var ogloszenie = context.Ogloszenia.OrderBy(o => o.Id).Last();
-                //context.Ogloszenia.Remove(ogloszenie);
-                //context.SaveChanges();
             }
-
-            // roboczo
-            //using (var context = new MyDbContext())
-            //{
-            //    var uzytkownicy = context.Uzytkownicy.Where(u => u.Id > 0 && u.Id <= 2);
-            //    context.Uzytkownicy.RemoveRange(uzytkownicy);
-            //    context.SaveChanges();
-            //}
         }
 
         private void SerwerONButton_Click(object sender, RoutedEventArgs e)

@@ -25,7 +25,13 @@ namespace Klient
     {
         public static ListView ListViewOgl;
 
+        public static string TytulWybranegoOgloszenia;
+
+        public static string TrescWybranegoOgloszenia;
+
         public static int idWybranegoOgloszenia;
+
+        private static List<Ogloszenie> Ogloszenia_kopia;
 
         private static bool posortowano = false;
 
@@ -34,22 +40,18 @@ namespace Klient
             InitializeComponent();
 
             ListViewOgl = ListViewOgloszenia;
+
+            OperacjeKlient.Wyslij("OGLOSZENIA");
+            OperacjeKlient.Wyslij(StronaGlowna.idKategorii.ToString());
+            string oglSerialized = OperacjeKlient.Odbierz();
+            var ogloszenia = JsonConvert.DeserializeObject<List<Ogloszenie>>(oglSerialized);
+            ListViewOgl.ItemsSource = ogloszenia;
+            Ogloszenia_kopia = ogloszenia;
         }
 
         private void PowrotButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow.rama.Content = new StronaGlowna();
-
-            OperacjeKlient.Wyslij("KATEGORIE");
-            string katSerialized = OperacjeKlient.Odbierz();
-            var kategorie = JsonConvert.DeserializeObject<List<Kategoria>>(katSerialized);
-            StronaGlowna.ListViewKat.ItemsSource = kategorie;
-
-            // sprawdzenie czy uzytkownik ma uprawnienia administratora
-            if (Logowanie.czyAdmin == "nie admin")
-            {
-                StronaGlowna.UsunKatButton.Visibility = Visibility.Hidden;
-            }
         }
 
         private void ListViewOgloszenia_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -65,6 +67,10 @@ namespace Klient
             var ogloszenia = (List<Ogloszenie>)ListViewOgl.ItemsSource;
             EdycjaOgloszenia.TextBoxTytulOgl.Text = ogloszenia[ListViewOgl.SelectedIndex].Tytul;
             EdycjaOgloszenia.TextBoxTrescOgl.Text = ogloszenia[ListViewOgl.SelectedIndex].Tresc;
+
+            // potrzebne do weryfikacji zmian przy edycji ogloszenia
+            TytulWybranegoOgloszenia = ogloszenia[ListViewOgl.SelectedIndex].Tytul;
+            TrescWybranegoOgloszenia = ogloszenia[ListViewOgl.SelectedIndex].Tresc;
 
             // potrzebne do usuniecia wybranego ogloszenia
             idWybranegoOgloszenia = ogloszenia[ListViewOgl.SelectedIndex].Id;
@@ -82,6 +88,8 @@ namespace Klient
             {
                 EdycjaOgloszenia.ZatwierdzEdycjeOgloszeniaButton.Visibility = Visibility.Hidden;
                 EdycjaOgloszenia.UsunOgloszenieButton.Visibility = Visibility.Hidden;
+                EdycjaOgloszenia.TextBoxTytulOgl.IsReadOnly = true;
+                EdycjaOgloszenia.TextBoxTrescOgl.IsReadOnly = true;
             }
         }
 
@@ -109,58 +117,60 @@ namespace Klient
             {
                 if (kolumna.Tag.ToString() == "Id")
                 {
-                    ogloszenia = ogloszenia.OrderBy(k => k.Id).ToList();
+                    ogloszenia = ogloszenia.OrderBy(o => o.Id).ToList();
                 }
                 else if (kolumna.Tag.ToString() == "UzytkownikId")
                 {
-                    ogloszenia = ogloszenia.OrderBy(k => k.UzytkownikId).ToList();
+                    ogloszenia = ogloszenia.OrderBy(o => o.UzytkownikId).ToList();
                 }
                 else if (kolumna.Tag.ToString() == "Tytul")
                 {
-                    ogloszenia = ogloszenia.OrderBy(k => k.Tytul).ToList();
+                    ogloszenia = ogloszenia.OrderBy(o => o.Tytul).ToList();
                 }
                 else if (kolumna.Tag.ToString() == "Data_utw")
                 {
-                    ogloszenia = ogloszenia.OrderBy(k => k.Data_utw).ToList();
+                    ogloszenia = ogloszenia.OrderBy(o => o.Data_utw).ToList();
                 }
                 else if (kolumna.Tag.ToString() == "Data_ed")
                 {
-                    ogloszenia = ogloszenia.OrderBy(k => k.Data_ed).ToList();
+                    ogloszenia = ogloszenia.OrderBy(o => o.Data_ed).ToList();
                 }
                 else if (kolumna.Tag.ToString() == "Tresc")
                 {
-                    ogloszenia = ogloszenia.OrderBy(k => k.Tresc).ToList();
+                    ogloszenia = ogloszenia.OrderBy(o => o.Tresc).ToList();
                 }
                 ListViewOgl.ItemsSource = ogloszenia;
+                Ogloszenia_kopia = ogloszenia;
                 posortowano = true;
             }
             else
             {
                 if (kolumna.Tag.ToString() == "Id")
                 {
-                    ogloszenia = ogloszenia.OrderByDescending(k => k.Id).ToList();
+                    ogloszenia = ogloszenia.OrderByDescending(o => o.Id).ToList();
                 }
                 else if (kolumna.Tag.ToString() == "UzytkownikId")
                 {
-                    ogloszenia = ogloszenia.OrderByDescending(k => k.UzytkownikId).ToList();
+                    ogloszenia = ogloszenia.OrderByDescending(o => o.UzytkownikId).ToList();
                 }
                 else if (kolumna.Tag.ToString() == "Tytul")
                 {
-                    ogloszenia = ogloszenia.OrderByDescending(k => k.Tytul).ToList();
+                    ogloszenia = ogloszenia.OrderByDescending(o => o.Tytul).ToList();
                 }
                 else if (kolumna.Tag.ToString() == "Data_utw")
                 {
-                    ogloszenia = ogloszenia.OrderByDescending(k => k.Data_utw).ToList();
+                    ogloszenia = ogloszenia.OrderByDescending(o => o.Data_utw).ToList();
                 }
                 else if (kolumna.Tag.ToString() == "Data_ed")
                 {
-                    ogloszenia = ogloszenia.OrderByDescending(k => k.Data_ed).ToList();
+                    ogloszenia = ogloszenia.OrderByDescending(o => o.Data_ed).ToList();
                 }
                 else if (kolumna.Tag.ToString() == "Tresc")
                 {
-                    ogloszenia = ogloszenia.OrderByDescending(k => k.Tresc).ToList();
+                    ogloszenia = ogloszenia.OrderByDescending(o => o.Tresc).ToList();
                 }
                 ListViewOgl.ItemsSource = ogloszenia;
+                Ogloszenia_kopia = ogloszenia;
                 posortowano = false;
             }
         }
@@ -170,10 +180,7 @@ namespace Klient
             var ogloszenia = (List<Ogloszenie>)ListViewOgl.ItemsSource;
             if (TextBoxFilter.Text == string.Empty)
             {
-                OperacjeKlient.Wyslij("OGLOSZENIA");
-                OperacjeKlient.Wyslij(StronaGlowna.idKategorii.ToString());
-                string oglSerialized = OperacjeKlient.Odbierz();
-                ogloszenia = JsonConvert.DeserializeObject<List<Ogloszenie>>(oglSerialized);
+                ogloszenia = Ogloszenia_kopia;
             }
             else
             {

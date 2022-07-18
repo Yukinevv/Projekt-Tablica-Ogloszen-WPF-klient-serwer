@@ -22,8 +22,6 @@ namespace Klient
     {
         public static TextBox TextBoxLogowanie;
 
-        public static string czyAdmin;
-
         public Logowanie()
         {
             InitializeComponent();
@@ -60,20 +58,6 @@ namespace Klient
             if (czyZalogowac == "true")
             {
                 MainWindow.rama.Content = new StronaGlowna();
-
-                OperacjeKlient.Wyslij("KATEGORIE");
-                string katSerialized = OperacjeKlient.Odbierz();
-                var kategorie = JsonConvert.DeserializeObject<List<Kategoria>>(katSerialized);
-                StronaGlowna.ListViewKat.ItemsSource = kategorie;
-
-                // sprawdzenie czy uzytkownik ma uprawnienia administratora
-                OperacjeKlient.Wyslij("CZY ADMIN");
-                OperacjeKlient.Wyslij(TextBoxLogowanie.Text);
-                czyAdmin = OperacjeKlient.Odbierz();
-                if (czyAdmin == "nie admin")
-                {
-                    StronaGlowna.UsunKatButton.Visibility = Visibility.Hidden;
-                }
             }
             else
             {

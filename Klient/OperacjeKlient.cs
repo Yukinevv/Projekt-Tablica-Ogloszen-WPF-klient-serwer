@@ -34,7 +34,7 @@ namespace Klient
 
         public static string Odbierz()
         {
-            var buffer = new byte[2048];
+            var buffer = new byte[100000];
             int received = clientSocket.Receive(buffer, SocketFlags.None); // odebranie zserializowanych danych od serwera
             if (received == 0)
             {
