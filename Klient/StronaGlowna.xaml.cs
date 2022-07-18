@@ -28,6 +28,8 @@ namespace Klient
 
         public static Button UsunKatButton;
 
+        private static bool posortowano = false;
+
         public StronaGlowna()
         {
             InitializeComponent();
@@ -38,16 +40,18 @@ namespace Klient
 
         private void ListViewKategorie_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            if (ListViewKat.SelectedItem == null)
+            {
+                return;
+            }
+
             MainWindow.rama.Content = new StronaOgloszenia();
 
-            OperacjeKlient.Wyslij("KATEGORIE");
-            string katSerialized = OperacjeKlient.Odbierz();
-            var kategorie = JsonConvert.DeserializeObject<List<Kategoria>>(katSerialized);
-
+            var kategorie = (List<Kategoria>)ListViewKat.ItemsSource;
             idKategorii = kategorie[ListViewKat.SelectedIndex].Id;
+
             OperacjeKlient.Wyslij("OGLOSZENIA");
             OperacjeKlient.Wyslij(idKategorii.ToString());
-
             string oglSerialized = OperacjeKlient.Odbierz();
             var ogloszenia = JsonConvert.DeserializeObject<List<Ogloszenie>>(oglSerialized);
 
@@ -128,6 +132,78 @@ namespace Klient
             {
                 MessageBox.Show("Taka kategoria nie istnieje! Prosze sprawdzic poprawnosc wpisanej nazwy.");
             }
+        }
+
+        private void GridViewColumnHeader_Click(object sender, RoutedEventArgs e)
+        {
+            var kolumna = (sender as GridViewColumnHeader);
+            var kategorie = (List<Kategoria>)ListViewKat.ItemsSource;
+
+            if (posortowano == false)
+            {
+                if (kolumna.Tag.ToString() == "Id")
+                {
+                    kategorie = kategorie.OrderBy(k => k.Id).ToList();
+                }
+                else if (kolumna.Tag.ToString() == "Nazwa")
+                {
+                    kategorie = kategorie.OrderBy(k => k.Nazwa).ToList();
+                }
+                else if (kolumna.Tag.ToString() == "Data_utw")
+                {
+                    kategorie = kategorie.OrderBy(k => k.Data_utw).ToList();
+                }
+                ListViewKat.ItemsSource = kategorie;
+                posortowano = true;
+            }
+            else
+            {
+                if (kolumna.Tag.ToString() == "Id")
+                {
+                    kategorie = kategorie.OrderByDescending(k => k.Id).ToList();
+                }
+                else if (kolumna.Tag.ToString() == "Nazwa")
+                {
+                    kategorie = kategorie.OrderByDescending(k => k.Nazwa).ToList();
+                }
+                else if (kolumna.Tag.ToString() == "Data_utw")
+                {
+                    kategorie = kategorie.OrderByDescending(k => k.Data_utw).ToList();
+                }
+                ListViewKat.ItemsSource = kategorie;
+                posortowano = false;
+            }
+        }
+
+        private void TextBoxFilter_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var kategorie = (List<Kategoria>)ListViewKat.ItemsSource;
+            if (TextBoxFilter.Text == string.Empty)
+            {
+                OperacjeKlient.Wyslij("KATEGORIE");
+                string katSerialized = OperacjeKlient.Odbierz();
+                kategorie = JsonConvert.DeserializeObject<List<Kategoria>>(katSerialized);
+            }
+            else
+            {
+                kategorie = kategorie.Where(k => k.Nazwa.Contains(TextBoxFilter.Text)).ToList();
+            }
+            ListViewKat.ItemsSource = kategorie;
+
+
+            // roboczo
+            //if (TextBoxFilter.Text == null)
+            //{
+            //    ListViewKat.Items.Filter = null;
+            //}
+            //else
+            //{
+            //    ListViewKat.Items.Filter = (sender) =>
+            //    {
+            //        var filterObject = sender as Kategoria;
+            //        return filterObject.Nazwa.Contains(TextBoxFilter.Text);
+            //    };
+            //}
         }
     }
 }

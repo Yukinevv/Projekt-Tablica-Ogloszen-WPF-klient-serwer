@@ -27,6 +27,8 @@ namespace Klient
 
         public static int idWybranegoOgloszenia;
 
+        private static bool posortowano = false;
+
         public StronaOgloszenia()
         {
             InitializeComponent();
@@ -52,14 +54,15 @@ namespace Klient
 
         private void ListViewOgloszenia_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            if (ListViewOgl.SelectedItem == null)
+            {
+                return;
+            }
+
             MainWindow.rama.Content = new EdycjaOgloszenia();
 
-            // uzupelnienie textboxow danymi ogloszenia z bazy
-            OperacjeKlient.Wyslij("OGLOSZENIA");
-            OperacjeKlient.Wyslij(StronaGlowna.idKategorii.ToString());
-
-            string oglSerialized = OperacjeKlient.Odbierz();
-            var ogloszenia = JsonConvert.DeserializeObject<List<Ogloszenie>>(oglSerialized);
+            // uzupelnienie textboxow danymi ogloszenia
+            var ogloszenia = (List<Ogloszenie>)ListViewOgl.ItemsSource;
             EdycjaOgloszenia.TextBoxTytulOgl.Text = ogloszenia[ListViewOgl.SelectedIndex].Tytul;
             EdycjaOgloszenia.TextBoxTrescOgl.Text = ogloszenia[ListViewOgl.SelectedIndex].Tresc;
 
@@ -95,6 +98,88 @@ namespace Klient
             {
                 DodawanieOgloszen.ListBoxKat.Items.Add(kat.Nazwa);
             }
+        }
+
+        private void GridViewColumnHeader_Click(object sender, RoutedEventArgs e)
+        {
+            var kolumna = (sender as GridViewColumnHeader);
+            var ogloszenia = (List<Ogloszenie>)ListViewOgl.ItemsSource;
+
+            if (posortowano == false)
+            {
+                if (kolumna.Tag.ToString() == "Id")
+                {
+                    ogloszenia = ogloszenia.OrderBy(k => k.Id).ToList();
+                }
+                else if (kolumna.Tag.ToString() == "UzytkownikId")
+                {
+                    ogloszenia = ogloszenia.OrderBy(k => k.UzytkownikId).ToList();
+                }
+                else if (kolumna.Tag.ToString() == "Tytul")
+                {
+                    ogloszenia = ogloszenia.OrderBy(k => k.Tytul).ToList();
+                }
+                else if (kolumna.Tag.ToString() == "Data_utw")
+                {
+                    ogloszenia = ogloszenia.OrderBy(k => k.Data_utw).ToList();
+                }
+                else if (kolumna.Tag.ToString() == "Data_ed")
+                {
+                    ogloszenia = ogloszenia.OrderBy(k => k.Data_ed).ToList();
+                }
+                else if (kolumna.Tag.ToString() == "Tresc")
+                {
+                    ogloszenia = ogloszenia.OrderBy(k => k.Tresc).ToList();
+                }
+                ListViewOgl.ItemsSource = ogloszenia;
+                posortowano = true;
+            }
+            else
+            {
+                if (kolumna.Tag.ToString() == "Id")
+                {
+                    ogloszenia = ogloszenia.OrderByDescending(k => k.Id).ToList();
+                }
+                else if (kolumna.Tag.ToString() == "UzytkownikId")
+                {
+                    ogloszenia = ogloszenia.OrderByDescending(k => k.UzytkownikId).ToList();
+                }
+                else if (kolumna.Tag.ToString() == "Tytul")
+                {
+                    ogloszenia = ogloszenia.OrderByDescending(k => k.Tytul).ToList();
+                }
+                else if (kolumna.Tag.ToString() == "Data_utw")
+                {
+                    ogloszenia = ogloszenia.OrderByDescending(k => k.Data_utw).ToList();
+                }
+                else if (kolumna.Tag.ToString() == "Data_ed")
+                {
+                    ogloszenia = ogloszenia.OrderByDescending(k => k.Data_ed).ToList();
+                }
+                else if (kolumna.Tag.ToString() == "Tresc")
+                {
+                    ogloszenia = ogloszenia.OrderByDescending(k => k.Tresc).ToList();
+                }
+                ListViewOgl.ItemsSource = ogloszenia;
+                posortowano = false;
+            }
+        }
+
+        private void TextBoxFilter_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var ogloszenia = (List<Ogloszenie>)ListViewOgl.ItemsSource;
+            if (TextBoxFilter.Text == string.Empty)
+            {
+                OperacjeKlient.Wyslij("OGLOSZENIA");
+                OperacjeKlient.Wyslij(StronaGlowna.idKategorii.ToString());
+                string oglSerialized = OperacjeKlient.Odbierz();
+                ogloszenia = JsonConvert.DeserializeObject<List<Ogloszenie>>(oglSerialized);
+            }
+            else
+            {
+                ogloszenia = ogloszenia.Where(o => o.Tytul.Contains(TextBoxFilter.Text)).ToList();
+            }
+            ListViewOgl.ItemsSource = ogloszenia;
         }
     }
 }

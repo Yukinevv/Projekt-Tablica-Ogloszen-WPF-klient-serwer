@@ -9,21 +9,47 @@
       Title="StronaOgloszenia">
 
     <Grid>
-        <ListView x:Name="ListViewOgloszenia" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="68,10,68,149" MouseDoubleClick="ListViewOgloszenia_MouseDoubleClick">
+        <ListView x:Name="ListViewOgloszenia" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="68,52,68,118" MouseDoubleClick="ListViewOgloszenia_MouseDoubleClick">
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
-                        <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" Width="30"/>
-                        <GridViewColumn Header="Id u" DisplayMemberBinding="{Binding UzytkownikId}" Width="30"/>
-                        <GridViewColumn Header="Tytul" DisplayMemberBinding="{Binding Tytul}" Width="120"/>
-                        <GridViewColumn Header="Data utworzenia" DisplayMemberBinding="{Binding Data_utw}" Width="120"/>
-                        <GridViewColumn Header="Data edycji" DisplayMemberBinding="{Binding Data_ed}" Width="120"/>
-                        <GridViewColumn Header="Tresc ogloszenia" DisplayMemberBinding="{Binding Tresc}" Width="200"/>
+                        <GridViewColumn Width="30" DisplayMemberBinding="{Binding Id}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="Id" Click="GridViewColumnHeader_Click">Id</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="30" DisplayMemberBinding="{Binding UzytkownikId}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="UzytkownikId" Click="GridViewColumnHeader_Click">Id u</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="120" DisplayMemberBinding="{Binding Tytul}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="Tytul" Click="GridViewColumnHeader_Click">Tytul</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="120" DisplayMemberBinding="{Binding Data_utw}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="Data_utw" Click="GridViewColumnHeader_Click">Data utworzenia</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="120" DisplayMemberBinding="{Binding Data_ed}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="Data_ed" Click="GridViewColumnHeader_Click">Data edycji</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="200" DisplayMemberBinding="{Binding Tresc}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="Tresc" Click="GridViewColumnHeader_Click">Tresc ogloszenia</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
                     </GridView.Columns>
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button x:Name="PowrotButton" Content="Powrot" HorizontalAlignment="Center" Margin="0,315,0,0" VerticalAlignment="Top" Height="44" Width="148" Click="PowrotButton_Click"/>
-        <Button x:Name="DodajOgloszenieButton" Content="Dodaj ogłoszenie" HorizontalAlignment="Left" Margin="584,315,0,0" VerticalAlignment="Top" Height="44" Width="148" Click="DodajOgloszenieButton_Click"/>
+        <Button x:Name="PowrotButton" Content="Powrot" HorizontalAlignment="Center" Margin="0,337,0,0" VerticalAlignment="Top" Height="44" Width="148" Click="PowrotButton_Click"/>
+        <Button x:Name="DodajOgloszenieButton" Content="Dodaj ogłoszenie" HorizontalAlignment="Left" Margin="584,337,0,0" VerticalAlignment="Top" Height="44" Width="148" Click="DodajOgloszenieButton_Click"/>
+        <TextBox x:Name="TextBoxFilter" HorizontalAlignment="Left" Margin="132,17,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Height="30" TextChanged="TextBoxFilter_TextChanged"/>
+        <Label Content="Szukaj:" HorizontalAlignment="Left" Margin="68,17,0,0" VerticalAlignment="Top" Height="30" Width="59"/>
     </Grid>
 </Page>
