@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Security.Cryptography;
 
 namespace Klient
 {
@@ -23,42 +24,86 @@ namespace Klient
     /// </summary>
     public partial class Rejestracja : Page
     {
+        public static DatePicker DatePickerRejestracja;
+
         public Rejestracja()
         {
             InitializeComponent();
+
+            DatePickerRejestracja = DatePicker1;
         }
 
         private void ZarejestrujButton_Click(object sender, RoutedEventArgs e)
         {
             if (TextBoxImie.Text == string.Empty || TextBoxNazwisko.Text == string.Empty || TextBoxLogin.Text == string.Empty
-                || TextBoxEmail.Text == string.Empty || TextBoxHaslo1.Text == string.Empty || TextBoxHaslo2.Text == string.Empty
+                || TextBoxEmail.Text == string.Empty || PassBoxHaslo1.Password == string.Empty || PassBoxHaslo2.Password == string.Empty
                 || DatePicker1.SelectedDate.ToString() == string.Empty)
             {
                 MessageBox.Show("Uzupelnij wszystkie pola!");
                 return;
             }
+            else if (PassBoxHaslo1.Password != PassBoxHaslo2.Password)
+            {
+                MessageBox.Show("Podane hasła nie są takie same!");
+                return;
+            }
+            else if (PassBoxHaslo1.Password.Length < 8 || PassBoxHaslo1.Password.Length > 20)
+            {
+                MessageBox.Show("Hasło powinno miec długość od 8 do 20 znaków");
+                return;
+            }
+            else if (!TextBoxEmail.Text.Contains("@"))
+            {
+                MessageBox.Show("Nieprawidłowy format adresu Email");
+                return;
+            }
 
-            OperacjeKlient.Wyslij("REJESTRACJA");
+            // hashuje podane przez uzytkownika haslo
+            SHA256 sha256Hash = SHA256.Create();
+            string hash = GetHash(sha256Hash, PassBoxHaslo1.Password);
+
+            OperacjeKlient.Wyslij("REJESTRACJA");      
             Uzytkownik uzytkownik = new Uzytkownik()
             {
                 Imie = TextBoxImie.Text,
                 Nazwisko = TextBoxNazwisko.Text,
                 Login = TextBoxLogin.Text,
                 Email = TextBoxEmail.Text,
-                Haslo = TextBoxHaslo1.Text,
+                Haslo = hash,
                 Data_ur = (DateTime)DatePicker1.SelectedDate,
                 Uprawnienia = "uzytkownik"
             };
             string uzytkownikSerialized = JsonConvert.SerializeObject(uzytkownik);
             OperacjeKlient.Wyslij(uzytkownikSerialized);
 
-            MainWindow.rama.Content = new Logowanie();
-            Logowanie.textBoxInfo.Text = "Udana rejestracja!\n Teraz mozesz sie zalogowac.";
+            string odpowiedz = OperacjeKlient.Odbierz();
+            if (odpowiedz == "zarejestrowano")
+            {
+                MessageBox.Show("Udana rejestracja!\n Teraz mozesz sie zalogowac.");
+                MainWindow.rama.Content = new Logowanie();        
+            }
+            else
+            {
+                MessageBox.Show(odpowiedz);
+            }        
         }
 
         private void PowrotButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow.rama.Content = new Logowanie();
+        }
+
+        public static string GetHash(HashAlgorithm hashAlgorithm, string input)
+        {
+            byte[] data = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+            var sBuilder = new StringBuilder();
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+            return sBuilder.ToString();
         }
     }
 }

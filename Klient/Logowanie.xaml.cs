@@ -1,6 +1,8 @@
 ﻿using BibliotekaEncje.Encje;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -18,8 +20,6 @@ namespace Klient
     /// </summary>
     public partial class Logowanie : Page
     {
-        public static TextBox textBoxInfo;
-
         public static TextBox TextBoxLogowanie;
 
         public static string czyAdmin;
@@ -28,27 +28,33 @@ namespace Klient
         {
             InitializeComponent();
 
-            textBoxInfo = TextBoxInformacyjny;
             TextBoxLogowanie = TextBoxLogin;
         }
 
         private void RejestracjaButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow.rama.Content = new Rejestracja();
+
+            Rejestracja.DatePickerRejestracja.DisplayDateEnd = DateTime.Today;
+            Rejestracja.DatePickerRejestracja.DisplayDateStart = DateTime.Parse("1900-01-01");
         }
 
         private void LogowanieButton_Click(object sender, RoutedEventArgs e)
         {
-            if (TextBoxLogin.Text == string.Empty || TextBoxHaslo.Text == string.Empty)
+            if (TextBoxLogin.Text == string.Empty || PassBoxHaslo.Password == string.Empty)
             {
                 MessageBox.Show("Uzupelnij wszystkie pola!");
                 return;
             }
 
+            // hashuje podane przez uzytkownika haslo
+            SHA256 sha256Hash = SHA256.Create();
+            string hash = Rejestracja.GetHash(sha256Hash, PassBoxHaslo.Password);
+
             OperacjeKlient.Wyslij("LOGOWANIE");
             OperacjeKlient.Wyslij(TextBoxLogin.Text);
             OperacjeKlient.Odbierz();
-            OperacjeKlient.Wyslij(TextBoxHaslo.Text);
+            OperacjeKlient.Wyslij(hash);
             string czyZalogowac = OperacjeKlient.Odbierz();
 
             if (czyZalogowac == "true")

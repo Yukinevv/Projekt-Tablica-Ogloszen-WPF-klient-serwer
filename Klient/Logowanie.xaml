@@ -17,12 +17,11 @@
             <RowDefinition Height="73*"/>
             <RowDefinition Height="77*"/>
         </Grid.RowDefinitions>
-        <TextBox x:Name="TextBoxInformacyjny" HorizontalAlignment="Left" Margin="40,21,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="222" Height="59"/>
-        <TextBox x:Name="TextBoxLogin" Text="jank" HorizontalAlignment="Left" Margin="189,141,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="148" Height="34" RenderTransformOrigin="0.128,0.479"/>
-        <TextBox x:Name="TextBoxHaslo" Text="qwerty123" HorizontalAlignment="Left" Margin="53,141,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="148" Height="34" RenderTransformOrigin="0.128,0.479" Grid.Column="1"/>
+        <TextBox x:Name="TextBoxLogin" Text="jank2" HorizontalAlignment="Left" Margin="326,110,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="148" Height="34" Grid.ColumnSpan="2"/>
+        <PasswordBox x:Name="PassBoxHaslo" Password="qwerty123" HorizontalAlignment="Left" Margin="326,208,0,0" VerticalAlignment="Top" Width="148" Height="34" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
         <Button x:Name="LogowanieButton" Content="Zaloguj sie" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Height="47" Width="151" Margin="189,0,0,0" Click="LogowanieButton_Click"/>
         <Button x:Name="RejestracjaButton" Content="Zarejestruj sie" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Height="47" Width="151" Grid.Column="1" Click="RejestracjaButton_Click" Margin="53,0,0,0"/>
-        <Label Content="Login" HorizontalAlignment="Left" Margin="189,0,0,0" VerticalAlignment="Center" Width="148"/>
-        <Label Content="Hasło" HorizontalAlignment="Left" Margin="53,0,0,0" VerticalAlignment="Center" Width="148" Grid.Column="1"/>
+        <Label Content="Login" HorizontalAlignment="Left" Margin="326,66,0,0" VerticalAlignment="Top" Width="148" Grid.ColumnSpan="2"/>
+        <Label Content="Hasło" HorizontalAlignment="Left" Margin="326,170,0,0" VerticalAlignment="Top" Width="148" Grid.ColumnSpan="2"/>
     </Grid>
 </Page>

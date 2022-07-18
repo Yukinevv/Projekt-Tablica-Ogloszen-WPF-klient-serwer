@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using BibliotekaEncje.Encje;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -25,6 +28,33 @@ namespace Klient
             rama.Content = new Logowanie();
 
             OperacjeKlient.PolaczZSerwerem();
+
+            // --------------------------roboczo------------------------------
+
+            //OperacjeKlient.Wyslij("UZYTKOWNICY");
+
+            // wszyscy na raz
+            //string uzytkownicySerialized = OperacjeKlient.Odbierz();
+            //var uzytkownicy = JsonConvert.DeserializeObject<List<Uzytkownik>>(uzytkownicySerialized);
+            //foreach (var item in uzytkownicy)
+            //{
+            //    Logowanie.TextBoxInfo.Text += "Login: " + item.Login + "  Hasło: " + item.Haslo + "\n";
+            //}   
+
+            // pojedynczo kazdy uzytkownik
+            //string odpowiedz = OperacjeKlient.Odbierz();
+            //int ileUzytkownikow = int.Parse(odpowiedz);
+            //for (int i = 0; i < ileUzytkownikow; i++)
+            //{
+            //    string uzytkownikSerialized = OperacjeKlient.Odbierz();
+            //    var uzytkownik = JsonConvert.DeserializeObject<Uzytkownik>(uzytkownikSerialized);
+            //    Logowanie.TextBoxInfo.Text += "Login: " + uzytkownik.Login + "  Hasło: " + uzytkownik.Haslo + "\n";
+            //}
+
+            // tylko jeden
+            //string uzytkownikSerialized = OperacjeKlient.Odbierz();
+            //var uzytkownik = JsonConvert.DeserializeObject<Uzytkownik>(uzytkownikSerialized);
+            //Logowanie.TextBoxInfo.Text += "Login: " + uzytkownik.Login + "  Hasło: " + uzytkownik.Haslo + "\n";
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

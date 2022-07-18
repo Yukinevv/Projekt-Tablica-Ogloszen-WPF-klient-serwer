@@ -66,15 +66,66 @@ namespace Serwer
                     {
                         string odKlienta = Odbierz();
 
-                        if (odKlienta == "REJESTRACJA")
+                        if (odKlienta == "UZYTKOWNICY")
+                        {
+                            using (var context = new MyDbContext())
+                            {
+                                var uzytkownicy = context.Uzytkownicy.Where(u => u.Id <= 7).ToList();
+
+                                // wszyscy na raz
+                                string uzytkownicySerialized = JsonConvert.SerializeObject(uzytkownicy, Formatting.Indented,
+                                new JsonSerializerSettings()
+                                {
+                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                });
+                                Wyslij(uzytkownicySerialized);
+
+                                // --------------------------roboczo------------------------------
+
+                                //pojedynczo kazdy uzytkownik
+                                //int ileUzytkownikow = context.Uzytkownicy.Count();
+                                //Wyslij(ileUzytkownikow.ToString());
+                                //for (int i = 0; i < ileUzytkownikow; i++)
+                                //{
+                                //    string uzytkownikSerialized = JsonConvert.SerializeObject(uzytkownicy[i], Formatting.Indented,
+                                //    new JsonSerializerSettings()
+                                //    {
+                                //        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                //    });
+                                //    Wyslij(uzytkownikSerialized);
+                                //}
+
+                                // tylko jeden
+                                //var uzytkownik = context.Uzytkownicy.FirstOrDefault(u => u.Login == "kamal");
+                                //string uzytkownikSerialized = JsonConvert.SerializeObject(uzytkownik, Formatting.Indented,
+                                //new JsonSerializerSettings()
+                                //{
+                                //    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                //});
+                                //Wyslij(uzytkownikSerialized);
+                            }
+                        }
+                        else if (odKlienta == "REJESTRACJA")
                         {
                             string zserializowanyObiekt = Odbierz();
                             var obiekt = JsonConvert.DeserializeObject<Uzytkownik>(zserializowanyObiekt);
 
                             using (var context = new MyDbContext())
                             {
-                                context.Uzytkownicy.Add(obiekt);
-                                context.SaveChanges();
+                                bool czyMogeDodac = context.Uzytkownicy.Any(u => u.Login == obiekt.Login);
+
+                                if (!czyMogeDodac)
+                                {
+                                    context.Uzytkownicy.Add(obiekt);
+                                    context.SaveChanges();
+
+                                    Wyslij("zarejestrowano");
+                                }
+                                else
+                                {
+                                    string komunikat = "Uzytkownik o podanym loginie juz istnieje!";
+                                    Wyslij(komunikat);
+                                }      
                             }
                         }
                         else if (odKlienta == "LOGOWANIE")
