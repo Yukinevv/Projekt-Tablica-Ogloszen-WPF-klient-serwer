@@ -1,0 +1,41 @@
+﻿<Page x:Class="Klient.MojProfil"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Klient"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="MojProfil">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="117*"/>
+            <ColumnDefinition Width="83*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="50*"/>
+        </Grid.RowDefinitions>
+        <Button x:Name="MojeOgloszeniaButton" Content="Moje ogłoszenia" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Center" Height="36" Width="156" Margin="272,0,0,0" Click="MojeOgloszeniaButton_Click"/>
+        <Button x:Name="ZaktualizujDaneButton" Content="Zaktualizuj dane" HorizontalAlignment="Left" Margin="51,0,0,0" Grid.Row="3" VerticalAlignment="Center" Height="36" Width="156" Click="ZaktualizujDaneButton_Click"/>
+        <TextBox x:Name="TextBoxImie" HorizontalAlignment="Center" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="156" Height="36" Margin="0,56,0,0"/>
+        <TextBox x:Name="TextBoxNazwisko" HorizontalAlignment="Center" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="156" Height="36" Grid.Column="1" Margin="0,56,0,0"/>
+        <TextBox x:Name="TextBoxLogin" HorizontalAlignment="Center" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="156" Height="36" Grid.Row="1" Margin="0,56,0,0"/>
+        <TextBox x:Name="TextBoxEmail" HorizontalAlignment="Center" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="156" Height="36" Grid.Column="1" Grid.Row="1" Margin="0,56,0,0"/>
+        <PasswordBox x:Name="PassBox1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="156" Height="36" Grid.Row="2" Margin="51,56,0,0" RenderTransformOrigin="0.68,0.411"/>
+        <PasswordBox x:Name="PassBox2" HorizontalAlignment="Left" VerticalAlignment="Top" Width="156" Height="36" Grid.Row="2" Margin="272,56,0,0"/>
+        <DatePicker x:Name="DatePicker1" Grid.Column="1" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Top" Height="36" Width="156" Margin="0,56,0,0" FontSize="16"/>
+        <Label Content="Imię" HorizontalAlignment="Left" Margin="142,25,0,0" VerticalAlignment="Top" Width="102" Height="26"/>
+        <Label Content="Nazwisko" HorizontalAlignment="Left" Margin="77,25,0,0" VerticalAlignment="Top" Width="102" Grid.Column="1" Height="26"/>
+        <Label Content="Login" HorizontalAlignment="Left" Margin="142,26,0,0" VerticalAlignment="Top" Width="102" Grid.Row="1" Height="26"/>
+        <Label Content="Email" HorizontalAlignment="Left" Margin="77,22,0,0" VerticalAlignment="Top" Width="102" Grid.Column="1" Grid.Row="1" Height="26"/>
+        <Label Content="Hasło" HorizontalAlignment="Left" Margin="37,25,0,0" VerticalAlignment="Top" Width="102" Grid.Row="2" Height="26"/>
+        <Label Content="Powtórz hasło" HorizontalAlignment="Left" Margin="263,25,0,0" VerticalAlignment="Top" Width="102" Grid.Row="2" Height="26"/>
+        <Label Content="Data urodzenia" HorizontalAlignment="Left" Margin="77,25,0,0" VerticalAlignment="Top" Width="102" Grid.Column="1" Grid.Row="2" Height="26"/>
+        <Button x:Name="PowrotButton" Content="Powrót" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" Height="36" Width="156" Grid.Column="1" Click="PowrotButton_Click"/>
+
+    </Grid>
+</Page>

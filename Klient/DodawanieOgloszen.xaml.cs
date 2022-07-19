@@ -22,23 +22,38 @@ namespace Klient
     /// </summary>
     public partial class DodawanieOgloszen : Page
     {
-        public static ListBox ListBoxKat;
+        public static string SkadWchodze;
 
         public DodawanieOgloszen()
         {
             InitializeComponent();
 
-            ListBoxKat = ListBoxKategorie;
+            // wyswietlanie dostepnych kategorii w listboxie
+            OperacjeKlient.Wyslij("KATEGORIE");
+            string katSerialized = OperacjeKlient.Odbierz();
+            var kategorie = JsonConvert.DeserializeObject<List<Kategoria>>(katSerialized);
+
+            foreach (var kat in kategorie)
+            {
+                ListBoxKategorie.Items.Add(kat.Nazwa);
+            }
         }
 
         private void PowrotButton_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow.rama.Content = new StronaOgloszenia();
+            if (SkadWchodze == "ze strony ogloszenia")
+            {
+                MainWindow.rama.Content = new StronaOgloszenia();
+            }
+            else if (SkadWchodze == "z moich ogloszen")
+            {
+                MainWindow.rama.Content = new MojeOgloszenia();
+            }
         }
 
         private void ZatwierdzButton_Click(object sender, RoutedEventArgs e)
         {
-            if (TextBoxTytul.Text == string.Empty || TextBoxTresc.Text == string.Empty || ListBoxKat.SelectedItems.Count == 0)
+            if (TextBoxTytul.Text == string.Empty || TextBoxTresc.Text == string.Empty || ListBoxKategorie.SelectedItems.Count == 0)
             {
                 MessageBox.Show("Uzupełnij wszystkie pola!");
                 return;
@@ -53,7 +68,6 @@ namespace Klient
                 Data_utw = DateTime.Now,
                 Data_ed = DateTime.Now,
                 Tresc = TextBoxTresc.Text,
-                UzytkownikId = 9999 // podaje byle jakie, bo wlasciwe serwer sobie pobierze na podstawie loginu
             };
             string oglSerialized = JsonConvert.SerializeObject(ogloszenie, Formatting.Indented,
             new JsonSerializerSettings()
@@ -66,7 +80,7 @@ namespace Klient
             if (odpowiedz == "Dodano")
             {
                 // wyslanie wybranych kategorii z listboxa
-                var kategorie = ListBoxKat.SelectedItems;
+                var kategorie = ListBoxKategorie.SelectedItems;
                 var nazwyKategorii = new List<string>();
                 foreach (var item in kategorie)
                 {
@@ -83,7 +97,14 @@ namespace Klient
                 if (drugaOdpowiedz == "zakonczono dodawanie")
                 {
                     MessageBox.Show("Ogłoszenie zostało dodane! Znajdziesz je w kategorii: " + String.Join(", ", nazwyKategorii));
-                    MainWindow.rama.Content = new StronaOgloszenia();
+                    if (SkadWchodze == "ze strony ogloszenia")
+                    {
+                        MainWindow.rama.Content = new StronaOgloszenia();
+                    }
+                    else if (SkadWchodze == "z moich ogloszen")
+                    {
+                        MainWindow.rama.Content = new MojeOgloszenia();
+                    }
 
                     OperacjeKlient.Wyslij("OGLOSZENIA");
                     OperacjeKlient.Wyslij(StronaGlowna.idKategorii.ToString());

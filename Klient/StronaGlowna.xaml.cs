@@ -32,7 +32,7 @@ namespace Klient
 
         public static string czyAdmin;
 
-        private static List<Kategoria> Kategorie_kopia;
+        private static List<Kategoria> KategorieKopia;
 
         private static bool posortowano = false;
 
@@ -41,6 +41,8 @@ namespace Klient
             InitializeComponent();
 
             ListViewKat = ListViewKategorie;
+
+            MojProfilButton.Content = "Profil " + Logowanie.TextBoxLogowanie.Text;
 
             // sprawdzenie czy uzytkownik ma uprawnienia administratora
             OperacjeKlient.Wyslij("CZY ADMIN");
@@ -56,7 +58,7 @@ namespace Klient
             string katSerialized = OperacjeKlient.Odbierz();
             var kategorie = JsonConvert.DeserializeObject<List<Kategoria>>(katSerialized);
             ListViewKat.ItemsSource = kategorie;
-            Kategorie_kopia = kategorie;
+            KategorieKopia = kategorie;
         }
 
         private void ListViewKategorie_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -93,10 +95,8 @@ namespace Klient
             OperacjeKlient.Wyslij("DODANIE KATEGORII");
             var nowaKategoria = new Kategoria()
             {
-                Id = 9999, // wlasciwe Id zostanie utworzone przy insercie do bazy
                 Nazwa = TextBoxNazwaNowejKategorii.Text,
                 Data_utw = DateTime.Now,
-                UzytkownikId = 9999 // serwer pobierze sobie wlasciwe na podstawie loginu zalogowanego uzytkownika, ktory wysylam
             };
             string kategoriaSerialized = JsonConvert.SerializeObject(nowaKategoria, Formatting.Indented,
             new JsonSerializerSettings()
@@ -173,7 +173,7 @@ namespace Klient
                     kategorie = kategorie.OrderBy(k => k.Data_utw).ToList();
                 }
                 ListViewKat.ItemsSource = kategorie;
-                Kategorie_kopia = kategorie;
+                KategorieKopia = kategorie;
                 posortowano = true;
             }
             else
@@ -191,7 +191,7 @@ namespace Klient
                     kategorie = kategorie.OrderByDescending(k => k.Data_utw).ToList();
                 }
                 ListViewKat.ItemsSource = kategorie;
-                Kategorie_kopia = kategorie;
+                KategorieKopia = kategorie;
                 posortowano = false;
             }
         }
@@ -201,7 +201,7 @@ namespace Klient
             var kategorie = (List<Kategoria>)ListViewKat.ItemsSource;
             if (TextBoxFilter.Text == string.Empty)
             {
-                kategorie = Kategorie_kopia;
+                kategorie = KategorieKopia;
             }
             else
             {
@@ -230,6 +230,11 @@ namespace Klient
             PanelAdmina = new PanelAdmina();
             PanelAdmina.Show();
             CzyPanelAdminaOtwarty = true;
+        }
+
+        private void MojProfilButton_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow.rama.Content = new MojProfil();
         }
     }
 }

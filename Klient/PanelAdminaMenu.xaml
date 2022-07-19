@@ -18,7 +18,7 @@
                                 <GridViewColumnHeader Tag="Id" Click="GridViewColumnHeader_Click">Id użytkownika</GridViewColumnHeader>
                             </GridViewColumn.Header>
                         </GridViewColumn>
-                        <GridViewColumn Width="260" DisplayMemberBinding="{Binding Login}">
+                        <GridViewColumn Width="250" DisplayMemberBinding="{Binding Login}">
                             <GridViewColumn.Header>
                                 <GridViewColumnHeader Tag="Login" Click="GridViewColumnHeader_Click">Login użytkownika</GridViewColumnHeader>
                             </GridViewColumn.Header>

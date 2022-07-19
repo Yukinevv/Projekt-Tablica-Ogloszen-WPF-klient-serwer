@@ -30,6 +30,8 @@ namespace Klient
 
         public static Button ZatwierdzEdycjeOgloszeniaButton;
 
+        public static string SkadWchodze;
+
         public EdycjaOgloszenia()
         {
             InitializeComponent();
@@ -43,7 +45,14 @@ namespace Klient
 
         private void PowrótButton_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow.rama.Content = new StronaOgloszenia();
+            if (SkadWchodze == "ze strony ogloszenia")
+            {
+                MainWindow.rama.Content = new StronaOgloszenia();
+            }
+            else if (SkadWchodze == "z moich ogloszen")
+            {
+                MainWindow.rama.Content = new MojeOgloszenia();
+            }
         }
 
         private void UsunButton_Click(object sender, RoutedEventArgs e)
@@ -54,7 +63,14 @@ namespace Klient
             if (odpowiedz == "Usunieto")
             {
                 MessageBox.Show("Ogloszenie zostalo usuniete (ze wszystkich kategorii)!");
-                MainWindow.rama.Content = new StronaOgloszenia();
+                if (SkadWchodze == "ze strony ogloszenia")
+                {
+                    MainWindow.rama.Content = new StronaOgloszenia();
+                }
+                else if (SkadWchodze == "z moich ogloszen")
+                {
+                    MainWindow.rama.Content = new MojeOgloszenia();
+                }
             }
         }
 
@@ -74,7 +90,6 @@ namespace Klient
 
             OperacjeKlient.Wyslij("EDYCJA OGLOSZENIA");
             // potrzebuje przeslac id, tytul i tresc ogloszenia, ale zeby nie wysylac trzech danych oddzielnie to wysylam jeden obiekt
-            // a reszte danych podaje byle byly np. UzytkownikId = 9999
             var ogloszenie = new Ogloszenie()
             {
                 Id = StronaOgloszenia.idWybranegoOgloszenia,
@@ -82,7 +97,6 @@ namespace Klient
                 Data_utw = DateTime.Now,
                 Data_ed = DateTime.Now,
                 Tresc = TextBoxTrescOgl.Text,
-                UzytkownikId = 9999
             };
             string ogloszenieSerialized = JsonConvert.SerializeObject(ogloszenie, Formatting.Indented,
             new JsonSerializerSettings()
@@ -95,7 +109,14 @@ namespace Klient
             if (odpowiedz == "zedytowano ogloszenie")
             {
                 MessageBox.Show("Ogloszenie zostalo zedytowane!");
-                MainWindow.rama.Content = new StronaOgloszenia();
+                if (SkadWchodze == "ze strony ogloszenia")
+                {
+                    MainWindow.rama.Content = new StronaOgloszenia();
+                }
+                else if (SkadWchodze == "z moich ogloszen")
+                {
+                    MainWindow.rama.Content = new MojeOgloszenia();
+                }
             }
         }
     }

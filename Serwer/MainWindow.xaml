@@ -5,9 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Serwer"
         mc:Ignorable="d"
-        Title="Serwer" Height="450" Width="800">
+        Title="Serwer" Height="450" Width="800" ResizeMode="CanMinimize">
     <Grid>
-        <ListBox x:Name="ListBox1" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="132,10,132,172"/>
-        <Button x:Name="SerwerONButton" Content="Serwer ON" HorizontalAlignment="Center" Margin="0,276,0,0" VerticalAlignment="Top" Width="120" Height="42" Click="SerwerONButton_Click"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="325*"/>
+            <RowDefinition Height="109*"/>
+        </Grid.RowDefinitions>
+        <ListBox x:Name="ListBoxPolaczeniKlienci" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="132,24,132,10"/>
+        <Button x:Name="UruchomSerwerButton" Content="Uruchom serwer" HorizontalAlignment="Center" VerticalAlignment="Top" Width="120" Height="42" Click="UruchomSerwerButton_Click" Grid.Row="1" Margin="0,13,0,0"/>
     </Grid>
 </Window>

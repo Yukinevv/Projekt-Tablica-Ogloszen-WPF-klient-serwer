@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,66 +18,57 @@ using System.Windows.Shapes;
 namespace Klient
 {
     /// <summary>
-    /// Logika interakcji dla klasy StronaOgloszenia.xaml
+    /// Logika interakcji dla klasy MojeOgloszenia.xaml
     /// </summary>
-    public partial class StronaOgloszenia : Page
+    public partial class MojeOgloszenia : Page
     {
-        public static ListView ListViewOgl;
-
-        public static string TytulWybranegoOgloszenia;
-
-        public static string TrescWybranegoOgloszenia;
-
-        public static int idWybranegoOgloszenia;
-
         private static List<Ogloszenie> OgloszeniaKopia;
 
         private static bool posortowano = false;
 
-        public StronaOgloszenia()
+        public MojeOgloszenia()
         {
             InitializeComponent();
 
-            ListViewOgl = ListViewOgloszenia;
-
-            OperacjeKlient.Wyslij("OGLOSZENIA");
-            OperacjeKlient.Wyslij(StronaGlowna.idKategorii.ToString());
+            OperacjeKlient.Wyslij("MOJE OGLOSZENIA");
+            OperacjeKlient.Wyslij(Logowanie.TextBoxLogowanie.Text);
             string oglSerialized = OperacjeKlient.Odbierz();
             var ogloszenia = JsonConvert.DeserializeObject<List<Ogloszenie>>(oglSerialized);
-            ListViewOgl.ItemsSource = ogloszenia;
+            ListViewOgloszenia.ItemsSource = ogloszenia;
+
             OgloszeniaKopia = ogloszenia;
         }
 
         private void PowrotButton_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow.rama.Content = new StronaGlowna();
+            MainWindow.rama.Content = new MojProfil();
         }
 
         private void ListViewOgloszenia_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (ListViewOgl.SelectedItem == null)
+            if (ListViewOgloszenia.SelectedItem == null)
             {
                 return;
             }
 
             MainWindow.rama.Content = new EdycjaOgloszenia();
-            EdycjaOgloszenia.SkadWchodze = "ze strony ogloszenia";
+            EdycjaOgloszenia.SkadWchodze = "z moich ogloszen";
 
             // uzupelnienie textboxow danymi ogloszenia
-            var ogloszenia = (List<Ogloszenie>)ListViewOgl.ItemsSource;
-            EdycjaOgloszenia.TextBoxTytulOgl.Text = ogloszenia[ListViewOgl.SelectedIndex].Tytul;
-            EdycjaOgloszenia.TextBoxTrescOgl.Text = ogloszenia[ListViewOgl.SelectedIndex].Tresc;
+            var ogloszenia = (List<Ogloszenie>)ListViewOgloszenia.ItemsSource;
+            EdycjaOgloszenia.TextBoxTytulOgl.Text = ogloszenia[ListViewOgloszenia.SelectedIndex].Tytul;
+            EdycjaOgloszenia.TextBoxTrescOgl.Text = ogloszenia[ListViewOgloszenia.SelectedIndex].Tresc;
 
             // potrzebne do weryfikacji zmian przy edycji ogloszenia
-            TytulWybranegoOgloszenia = ogloszenia[ListViewOgl.SelectedIndex].Tytul;
-            TrescWybranegoOgloszenia = ogloszenia[ListViewOgl.SelectedIndex].Tresc;
+            StronaOgloszenia.TytulWybranegoOgloszenia = ogloszenia[ListViewOgloszenia.SelectedIndex].Tytul;
+            StronaOgloszenia.TrescWybranegoOgloszenia = ogloszenia[ListViewOgloszenia.SelectedIndex].Tresc;
 
             // potrzebne do usuniecia wybranego ogloszenia
-            idWybranegoOgloszenia = ogloszenia[ListViewOgl.SelectedIndex].Id;
+            StronaOgloszenia.idWybranegoOgloszenia = ogloszenia[ListViewOgloszenia.SelectedIndex].Id;
 
             // sprawdzenie czy uzytkownik jest wlascicielem wybranego ogloszenia lub czy jest adminem
             // jezeli NIE to ukrywam przyciski odpowiadajace za edycje i usuniecie ogloszenia
-            int idUzytkownika = ogloszenia[ListViewOgl.SelectedIndex].UzytkownikId;
+            int idUzytkownika = ogloszenia[ListViewOgloszenia.SelectedIndex].UzytkownikId;
             OperacjeKlient.Wyslij("CZY MOZE EDYTOWAC");
             OperacjeKlient.Wyslij(Logowanie.TextBoxLogowanie.Text);
             OperacjeKlient.Odbierz();
@@ -97,13 +87,13 @@ namespace Klient
         private void DodajOgloszenieButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow.rama.Content = new DodawanieOgloszen();
-            DodawanieOgloszen.SkadWchodze = "ze strony ogloszenia";
+            DodawanieOgloszen.SkadWchodze = "z moich ogloszen";
         }
 
         private void GridViewColumnHeader_Click(object sender, RoutedEventArgs e)
         {
             var kolumna = (sender as GridViewColumnHeader);
-            var ogloszenia = (List<Ogloszenie>)ListViewOgl.ItemsSource;
+            var ogloszenia = (List<Ogloszenie>)ListViewOgloszenia.ItemsSource;
 
             if (posortowano == false)
             {
@@ -131,7 +121,7 @@ namespace Klient
                 {
                     ogloszenia = ogloszenia.OrderBy(o => o.Tresc).ToList();
                 }
-                ListViewOgl.ItemsSource = ogloszenia;
+                ListViewOgloszenia.ItemsSource = ogloszenia;
                 OgloszeniaKopia = ogloszenia;
                 posortowano = true;
             }
@@ -161,7 +151,7 @@ namespace Klient
                 {
                     ogloszenia = ogloszenia.OrderByDescending(o => o.Tresc).ToList();
                 }
-                ListViewOgl.ItemsSource = ogloszenia;
+                ListViewOgloszenia.ItemsSource = ogloszenia;
                 OgloszeniaKopia = ogloszenia;
                 posortowano = false;
             }
@@ -169,7 +159,7 @@ namespace Klient
 
         private void TextBoxFilter_TextChanged(object sender, TextChangedEventArgs e)
         {
-            var ogloszenia = (List<Ogloszenie>)ListViewOgl.ItemsSource;
+            var ogloszenia = (List<Ogloszenie>)ListViewOgloszenia.ItemsSource;
             if (TextBoxFilter.Text == string.Empty)
             {
                 ogloszenia = OgloszeniaKopia;
@@ -178,7 +168,7 @@ namespace Klient
             {
                 ogloszenia = ogloszenia.Where(o => o.Tytul.Contains(TextBoxFilter.Text)).ToList();
             }
-            ListViewOgl.ItemsSource = ogloszenia;
+            ListViewOgloszenia.ItemsSource = ogloszenia;
         }
     }
 }

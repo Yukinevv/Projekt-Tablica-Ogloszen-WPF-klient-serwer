@@ -27,7 +27,7 @@ namespace Serwer
 
         private static string Odbierz()
         {
-            var buf = new byte[2048];
+            var buf = new byte[5000];
             int received = gniazdoPolaczenia.Receive(buf, SocketFlags.None); // otrzymuje wstepna informacje od klienta
             if (received == 0)
             {
@@ -55,8 +55,8 @@ namespace Serwer
             gniazdoPolaczenia = serverSocket.Accept();
             //await Task<Socket>.Factory.StartNew(serverSocket.Accept);
 
-            ListBox ListBox1 = listbox as ListBox;
-            ListBox1.Items.Add(gniazdoPolaczenia.RemoteEndPoint);
+            ListBox ListBoxPolaczeniKlienci = listbox as ListBox;
+            ListBoxPolaczeniKlienci.Items.Add(gniazdoPolaczenia.RemoteEndPoint);
 
             await Task.Factory.StartNew(() =>
             {
@@ -219,6 +219,21 @@ namespace Serwer
                                 Wyslij(oglSerialized);
                             }
                         }
+                        else if (odKlienta == "MOJE OGLOSZENIA")
+                        {
+                            string login = Odbierz();
+                            using (var context = new MyDbContext())
+                            {
+                                int idUzytkownika = context.Uzytkownicy.Where(u => u.Login == login).Select(u => u.Id).FirstOrDefault();
+                                var ogloszenia = context.Ogloszenia.Where(o => o.UzytkownikId == idUzytkownika).ToList();
+                                string oglSerialized = JsonConvert.SerializeObject(ogloszenia, Formatting.Indented,
+                                new JsonSerializerSettings()
+                                {
+                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                });
+                                Wyslij(oglSerialized);
+                            }
+                        }
                         else if (odKlienta == "DODANIE OGLOSZENIA")
                         {
                             string login = Odbierz();
@@ -309,6 +324,50 @@ namespace Serwer
                                 }
                             }
                         }
+                        else if (odKlienta == "MOJE DANE")
+                        {
+                            string login = Odbierz();
+                            using (var context = new MyDbContext())
+                            {
+                                var uzytkownik = context.Uzytkownicy.FirstOrDefault(u => u.Login == login);
+                                string uzytkownikSerialized = JsonConvert.SerializeObject(uzytkownik, Formatting.Indented,
+                                new JsonSerializerSettings()
+                                {
+                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                });
+                                Wyslij(uzytkownikSerialized);
+                            }
+                        }
+                        else if (odKlienta == "EDYCJA DANYCH UZYTKOWNIKA")
+                        {            
+                            string uzytkownikOdKlientaSerialized = Odbierz();
+                            var uzytkownikOdKlienta = JsonConvert.DeserializeObject<Uzytkownik>(uzytkownikOdKlientaSerialized);
+                            string login = Odbierz(); // aktualny login uzytkownika
+                            using (var context = new MyDbContext())
+                            {
+                                // sprawdzam czy uzytkownik o nowo podanym loginie juz istnieje (roznym niz aktualny login)
+                                bool czyMogeEdytowac = context.Uzytkownicy.Any(u => u.Login == uzytkownikOdKlienta.Login && u.Login != login);
+                                
+                                if (!czyMogeEdytowac)
+                                {                               
+                                    var uzytkownikZBazy = context.Uzytkownicy.FirstOrDefault(u => u.Login == login);
+                                    uzytkownikZBazy.Imie = uzytkownikOdKlienta.Imie;
+                                    uzytkownikZBazy.Nazwisko = uzytkownikOdKlienta.Nazwisko;
+                                    uzytkownikZBazy.Login = uzytkownikOdKlienta.Login;
+                                    uzytkownikZBazy.Email = uzytkownikOdKlienta.Email;
+                                    uzytkownikZBazy.Haslo = uzytkownikOdKlienta.Haslo;
+                                    uzytkownikZBazy.Data_ur = uzytkownikOdKlienta.Data_ur;
+                                    context.SaveChanges();
+
+                                    Wyslij("edytowano");
+                                }
+                                else
+                                {
+                                    string komunikat = "Uzytkownik o podanym loginie juz istnieje! Prosze podac inny login.";
+                                    Wyslij(komunikat);
+                                }
+                            }
+                        }
                         else if (odKlienta == "UZYTKOWNICY")
                         {
                             string login = Odbierz();
@@ -371,7 +430,8 @@ namespace Serwer
                         {
                             gniazdoPolaczenia.Close();
                             MessageBox.Show("Nieznane rzadanie wyslania od klienta!");
-                            //ListBox1.Items.Remove(gniazdoPolaczenia.RemoteEndPoint);
+                            //ListBoxPolaczeniKlienci.Items.Remove(gniazdoPolaczenia.RemoteEndPoint);
+                            //ListBoxPolaczeniKlienci.Clear();
                         }
                     }
                     else

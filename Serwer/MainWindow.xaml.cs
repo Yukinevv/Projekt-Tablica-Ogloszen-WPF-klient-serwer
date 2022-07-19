@@ -29,9 +29,9 @@ namespace Serwer
             }
         }
 
-        private void SerwerONButton_Click(object sender, RoutedEventArgs e)
+        private void UruchomSerwerButton_Click(object sender, RoutedEventArgs e)
         {
-            OperacjeSerwer.SerwerOperacje(ListBox1);
+            OperacjeSerwer.SerwerOperacje(ListBoxPolaczeniKlienci);
         }
     }
 }
