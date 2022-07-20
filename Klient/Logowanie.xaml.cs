@@ -32,9 +32,6 @@ namespace Klient
         private void RejestracjaButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow.rama.Content = new Rejestracja();
-
-            Rejestracja.DatePickerRejestracja.DisplayDateEnd = DateTime.Today;
-            Rejestracja.DatePickerRejestracja.DisplayDateStart = DateTime.Parse("1900-01-01");
         }
 
         private void LogowanieButton_Click(object sender, RoutedEventArgs e)

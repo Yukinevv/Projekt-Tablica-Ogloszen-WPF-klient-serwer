@@ -51,11 +51,21 @@ namespace Klient
                 return;
             }
 
+            var ogloszenia = (List<Ogloszenie>)ListViewOgloszenia.ItemsSource;
+
+            // potrzebne do np. usuniecia wybranego ogloszenia
+            StronaOgloszenia.idWybranegoOgloszenia = ogloszenia[ListViewOgloszenia.SelectedIndex].Id;
+
+            // potrzebne do edycji kategorii ogloszenia
+            OperacjeKlient.Wyslij("WYBRANE NAZWY KATEGORII");
+            OperacjeKlient.Wyslij(StronaOgloszenia.idWybranegoOgloszenia.ToString());
+            string nazwyKategoriiSerialized = OperacjeKlient.Odbierz();
+            StronaOgloszenia.NazwyWybranychKategoriiDoListBoxa = JsonConvert.DeserializeObject<List<string>>(nazwyKategoriiSerialized);
+
             MainWindow.rama.Content = new EdycjaOgloszenia();
             EdycjaOgloszenia.SkadWchodze = "z moich ogloszen";
 
-            // uzupelnienie textboxow danymi ogloszenia
-            var ogloszenia = (List<Ogloszenie>)ListViewOgloszenia.ItemsSource;
+            // uzupelnienie textboxow danymi ogloszenia       
             EdycjaOgloszenia.TextBoxTytulOgl.Text = ogloszenia[ListViewOgloszenia.SelectedIndex].Tytul;
             EdycjaOgloszenia.TextBoxTrescOgl.Text = ogloszenia[ListViewOgloszenia.SelectedIndex].Tresc;
 
@@ -63,8 +73,7 @@ namespace Klient
             StronaOgloszenia.TytulWybranegoOgloszenia = ogloszenia[ListViewOgloszenia.SelectedIndex].Tytul;
             StronaOgloszenia.TrescWybranegoOgloszenia = ogloszenia[ListViewOgloszenia.SelectedIndex].Tresc;
 
-            // potrzebne do usuniecia wybranego ogloszenia
-            StronaOgloszenia.idWybranegoOgloszenia = ogloszenia[ListViewOgloszenia.SelectedIndex].Id;
+            
 
             // sprawdzenie czy uzytkownik jest wlascicielem wybranego ogloszenia lub czy jest adminem
             // jezeli NIE to ukrywam przyciski odpowiadajace za edycje i usuniecie ogloszenia

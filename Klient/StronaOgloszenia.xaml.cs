@@ -33,6 +33,8 @@ namespace Klient
 
         private static List<Ogloszenie> OgloszeniaKopia;
 
+        public static List<string> NazwyWybranychKategoriiDoListBoxa;
+
         private static bool posortowano = false;
 
         public StronaOgloszenia()
@@ -61,20 +63,27 @@ namespace Klient
                 return;
             }
 
-            MainWindow.rama.Content = new EdycjaOgloszenia();
-            EdycjaOgloszenia.SkadWchodze = "ze strony ogloszenia";
-
-            // uzupelnienie textboxow danymi ogloszenia
             var ogloszenia = (List<Ogloszenie>)ListViewOgl.ItemsSource;
+
+            // potrzebne do np. usuniecia wybranego ogloszenia
+            idWybranegoOgloszenia = ogloszenia[ListViewOgl.SelectedIndex].Id;
+
+            // potrzebne do edycji kategorii ogloszenia
+            OperacjeKlient.Wyslij("WYBRANE NAZWY KATEGORII");
+            OperacjeKlient.Wyslij(idWybranegoOgloszenia.ToString());
+            string nazwyKategoriiSerialized = OperacjeKlient.Odbierz();
+            NazwyWybranychKategoriiDoListBoxa = JsonConvert.DeserializeObject<List<string>>(nazwyKategoriiSerialized);
+
+            MainWindow.rama.Content = new EdycjaOgloszenia();
+            EdycjaOgloszenia.SkadWchodze = "ze strony ogloszenia";               
+
+            // uzupelnienie textboxow danymi ogloszenia      
             EdycjaOgloszenia.TextBoxTytulOgl.Text = ogloszenia[ListViewOgl.SelectedIndex].Tytul;
             EdycjaOgloszenia.TextBoxTrescOgl.Text = ogloszenia[ListViewOgl.SelectedIndex].Tresc;
 
             // potrzebne do weryfikacji zmian przy edycji ogloszenia
             TytulWybranegoOgloszenia = ogloszenia[ListViewOgl.SelectedIndex].Tytul;
-            TrescWybranegoOgloszenia = ogloszenia[ListViewOgl.SelectedIndex].Tresc;
-
-            // potrzebne do usuniecia wybranego ogloszenia
-            idWybranegoOgloszenia = ogloszenia[ListViewOgl.SelectedIndex].Id;
+            TrescWybranegoOgloszenia = ogloszenia[ListViewOgl.SelectedIndex].Tresc;            
 
             // sprawdzenie czy uzytkownik jest wlascicielem wybranego ogloszenia lub czy jest adminem
             // jezeli NIE to ukrywam przyciski odpowiadajace za edycje i usuniecie ogloszenia

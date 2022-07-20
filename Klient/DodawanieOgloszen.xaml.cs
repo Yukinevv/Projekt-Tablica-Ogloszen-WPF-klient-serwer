@@ -77,26 +77,25 @@ namespace Klient
             OperacjeKlient.Wyslij(oglSerialized);
 
             string odpowiedz = OperacjeKlient.Odbierz();
-            if (odpowiedz == "Dodano")
+            if (odpowiedz == "dodano ogloszenie")
             {
                 // wyslanie wybranych kategorii z listboxa
-                var kategorie = ListBoxKategorie.SelectedItems;
-                var nazwyKategorii = new List<string>();
-                foreach (var item in kategorie)
+                var nazwyWybranychKategorii = new List<string>();
+                foreach (var nazwa in ListBoxKategorie.SelectedItems)
                 {
-                    nazwyKategorii.Add(item.ToString());
+                    nazwyWybranychKategorii.Add(nazwa.ToString());
                 }
-                string nazwyKategoriiSerialized = JsonConvert.SerializeObject(nazwyKategorii, Formatting.Indented,
+                string nazwyWybranychKategoriiSerialized = JsonConvert.SerializeObject(nazwyWybranychKategorii, Formatting.Indented,
                 new JsonSerializerSettings()
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 });
-                OperacjeKlient.Wyslij(nazwyKategoriiSerialized);
+                OperacjeKlient.Wyslij(nazwyWybranychKategoriiSerialized);
 
                 string drugaOdpowiedz = OperacjeKlient.Odbierz();
                 if (drugaOdpowiedz == "zakonczono dodawanie")
                 {
-                    MessageBox.Show("Ogłoszenie zostało dodane! Znajdziesz je w kategorii: " + String.Join(", ", nazwyKategorii));
+                    MessageBox.Show("Ogłoszenie zostało dodane! Znajdziesz je w kategorii: " + String.Join(", ", nazwyWybranychKategorii));
                     if (SkadWchodze == "ze strony ogloszenia")
                     {
                         MainWindow.rama.Content = new StronaOgloszenia();
@@ -105,13 +104,6 @@ namespace Klient
                     {
                         MainWindow.rama.Content = new MojeOgloszenia();
                     }
-
-                    OperacjeKlient.Wyslij("OGLOSZENIA");
-                    OperacjeKlient.Wyslij(StronaGlowna.idKategorii.ToString());
-
-                    string oglSerialized2 = OperacjeKlient.Odbierz();
-                    var ogloszenia = JsonConvert.DeserializeObject<List<Ogloszenie>>(oglSerialized2);
-                    StronaOgloszenia.ListViewOgl.ItemsSource = ogloszenia;
                 }
             }
         }

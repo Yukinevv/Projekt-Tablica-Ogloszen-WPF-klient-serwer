@@ -24,13 +24,12 @@ namespace Klient
     /// </summary>
     public partial class Rejestracja : Page
     {
-        public static DatePicker DatePickerRejestracja;
-
         public Rejestracja()
         {
             InitializeComponent();
 
-            DatePickerRejestracja = DatePicker1;
+            DatePicker1.DisplayDateEnd = DateTime.Today;
+            DatePicker1.DisplayDateStart = DateTime.Parse("1900-01-01");
         }
 
         private void ZarejestrujButton_Click(object sender, RoutedEventArgs e)

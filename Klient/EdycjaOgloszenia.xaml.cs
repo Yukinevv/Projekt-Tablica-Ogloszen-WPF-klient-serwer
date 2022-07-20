@@ -41,6 +41,21 @@ namespace Klient
 
             UsunOgloszenieButton = UsunButton;
             ZatwierdzEdycjeOgloszeniaButton = ZatwierdzButton;
+
+            // wyswietlanie dostepnych kategorii w listboxie
+            OperacjeKlient.Wyslij("KATEGORIE");
+            string katSerialized = OperacjeKlient.Odbierz();
+            var kategorie = JsonConvert.DeserializeObject<List<Kategoria>>(katSerialized);
+            foreach (var kat in kategorie)
+            {
+                ListBoxKategorie.Items.Add(kat.Nazwa);
+            }
+
+            // zaznaczenie kategorii wybranego ogloszenia
+            foreach (var nazwa in StronaOgloszenia.NazwyWybranychKategoriiDoListBoxa)
+            {
+                ListBoxKategorie.SelectedItems.Add(nazwa);
+            }
         }
 
         private void PowrótButton_Click(object sender, RoutedEventArgs e)
@@ -76,13 +91,31 @@ namespace Klient
 
         private void ZatwierdzButton_Click(object sender, RoutedEventArgs e)
         {
+            // sprawdzam czy nastapila zmiana w wyborze kategorii
+            bool zmianaWKategoriach = false;
+            if (ListBoxKategorie.SelectedItems.Count != StronaOgloszenia.NazwyWybranychKategoriiDoListBoxa.Count)
+            {
+                zmianaWKategoriach = true;
+            }
+            else
+            {
+                for (int i = 0; i < ListBoxKategorie.SelectedItems.Count; i++)
+                {
+                    bool czyZawiera = ListBoxKategorie.SelectedItems.Contains(StronaOgloszenia.NazwyWybranychKategoriiDoListBoxa[i]);
+                    if (!czyZawiera)
+                    {
+                        zmianaWKategoriach = true;
+                    }
+                }
+            }    
+
             if (TextBoxTytulOgl.Text == string.Empty || TextBoxTrescOgl.Text == string.Empty)
             {
                 MessageBox.Show("Uzupełnij wszystkie pola!");
                 return;
             }
             else if (TextBoxTytulOgl.Text == StronaOgloszenia.TytulWybranegoOgloszenia &&
-                TextBoxTrescOgl.Text == StronaOgloszenia.TrescWybranegoOgloszenia)
+                TextBoxTrescOgl.Text == StronaOgloszenia.TrescWybranegoOgloszenia && zmianaWKategoriach == false)
             {
                 MessageBox.Show("Nie zostały dokonane żadne zmiany!");
                 return;
@@ -108,15 +141,32 @@ namespace Klient
             string odpowiedz = OperacjeKlient.Odbierz();
             if (odpowiedz == "zedytowano ogloszenie")
             {
-                MessageBox.Show("Ogloszenie zostalo zedytowane!");
-                if (SkadWchodze == "ze strony ogloszenia")
+                // wyslanie nowo wybranych kategorii z listboxa
+                var nazwyWybranychKategorii = new List<string>();
+                foreach (var nazwa in ListBoxKategorie.SelectedItems)
                 {
-                    MainWindow.rama.Content = new StronaOgloszenia();
+                    nazwyWybranychKategorii.Add(nazwa.ToString());
                 }
-                else if (SkadWchodze == "z moich ogloszen")
+                string nazwyWybranychKategoriiSerialized = JsonConvert.SerializeObject(nazwyWybranychKategorii, Formatting.Indented,
+                new JsonSerializerSettings()
                 {
-                    MainWindow.rama.Content = new MojeOgloszenia();
-                }
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+                OperacjeKlient.Wyslij(nazwyWybranychKategoriiSerialized);
+
+                string odpowiedz2 = OperacjeKlient.Odbierz();
+                if (odpowiedz2 == "zakonczono edycje")
+                {
+                    MessageBox.Show("Ogloszenie zostalo zedytowane! Znajdziesz je w kategorii: " + String.Join(", ", nazwyWybranychKategorii));
+                    if (SkadWchodze == "ze strony ogloszenia")
+                    {
+                        MainWindow.rama.Content = new StronaOgloszenia();
+                    }
+                    else if (SkadWchodze == "z moich ogloszen")
+                    {
+                        MainWindow.rama.Content = new MojeOgloszenia();
+                    }
+                }    
             }
         }
     }

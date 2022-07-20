@@ -9,20 +9,25 @@
       Title="DodawanieOgloszen">
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="30*"/>
+            <ColumnDefinition Width="740*"/>
+            <ColumnDefinition Width="30*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="150*"/>
             <RowDefinition Height="97*"/>
             <RowDefinition Height="203*"/>
         </Grid.RowDefinitions>
-        <TextBox x:Name="TextBoxTytul" HorizontalAlignment="Left" Margin="56,75,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="192" Height="49"/>
-        <TextBox x:Name="TextBoxTresc" HorizontalAlignment="Left" Margin="56,64,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="371" Height="179" Grid.Row="1" Grid.RowSpan="2"/>
-        <Label Content="Tytul" HorizontalAlignment="Left" Margin="56,44,0,0" VerticalAlignment="Top" Width="149"/>
-        <Label Content="Treść" HorizontalAlignment="Left" Margin="56,19,0,0" VerticalAlignment="Top" Width="149" Grid.Row="1"/>
-        <Label Content="Kategorie" HorizontalAlignment="Left" Margin="382,74,0,0" VerticalAlignment="Top" Width="95"/>
-        <Button x:Name="ZatwierdzButton" Content="Zatwierdź" HorizontalAlignment="Left" Margin="477,114,0,0" Grid.Row="2" VerticalAlignment="Top" Height="32" Width="130" Click="ZatwierdzButton_Click" RenderTransformOrigin="-0.285,0.545"/>
-        <Button x:Name="PowrotButton" Content="Powrót" HorizontalAlignment="Left" Margin="641,113,0,0" Grid.Row="2" VerticalAlignment="Top" Height="34" Width="130" Click="PowrotButton_Click"/>
-        <Label Content="Dodaj swoje nowe ogłoszenie" FontSize="20" HorizontalContentAlignment="Center" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Height="47" Width="340"/>
-        <ListBox x:Name="ListBoxKategorie" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="477,75,29,122" Grid.RowSpan="3" SelectionMode="Multiple"/>
+        <TextBox x:Name="TextBoxTytul" HorizontalAlignment="Left" Margin="17,75,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="192" Height="49" Grid.Column="1"/>
+        <TextBox x:Name="TextBoxTresc" HorizontalAlignment="Left" Margin="17,64,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="371" Height="179" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1"/>
+        <Label Content="Tytul" HorizontalAlignment="Left" Margin="10,44,0,0" VerticalAlignment="Top" Width="149" Grid.Column="1"/>
+        <Label Content="Treść" HorizontalAlignment="Left" Margin="10,34,0,0" VerticalAlignment="Top" Width="149" Grid.Row="1" Grid.Column="1"/>
+        <Label Content="Kategorie" HorizontalAlignment="Left" Margin="370,74,0,0" VerticalAlignment="Top" Width="68" Grid.Column="1"/>
+        <Button x:Name="ZatwierdzButton" Content="Zatwierdź" HorizontalAlignment="Left" Margin="438,121,0,0" Grid.Row="2" VerticalAlignment="Top" Height="32" Width="123" Click="ZatwierdzButton_Click" RenderTransformOrigin="-0.285,0.545" Grid.Column="1"/>
+        <Button x:Name="PowrotButton" Content="Powrót" HorizontalAlignment="Left" Margin="601,120,0,0" Grid.Row="2" VerticalAlignment="Top" Height="34" Width="119" Click="PowrotButton_Click" Grid.Column="1"/>
+        <Label Content="Dodaj swoje nowe ogłoszenie" FontSize="20" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="191,10,0,0" VerticalAlignment="Top" Height="47" Width="340" Grid.Column="1"/>
+        <ListBox x:Name="ListBoxKategorie" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="438,75,10,122" Grid.RowSpan="3" SelectionMode="Multiple" Grid.Column="1"/>
 
     </Grid>
 </Page>

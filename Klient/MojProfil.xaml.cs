@@ -34,6 +34,9 @@ namespace Klient
         {
             InitializeComponent();
 
+            DatePicker1.DisplayDateEnd = DateTime.Today;
+            DatePicker1.DisplayDateStart = DateTime.Parse("1900-01-01");
+
             OperacjeKlient.Wyslij("MOJE DANE");
             OperacjeKlient.Wyslij(Logowanie.TextBoxLogowanie.Text);
 

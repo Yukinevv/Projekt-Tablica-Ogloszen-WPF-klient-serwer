@@ -133,6 +133,26 @@ namespace Serwer
                                 Wyslij(katSerialized);
                             }
                         }
+                        else if (odKlienta == "WYBRANE NAZWY KATEGORII")
+                        {
+                            string wiadomosc = Odbierz();
+                            int idOgloszenia = int.Parse(wiadomosc);
+                            using (var context = new MyDbContext())
+                            {
+                                var idWybranychKategorii = context.OgloszeniaKategorie.Where(ok => ok.OgloszenieId == idOgloszenia)
+                                    .Select(ok => ok.KategoriaId).ToList();
+
+                                var nazwyKategorii = new List<string>();
+                                foreach (var idWybranejKategorii in idWybranychKategorii)
+                                {
+                                    string? nazwaKategorii = context.Kategorie.Where(k => k.Id == idWybranejKategorii)
+                                        .Select(k => k.Nazwa).FirstOrDefault();
+                                    nazwyKategorii.Add(nazwaKategorii);
+                                }
+                                string nazwyKategoriiSerialized = JsonConvert.SerializeObject(nazwyKategorii);
+                                Wyslij(nazwyKategoriiSerialized);
+                            }
+                        }
                         else if (odKlienta == "DODANIE KATEGORII")
                         {
                             string kategoriaSerialized = Odbierz();
@@ -203,14 +223,15 @@ namespace Serwer
                             int idKategorii = int.Parse(wiadomosc);
                             using (var context = new MyDbContext())
                             {
-                                var pomocnicza = context.OgloszeniaKategorie.Where(ok => ok.KategoriaId == idKategorii).ToList();
-                                var ogloszenia = new List<Ogloszenie>();
-                                foreach (var oglkat in pomocnicza)
-                                {
-                                    var ogl = context.Ogloszenia.Where(o => o.Id == oglkat.OgloszenieId);
-                                    ogloszenia.AddRange(ogl);
-                                }
+                                var idOgloszen = context.OgloszeniaKategorie.Where(ok => ok.KategoriaId == idKategorii)
+                                    .Select(ok => ok.OgloszenieId).ToList();
 
+                                var ogloszenia = new List<Ogloszenie>();
+                                foreach (var idOgloszenia in idOgloszen)
+                                {
+                                    var ogloszenie = context.Ogloszenia.FirstOrDefault(o => o.Id == idOgloszenia);
+                                    ogloszenia.Add(ogloszenie);
+                                }
                                 string oglSerialized = JsonConvert.SerializeObject(ogloszenia, Formatting.Indented,
                                 new JsonSerializerSettings()
                                 {
@@ -249,7 +270,7 @@ namespace Serwer
                                 context.Ogloszenia.Add(ogloszenie);
                                 context.SaveChanges();
 
-                                Wyslij("Dodano");
+                                Wyslij("dodano ogloszenie");
 
                                 // dodanie relacji do tabeli OgloszeniaKategorie
                                 int idOgloszenia = context.Ogloszenia.OrderBy(o => o.Id).Select(o => o.Id).LastOrDefault();
@@ -258,13 +279,13 @@ namespace Serwer
                                 var nazwyKategorii = JsonConvert.DeserializeObject<List<string>>(nazwyKategoriiSerialized);
                                 var idKategorii = new List<int>();
 
-                                foreach (var item in nazwyKategorii)
+                                foreach (var nazwa in nazwyKategorii)
                                 {
-                                    idKategorii.Add(context.Kategorie.Where(k => k.Nazwa == item).Select(k => k.Id).FirstOrDefault());
+                                    idKategorii.Add(context.Kategorie.Where(k => k.Nazwa == nazwa).Select(k => k.Id).FirstOrDefault());
                                 }
-                                foreach (var item in idKategorii)
+                                foreach (var id in idKategorii)
                                 {
-                                    context.OgloszeniaKategorie.Add(new OgloszenieKategoria() { OgloszenieId = idOgloszenia, KategoriaId = item });
+                                    context.OgloszeniaKategorie.Add(new OgloszenieKategoria() { OgloszenieId = idOgloszenia, KategoriaId = id });
                                 }
                                 context.SaveChanges();                    
                             }
@@ -299,8 +320,32 @@ namespace Serwer
                                 ogloszenie.Data_ed = DateTime.Now;
                                 ogloszenie.Tresc = ogloszenieOdKlienta.Tresc;
                                 context.SaveChanges();
+
+                                Wyslij("zedytowano ogloszenie");
+
+                                // edycja relacji w tabeli OgloszeniaKategorie
+                                // usuniecie wczesniejszych relacji
+                                int idOgloszenia = ogloszenie.Id;
+                                var relacje = context.OgloszeniaKategorie.Where(ok => ok.OgloszenieId == idOgloszenia).ToList();
+                                context.OgloszeniaKategorie.RemoveRange(relacje);
+                                context.SaveChanges();
+
+                                // dodanie nowych relacji
+                                string nazwyKategoriiSerialized = Odbierz();
+                                var nazwyKategorii = JsonConvert.DeserializeObject<List<string>>(nazwyKategoriiSerialized);
+                                var idKategorii = new List<int>();
+
+                                foreach (var nazwa in nazwyKategorii)
+                                {
+                                    idKategorii.Add(context.Kategorie.Where(k => k.Nazwa == nazwa).Select(k => k.Id).FirstOrDefault());
+                                }
+                                foreach (var id in idKategorii)
+                                {
+                                    context.OgloszeniaKategorie.Add(new OgloszenieKategoria() { OgloszenieId = idOgloszenia, KategoriaId = id });
+                                }
+                                context.SaveChanges();
                             }
-                            Wyslij("zedytowano ogloszenie");
+                            Wyslij("zakonczono edycje");
                         }
                         else if (odKlienta == "CZY MOZE EDYTOWAC")
                         {
