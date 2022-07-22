@@ -59,7 +59,7 @@
         </ListView>
         <Button x:Name="PowrotButton" Content="Powrot" HorizontalAlignment="Center" Margin="0,6,0,0" VerticalAlignment="Top" Height="32" Width="142" Click="PowrotButton_Click" Grid.Row="2" Grid.Column="1"/>
         <Button x:Name="DodajOgloszenieButton" Content="Dodaj ogłoszenie" HorizontalAlignment="Left" Margin="502,6,0,0" VerticalAlignment="Top" Height="32" Width="148" Click="DodajOgloszenieButton_Click" Grid.Row="2" Grid.Column="1"/>
-        <TextBox x:Name="TextBoxFilter" HorizontalAlignment="Left" Margin="73,17,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Height="30" TextChanged="TextBoxFilter_TextChanged" Grid.Column="1"/>
+        <TextBox x:Name="TextBoxFilter" HorizontalAlignment="Left" Margin="73,17,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Height="30" TextChanged="TextBoxFilter_TextChanged" Grid.Column="1" FontSize="16" VerticalContentAlignment="Center"/>
         <Label Content="Szukaj:" HorizontalAlignment="Left" Margin="9,17,0,0" VerticalAlignment="Top" Height="30" Width="59" Grid.Column="1"/>
     </Grid>
 </Page>

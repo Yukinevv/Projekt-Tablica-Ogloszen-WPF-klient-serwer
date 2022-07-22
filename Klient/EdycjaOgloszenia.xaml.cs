@@ -72,6 +72,13 @@ namespace Klient
 
         private void UsunButton_Click(object sender, RoutedEventArgs e)
         {
+            var result = MessageBox.Show("Czy na pewno chcesz usunac te ogloszenie?", "Usuniecie ogloszenia",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.No)
+            {
+                return;
+            }
+
             OperacjeKlient.Wyslij("USUNIECIE OGLOSZENIA");
             OperacjeKlient.Wyslij(StronaOgloszenia.idWybranegoOgloszenia.ToString());
             string odpowiedz = OperacjeKlient.Odbierz();
@@ -99,9 +106,9 @@ namespace Klient
             }
             else
             {
-                for (int i = 0; i < ListBoxKategorie.SelectedItems.Count; i++)
+                foreach (var nazwa in StronaOgloszenia.NazwyWybranychKategoriiDoListBoxa)
                 {
-                    bool czyZawiera = ListBoxKategorie.SelectedItems.Contains(StronaOgloszenia.NazwyWybranychKategoriiDoListBoxa[i]);
+                    bool czyZawiera = ListBoxKategorie.SelectedItems.Contains(nazwa);
                     if (!czyZawiera)
                     {
                         zmianaWKategoriach = true;
@@ -118,6 +125,13 @@ namespace Klient
                 TextBoxTrescOgl.Text == StronaOgloszenia.TrescWybranegoOgloszenia && zmianaWKategoriach == false)
             {
                 MessageBox.Show("Nie zostały dokonane żadne zmiany!");
+                return;
+            }
+
+            var result = MessageBox.Show("Czy na pewno chcesz edytowac te ogloszenie?", "Edycja ogloszenia",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.No)
+            {
                 return;
             }
 

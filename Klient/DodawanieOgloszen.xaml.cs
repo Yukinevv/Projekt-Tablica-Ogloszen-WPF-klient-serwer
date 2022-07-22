@@ -58,6 +58,12 @@ namespace Klient
                 MessageBox.Show("Uzupełnij wszystkie pola!");
                 return;
             }
+            var result = MessageBox.Show("Czy na pewno chcesz dodac te ogloszenie?", "Dodawanie ogloszenia",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.No)
+            {
+                return;
+            }
 
             // wyslanie ogloszenia do dodania
             OperacjeKlient.Wyslij("DODANIE OGLOSZENIA");

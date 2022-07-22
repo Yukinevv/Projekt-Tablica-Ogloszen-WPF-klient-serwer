@@ -23,9 +23,9 @@
         <TextBox x:Name="TextBoxTresc" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="384" Grid.Row="1" Height="128" Margin="14,41,0,0" Grid.Column="1"/>
         <Label Content="Tytuł" HorizontalAlignment="Left" Margin="4,56,0,0" VerticalAlignment="Top" Width="128" Height="26" Grid.Column="1"/>
         <Label Content="Treść" HorizontalAlignment="Left" Margin="4,10,0,0" VerticalAlignment="Top" Width="128" Height="26" Grid.Row="1" Grid.Column="1"/>
-        <Button x:Name="ZatwierdzButton" Content="Zatwierdź" HorizontalAlignment="Left" Margin="14,9,0,0" Grid.Row="2" VerticalAlignment="Top" Height="42" Width="165" Click="ZatwierdzButton_Click" Grid.Column="1"/>
-        <Button x:Name="PowrótButton" Content="Powrót" HorizontalAlignment="Left" Margin="512,9,0,0" Grid.Row="2" VerticalAlignment="Top" Height="42" Width="165" Click="PowrótButton_Click" Grid.Column="1"/>
-        <Button x:Name="UsunButton" Content="Usun ogloszenie" HorizontalAlignment="Left" Margin="234,9,0,0" Grid.Row="2" VerticalAlignment="Top" Height="42" Width="164" Click="UsunButton_Click" Grid.Column="1"/>
+        <Button x:Name="ZatwierdzButton" Content="Zatwierdź" HorizontalAlignment="Left" Margin="14,9,0,0" Grid.Row="2" VerticalAlignment="Top" Height="42" Width="165" Click="ZatwierdzButton_Click" Grid.Column="1" FontSize="18"/>
+        <Button x:Name="PowrótButton" Content="Powrót" HorizontalAlignment="Left" Margin="512,9,0,0" Grid.Row="2" VerticalAlignment="Top" Height="42" Width="165" Click="PowrótButton_Click" Grid.Column="1" FontSize="18"/>
+        <Button x:Name="UsunButton" Content="Usun ogloszenie" HorizontalAlignment="Left" Margin="234,9,0,0" Grid.Row="2" VerticalAlignment="Top" Height="42" Width="164" Click="UsunButton_Click" Grid.Column="1" FontSize="18"/>
         <Label Content="Edytuj swoje ogłoszenie" FontSize="20" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="247,22,0,0" VerticalAlignment="Top" Height="52" Width="264" Grid.Column="1"/>
         <ListBox x:Name="ListBoxKategorie" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="459,86,10,27" Grid.RowSpan="2" SelectionMode="Multiple" Grid.Column="1"/>
         <Label Content="Kategorie" HorizontalAlignment="Left" Margin="394,86,0,0" VerticalAlignment="Top" Width="65" Grid.Column="1"/>

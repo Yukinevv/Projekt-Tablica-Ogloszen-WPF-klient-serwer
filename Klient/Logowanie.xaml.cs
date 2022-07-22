@@ -22,11 +22,21 @@ namespace Klient
     {
         public static TextBox TextBoxLogowanie;
 
+        private static string[] daneLogowania = new string[2];
+
         public Logowanie()
         {
             InitializeComponent();
 
             TextBoxLogowanie = TextBoxLogin;
+
+            daneLogowania = Ustawienia.WczytajDaneLogowania();
+
+            if (TextBoxLogowanie.Text == string.Empty && PassBoxHaslo.Password == string.Empty)
+            {
+                TextBoxLogowanie.Text = daneLogowania[0];
+                PassBoxHaslo.Password = daneLogowania[1];
+            }
         }
 
         private void RejestracjaButton_Click(object sender, RoutedEventArgs e)
@@ -42,12 +52,17 @@ namespace Klient
                 return;
             }
 
+            if (CheckBoxZapamietaj.IsChecked == true)
+            {
+                Ustawienia.ZapiszDaneLogowania(TextBoxLogowanie.Text, PassBoxHaslo.Password);
+            }
+
             // hashuje podane przez uzytkownika haslo
             SHA256 sha256Hash = SHA256.Create();
             string hash = Rejestracja.GetHash(sha256Hash, PassBoxHaslo.Password);
 
             OperacjeKlient.Wyslij("LOGOWANIE");
-            OperacjeKlient.Wyslij(TextBoxLogin.Text);
+            OperacjeKlient.Wyslij(TextBoxLogowanie.Text);
             OperacjeKlient.Odbierz();
             OperacjeKlient.Wyslij(hash);
             string czyZalogowac = OperacjeKlient.Odbierz();
@@ -59,6 +74,14 @@ namespace Klient
             else
             {
                 MessageBox.Show("Nieprawidlowe dane!");
+            }
+        }
+
+        private void Page_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                LogowanieButton_Click(null, null);
             }
         }
     }

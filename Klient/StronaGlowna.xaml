@@ -44,9 +44,9 @@
         </ListView>
         <Button x:Name="WylogujButton" Content="Wyloguj" HorizontalAlignment="Center" VerticalAlignment="Top" Height="30" Width="130" Click="WylogujButton_Click" Grid.Row="2" Grid.Column="1" Margin="0,9,0,0" RenderTransformOrigin="0.492,1.6"/>
         <Button x:Name="UsunKategorieButton" Content="Usun kategorie" HorizontalAlignment="Left" Margin="560,9,0,0" VerticalAlignment="Top" Height="30" Width="96" Click="UsunKategorieButton_Click" Grid.Row="2" Grid.Column="1"/>
-        <TextBox x:Name="TextBoxNazwaNowejKategorii" HorizontalAlignment="Left" Margin="391,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="117" Height="32" Grid.Column="1"/>
+        <TextBox x:Name="TextBoxNazwaNowejKategorii" HorizontalAlignment="Left" Margin="391,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="117" Height="32" Grid.Column="1" FontSize="16" VerticalContentAlignment="Center"/>
         <Label Content="Wpisz nazwę kategorii:" HorizontalAlignment="Left" Margin="250,0,0,0" VerticalAlignment="Center" Height="32" Width="141" Grid.Column="1"/>
-        <TextBox x:Name="TextBoxFilter" HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="130" Height="30" TextChanged="TextBoxFilter_TextChanged" Grid.Column="1"/>
+        <TextBox x:Name="TextBoxFilter" HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="130" Height="30" TextChanged="TextBoxFilter_TextChanged" Grid.Column="1" FontSize="16" VerticalContentAlignment="Center"/>
         <Label Content="Szukaj:" HorizontalAlignment="Left" Margin="17,14,0,16" RenderTransformOrigin="0.484,-0.069" Width="48" Grid.ColumnSpan="2" />
         <Button x:Name="PanelAdministracyjnyButton" Content="Panel admina" HorizontalAlignment="Left" Margin="450,9,0,0" VerticalAlignment="Top" Height="30" Width="88" Click="PanelAdministracyjnyButton_Click" RenderTransformOrigin="3.236,0.548" Grid.Row="2" Grid.Column="1"/>
         <Button x:Name="MojProfilButton" Content="Moj profil" HorizontalAlignment="Left" Margin="10,9,0,0" VerticalAlignment="Top" Height="30" Width="96" RenderTransformOrigin="0.271,0.516" Grid.Column="1" Grid.Row="2" Click="MojProfilButton_Click"/>

@@ -91,6 +91,12 @@ namespace Klient
                 MessageBox.Show("Nie wpisales nazwy kategorii!");
                 return;
             }
+            var result = MessageBox.Show("Czy na pewno chcesz dodac te kategorie?", "Dodawanie kategorii",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.No)
+            {
+                return;
+            }
 
             OperacjeKlient.Wyslij("DODANIE KATEGORII");
             var nowaKategoria = new Kategoria()
@@ -127,6 +133,12 @@ namespace Klient
             if (TextBoxNazwaNowejKategorii.Text == string.Empty)
             {
                 MessageBox.Show("Nie wpisales nazwy kategorii!");
+                return;
+            }
+            var result = MessageBox.Show("Czy na pewno chcesz usunac te kategorie?", "Usuniecie kategorii",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.No)
+            {
                 return;
             }
 
