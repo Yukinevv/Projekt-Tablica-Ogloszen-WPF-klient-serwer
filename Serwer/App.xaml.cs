@@ -13,5 +13,16 @@ namespace Serwer
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+            var bazaDanych = new MyDbContext();
+            bazaDanych.Database.EnsureCreated();
+
+            DataBaseLocator.Context = bazaDanych;
+        }
     }
 }

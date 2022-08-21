@@ -1,37 +1,36 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using BibliotekaEncje.Encje;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+﻿using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Threading;
 
 namespace Serwer
 {
     public class OperacjeSerwer
     {
-        private static Socket serverSocket = new Socket(
+        public static Socket serverSocket = new Socket(
                 AddressFamily.InterNetwork,
                 SocketType.Stream,
                 ProtocolType.Tcp);
 
         private static Socket gniazdoPolaczenia;
 
-        private static string Odbierz()
+        public static string Odbierz()
         {
             var buf = new byte[5000];
-            int received = gniazdoPolaczenia.Receive(buf, SocketFlags.None); // otrzymuje wstepna informacje od klienta
+            int received = 0;
+            try
+            {
+                received = gniazdoPolaczenia.Receive(buf, SocketFlags.None); // otrzymuje wstepna informacje od klienta
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show(err.Message);
+            }
             if (received == 0)
             {
-                MessageBox.Show("Blad przy otrzymaniu informacji");
                 return "";
             }
             var data = new byte[received];
@@ -40,22 +39,35 @@ namespace Serwer
             return odKlienta;
         }
 
-        private static void Wyslij(string text)
+        public static void Wyslij(string text)
         {
             byte[] buffer = Encoding.ASCII.GetBytes(text);
-            gniazdoPolaczenia.Send(buffer, 0, buffer.Length, SocketFlags.None);
+            try
+            {
+                gniazdoPolaczenia.Send(buffer, 0, buffer.Length, SocketFlags.None);
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show(err.Message);
+            }
         }
 
-        public static async void SerwerOperacje(object listbox)
+        public static async Task SerwerOperacje(object listBox)
         {
             EndPoint serverAddress = new IPEndPoint(IPAddress.Any, 11111);
             serverSocket.Bind(serverAddress);
             serverSocket.Listen(5);
 
-            gniazdoPolaczenia = serverSocket.Accept();
-            //await Task<Socket>.Factory.StartNew(serverSocket.Accept);
+            try
+            {
+                gniazdoPolaczenia = await Task<Socket>.Factory.StartNew(serverSocket.Accept);
+            }
+            catch (Exception)
+            {
+                return;
+            }
 
-            ListBox ListBoxPolaczeniKlienci = listbox as ListBox;
+            ListBox ListBoxPolaczeniKlienci = listBox as ListBox;
             ListBoxPolaczeniKlienci.Items.Add(gniazdoPolaczenia.RemoteEndPoint);
 
             await Task.Factory.StartNew(() =>
@@ -68,425 +80,89 @@ namespace Serwer
 
                         if (odKlienta == "REJESTRACJA")
                         {
-                            string zserializowanyObiekt = Odbierz();
-                            var obiekt = JsonConvert.DeserializeObject<Uzytkownik>(zserializowanyObiekt);
-
-                            using (var context = new MyDbContext())
-                            {
-                                bool czyMogeDodac = context.Uzytkownicy.Any(u => u.Login == obiekt.Login);
-
-                                if (!czyMogeDodac)
-                                {
-                                    context.Uzytkownicy.Add(obiekt);
-                                    context.SaveChanges();
-
-                                    Wyslij("zarejestrowano");
-                                }
-                                else
-                                {
-                                    string komunikat = "Uzytkownik o podanym loginie juz istnieje!";
-                                    Wyslij(komunikat);
-                                }      
-                            }
+                            PoleceniaOdKlienta.Rejestracja();
                         }
                         else if (odKlienta == "LOGOWANIE")
                         {
-                            string login = Odbierz();
-                            Wyslij("OK");
-                            string haslo = Odbierz();
-
-                            using (var context = new MyDbContext())
-                            {
-                                bool czyZalogowac = context.Uzytkownicy.Any(u => u.Login == login && u.Haslo == haslo);
-                                if (czyZalogowac)
-                                {
-                                    Wyslij("true");
-                                }
-                                else
-                                {
-                                    Wyslij("false");
-                                }
-                            }
+                            PoleceniaOdKlienta.Logowanie();
                         }
                         else if (odKlienta == "CZY ADMIN")
                         {
-                            string login = Odbierz();
-                            using (var context = new MyDbContext())
-                            {
-                                bool czyAdmin = context.Uzytkownicy.Any(u => u.Login == login && u.Uprawnienia == "admin");
-                                if (czyAdmin)
-                                {
-                                    Wyslij("admin");
-                                }
-                                else
-                                {
-                                    Wyslij("nie admin");
-                                }
-                            }
+                            PoleceniaOdKlienta.CzyAdmin();
                         }
                         else if (odKlienta == "KATEGORIE")
                         {
-                            using (var context = new MyDbContext())
-                            {
-                                var kategorie = context.Kategorie.ToList();
-                                string katSerialized = JsonConvert.SerializeObject(kategorie);
-                                Wyslij(katSerialized);
-                            }
+                            PoleceniaOdKlienta.Kategorie();
                         }
                         else if (odKlienta == "WYBRANE NAZWY KATEGORII")
                         {
-                            string wiadomosc = Odbierz();
-                            int idOgloszenia = int.Parse(wiadomosc);
-                            using (var context = new MyDbContext())
-                            {
-                                var idWybranychKategorii = context.OgloszeniaKategorie.Where(ok => ok.OgloszenieId == idOgloszenia)
-                                    .Select(ok => ok.KategoriaId).ToList();
-
-                                var nazwyKategorii = new List<string>();
-                                foreach (var idWybranejKategorii in idWybranychKategorii)
-                                {
-                                    string? nazwaKategorii = context.Kategorie.Where(k => k.Id == idWybranejKategorii)
-                                        .Select(k => k.Nazwa).FirstOrDefault();
-                                    nazwyKategorii.Add(nazwaKategorii);
-                                }
-                                string nazwyKategoriiSerialized = JsonConvert.SerializeObject(nazwyKategorii);
-                                Wyslij(nazwyKategoriiSerialized);
-                            }
+                            PoleceniaOdKlienta.WybraneNazwyKategorii();
                         }
                         else if (odKlienta == "DODANIE KATEGORII")
                         {
-                            string kategoriaSerialized = Odbierz();
-                            var kategoriaOdKlienta = JsonConvert.DeserializeObject<Kategoria>(kategoriaSerialized);
-                            string login = Odbierz();
-
-                            using (var context = new MyDbContext())
-                            {
-                                bool czyDodac = context.Kategorie.Any(k => k.Nazwa == kategoriaOdKlienta.Nazwa);
-                                if (!czyDodac)
-                                {
-                                    int idUzytkownika = context.Uzytkownicy.Where(u => u.Login == login).Select(u => u.Id).FirstOrDefault();
-                                    var nowaKategoria = new Kategoria()
-                                    {
-                                        Nazwa = kategoriaOdKlienta.Nazwa,
-                                        Data_utw = DateTime.Now,
-                                        UzytkownikId = idUzytkownika
-                                    };
-                                    context.Kategorie.Add(nowaKategoria);
-                                    context.SaveChanges();
-
-                                    Wyslij("Dodano");
-                                }
-                                else
-                                {
-                                    string komunikat = "Kategoria o podanej nazwie juz istnieje! Prosze podac inna nazwe.";
-                                    Wyslij(komunikat);
-                                }             
-                            }
+                            PoleceniaOdKlienta.DodanieKategorii();
                         }
                         else if (odKlienta == "USUNIECIE KATEGORII")
                         {
-                            string nazwaKategorii = Odbierz();
-
-                            using (var context = new MyDbContext())
-                            {
-                                // sprawdzam czy kategoria o podanej przez klienta nazwie znajduje sie w bazie
-                                bool czyKategoriaIstnieje = context.Kategorie.Any(k => k.Nazwa == nazwaKategorii);
-
-                                if (czyKategoriaIstnieje)
-                                {
-                                    int idKategorii = context.Kategorie.Where(k => k.Nazwa == nazwaKategorii).Select(k => k.Id).FirstOrDefault();
-                                    // sprawdzam czy w usuwanej kategorii znajduja sie jakies ogloszenia, jezeli nie to usuwam kategorie
-                                    bool czyMogeUsunac = context.OgloszeniaKategorie.Any(ok => ok.KategoriaId == idKategorii);
-
-                                    if (!czyMogeUsunac)
-                                    {
-                                        var kategoria = context.Kategorie.Where(k => k.Nazwa == nazwaKategorii).FirstOrDefault();
-                                        context.Kategorie.Remove(kategoria);
-                                        context.SaveChanges();
-
-                                        Wyslij("usunieto");
-                                    }
-                                    else
-                                    {
-                                        Wyslij("nie usunieto");
-                                    }
-                                }
-                                else
-                                {
-                                    Wyslij("nie ma takiej kategorii");
-                                } 
-                            }
+                            PoleceniaOdKlienta.UsuniecieKategorii();
                         }
                         else if (odKlienta == "OGLOSZENIA")
                         {
-                            string wiadomosc = Odbierz();
-                            int idKategorii = int.Parse(wiadomosc);
-                            using (var context = new MyDbContext())
-                            {
-                                var idOgloszen = context.OgloszeniaKategorie.Where(ok => ok.KategoriaId == idKategorii)
-                                    .Select(ok => ok.OgloszenieId).ToList();
-
-                                var ogloszenia = new List<Ogloszenie>();
-                                foreach (var idOgloszenia in idOgloszen)
-                                {
-                                    var ogloszenie = context.Ogloszenia.FirstOrDefault(o => o.Id == idOgloszenia);
-                                    ogloszenia.Add(ogloszenie);
-                                }
-                                string oglSerialized = JsonConvert.SerializeObject(ogloszenia, Formatting.Indented,
-                                new JsonSerializerSettings()
-                                {
-                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                                });
-                                Wyslij(oglSerialized);
-                            }
+                            PoleceniaOdKlienta.Ogloszenia();
                         }
                         else if (odKlienta == "MOJE OGLOSZENIA")
                         {
-                            string login = Odbierz();
-                            using (var context = new MyDbContext())
-                            {
-                                int idUzytkownika = context.Uzytkownicy.Where(u => u.Login == login).Select(u => u.Id).FirstOrDefault();
-                                var ogloszenia = context.Ogloszenia.Where(o => o.UzytkownikId == idUzytkownika).ToList();
-                                string oglSerialized = JsonConvert.SerializeObject(ogloszenia, Formatting.Indented,
-                                new JsonSerializerSettings()
-                                {
-                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                                });
-                                Wyslij(oglSerialized);
-                            }
+                            PoleceniaOdKlienta.MojeOgloszenia();
                         }
                         else if (odKlienta == "DODANIE OGLOSZENIA")
                         {
-                            string login = Odbierz();
-                            using (var context = new MyDbContext())
-                            {
-                                int idUzytkownika = context.Uzytkownicy.Where(u => u.Login == login).Select(u => u.Id).FirstOrDefault();
-
-                                // dodanie samego ogloszenia
-                                string zserializowanyObiekt = Odbierz();
-                                var ogloszenie = JsonConvert.DeserializeObject<Ogloszenie>(zserializowanyObiekt);
-                                ogloszenie.UzytkownikId = idUzytkownika;
-
-                                context.Ogloszenia.Add(ogloszenie);
-                                context.SaveChanges();
-
-                                Wyslij("dodano ogloszenie");
-
-                                // dodanie relacji do tabeli OgloszeniaKategorie
-                                int idOgloszenia = context.Ogloszenia.OrderBy(o => o.Id).Select(o => o.Id).LastOrDefault();
-
-                                string nazwyKategoriiSerialized = Odbierz();
-                                var nazwyKategorii = JsonConvert.DeserializeObject<List<string>>(nazwyKategoriiSerialized);
-                                var idKategorii = new List<int>();
-
-                                foreach (var nazwa in nazwyKategorii)
-                                {
-                                    idKategorii.Add(context.Kategorie.Where(k => k.Nazwa == nazwa).Select(k => k.Id).FirstOrDefault());
-                                }
-                                foreach (var id in idKategorii)
-                                {
-                                    context.OgloszeniaKategorie.Add(new OgloszenieKategoria() { OgloszenieId = idOgloszenia, KategoriaId = id });
-                                }
-                                context.SaveChanges();                    
-                            }
-                            Wyslij("zakonczono dodawanie");
+                            PoleceniaOdKlienta.DodanieOgloszenia();
                         }
                         else if (odKlienta == "USUNIECIE OGLOSZENIA")
                         {
-                            string wiadomosc = Odbierz();
-                            int idOgloszenia = int.Parse(wiadomosc);
-                            using (var context = new MyDbContext())
-                            {
-                                // usuniecie samego ogloszenia
-                                var ogloszenie = context.Ogloszenia.Where(o => o.Id == idOgloszenia).FirstOrDefault();
-                                context.Ogloszenia.Remove(ogloszenie);
-
-                                // usuniecie relacji pomiedzy Ogloszeniami a Kategoriami
-                                var relacje = context.OgloszeniaKategorie.Where(ok => ok.OgloszenieId == idOgloszenia);
-                                context.OgloszeniaKategorie.RemoveRange(relacje);
-                                context.SaveChanges();
-                            }
-                            Wyslij("Usunieto");
+                            PoleceniaOdKlienta.UsuniecieOgloszenia();
                         }
                         else if (odKlienta == "EDYCJA OGLOSZENIA")
                         {
-                            string oglSeralized = Odbierz();
-                            var ogloszenieOdKlienta = JsonConvert.DeserializeObject<Ogloszenie>(oglSeralized);
-
-                            using (var context = new MyDbContext())
-                            {
-                                var ogloszenie = context.Ogloszenia.Where(o => o.Id == ogloszenieOdKlienta.Id).FirstOrDefault();
-                                ogloszenie.Tytul = ogloszenieOdKlienta.Tytul;
-                                ogloszenie.Data_ed = DateTime.Now;
-                                ogloszenie.Tresc = ogloszenieOdKlienta.Tresc;
-                                context.SaveChanges();
-
-                                Wyslij("zedytowano ogloszenie");
-
-                                // edycja relacji w tabeli OgloszeniaKategorie
-                                // usuniecie wczesniejszych relacji
-                                int idOgloszenia = ogloszenie.Id;
-                                var relacje = context.OgloszeniaKategorie.Where(ok => ok.OgloszenieId == idOgloszenia).ToList();
-                                context.OgloszeniaKategorie.RemoveRange(relacje);
-                                context.SaveChanges();
-
-                                // dodanie nowych relacji
-                                string nazwyKategoriiSerialized = Odbierz();
-                                var nazwyKategorii = JsonConvert.DeserializeObject<List<string>>(nazwyKategoriiSerialized);
-                                var idKategorii = new List<int>();
-
-                                foreach (var nazwa in nazwyKategorii)
-                                {
-                                    idKategorii.Add(context.Kategorie.Where(k => k.Nazwa == nazwa).Select(k => k.Id).FirstOrDefault());
-                                }
-                                foreach (var id in idKategorii)
-                                {
-                                    context.OgloszeniaKategorie.Add(new OgloszenieKategoria() { OgloszenieId = idOgloszenia, KategoriaId = id });
-                                }
-                                context.SaveChanges();
-                            }
-                            Wyslij("zakonczono edycje");
+                            PoleceniaOdKlienta.EdycjaOgloszenia();
                         }
                         else if (odKlienta == "CZY MOZE EDYTOWAC")
                         {
-                            string login = Odbierz();
-                            Wyslij("OK");
-                            string wiadomosc = Odbierz();
-                            Debug.WriteLine("Id uzytkownika wybranego ogloszenia = " + wiadomosc);
-                            int idUzytkownikaWybranegoOgloszenia = int.Parse(wiadomosc);
-
-                            using (var context = new MyDbContext())
-                            {
-                                int idUzytkownikZalogowanego = context.Uzytkownicy.Where(u => u.Login == login).Select(u => u.Id).FirstOrDefault();
-                                bool czyAdmin = context.Uzytkownicy.Where(u => u.Id == idUzytkownikZalogowanego && u.Uprawnienia == "admin").Any();
-                                if (idUzytkownikZalogowanego == idUzytkownikaWybranegoOgloszenia || czyAdmin == true)
-                                {
-                                    Wyslij("TAK");
-                                }
-                                else
-                                {
-                                    Wyslij("NIE");
-                                }
-                            }
+                            PoleceniaOdKlienta.CzyMozeEdytowac();
                         }
                         else if (odKlienta == "MOJE DANE")
                         {
-                            string login = Odbierz();
-                            using (var context = new MyDbContext())
-                            {
-                                var uzytkownik = context.Uzytkownicy.FirstOrDefault(u => u.Login == login);
-                                string uzytkownikSerialized = JsonConvert.SerializeObject(uzytkownik, Formatting.Indented,
-                                new JsonSerializerSettings()
-                                {
-                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                                });
-                                Wyslij(uzytkownikSerialized);
-                            }
+                            PoleceniaOdKlienta.MojeDane();
                         }
                         else if (odKlienta == "EDYCJA DANYCH UZYTKOWNIKA")
-                        {            
-                            string uzytkownikOdKlientaSerialized = Odbierz();
-                            var uzytkownikOdKlienta = JsonConvert.DeserializeObject<Uzytkownik>(uzytkownikOdKlientaSerialized);
-                            string login = Odbierz(); // aktualny login uzytkownika
-                            using (var context = new MyDbContext())
-                            {
-                                // sprawdzam czy uzytkownik o nowo podanym loginie juz istnieje (roznym niz aktualny login)
-                                bool czyMogeEdytowac = context.Uzytkownicy.Any(u => u.Login == uzytkownikOdKlienta.Login && u.Login != login);
-                                
-                                if (!czyMogeEdytowac)
-                                {                               
-                                    var uzytkownikZBazy = context.Uzytkownicy.FirstOrDefault(u => u.Login == login);
-                                    uzytkownikZBazy.Imie = uzytkownikOdKlienta.Imie;
-                                    uzytkownikZBazy.Nazwisko = uzytkownikOdKlienta.Nazwisko;
-                                    uzytkownikZBazy.Login = uzytkownikOdKlienta.Login;
-                                    uzytkownikZBazy.Email = uzytkownikOdKlienta.Email;
-                                    uzytkownikZBazy.Haslo = uzytkownikOdKlienta.Haslo;
-                                    uzytkownikZBazy.Data_ur = uzytkownikOdKlienta.Data_ur;
-                                    context.SaveChanges();
-
-                                    Wyslij("edytowano");
-                                }
-                                else
-                                {
-                                    string komunikat = "Uzytkownik o podanym loginie juz istnieje! Prosze podac inny login.";
-                                    Wyslij(komunikat);
-                                }
-                            }
+                        {
+                            PoleceniaOdKlienta.EdycjaDanychUzytkownika();
                         }
                         else if (odKlienta == "UZYTKOWNICY")
                         {
-                            string login = Odbierz();
-                            using (var context = new MyDbContext())
-                            {
-                                var uzytkownicy = context.Uzytkownicy.Where(u => u.Login != login).ToList();
-                                string uzytkownicySerialized = JsonConvert.SerializeObject(uzytkownicy, Formatting.Indented,
-                                new JsonSerializerSettings()
-                                {
-                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                                });
-                                Wyslij(uzytkownicySerialized);
-                            }
+                            PoleceniaOdKlienta.Uzytkownicy();
                         }
                         else if (odKlienta == "AWANS UZYTKOWNIKA")
                         {
-                            string login = Odbierz();
-
-                            using (var context = new MyDbContext())
-                            {
-                                var uzytkownik = context.Uzytkownicy.FirstOrDefault(u => u.Login == login);
-
-                                if (uzytkownik.Uprawnienia == "uzytkownik")
-                                {
-                                    uzytkownik.Uprawnienia = "admin";
-                                    context.SaveChanges();
-
-                                    Wyslij("awansowano");
-                                }
-                                else
-                                {
-                                    string komunikat = "Uzytkownik juz jest administratorem!";
-                                    Wyslij(komunikat);
-                                }
-                            } 
+                            PoleceniaOdKlienta.AwansUzytkownika();
                         }
                         else if (odKlienta == "ZDEGRADOWANIE UZYTKOWNIKA")
                         {
-                            string login = Odbierz();
-
-                            using (var context = new MyDbContext())
-                            {
-                                var uzytkownik = context.Uzytkownicy.FirstOrDefault(u => u.Login == login);
-
-                                if (uzytkownik.Uprawnienia == "admin")
-                                {
-                                    uzytkownik.Uprawnienia = "uzytkownik";
-                                    context.SaveChanges();
-
-                                    Wyslij("zdegradowano");
-                                }
-                                else
-                                {
-                                    string komunikat = "Uzytkownik jest juz zwyklym uzytkownikiem!";
-                                    Wyslij(komunikat);
-                                }
-                            }
+                            PoleceniaOdKlienta.ZdegradowanieUzytkownika();
                         }
                         else
                         {
                             gniazdoPolaczenia.Close();
-                            MessageBox.Show("Nieznane rzadanie wyslania od klienta!");
-                            //ListBoxPolaczeniKlienci.Items.Remove(gniazdoPolaczenia.RemoteEndPoint);
-                            //ListBoxPolaczeniKlienci.Clear();
                         }
                     }
                     else
                     {
-                        MessageBox.Show("Klient NIE jest podlaczony! Wylaczam serwer.");
-                        serverSocket.Close();
+                        MessageBox.Show("Klient zakonczyl polaczenie!");
                         break;
                     }
                 }
             });
+            ListBoxPolaczeniKlienci.Items.RemoveAt(ListBoxPolaczeniKlienci.Items.Count - 1);
         }
     }
 }

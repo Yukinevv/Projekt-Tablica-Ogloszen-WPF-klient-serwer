@@ -11,7 +11,16 @@
             <RowDefinition Height="325*"/>
             <RowDefinition Height="109*"/>
         </Grid.RowDefinitions>
-        <ListBox x:Name="ListBoxPolaczeniKlienci" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="132,24,132,10"/>
-        <Button x:Name="UruchomSerwerButton" Content="Uruchom serwer" HorizontalAlignment="Center" VerticalAlignment="Top" Width="120" Height="42" Click="UruchomSerwerButton_Click" Grid.Row="1" Margin="0,13,0,0"/>
+
+        <ListBox x:Name="ListBoxPolaczeniKlienci" Margin="132,24,132,10"/>
+
+        <Button x:Name="UruchomSerwerButton" Content="Uruchom serwer" HorizontalAlignment="Left" VerticalAlignment="Top"
+                Width="120" Height="42" Grid.Row="1" Margin="217,10,0,0" Command="{Binding UruchomSerwerKomenda}"
+                CommandParameter="{Binding ElementName=ListBoxPolaczeniKlienci}"
+                Visibility="{Binding UruchomSerwerButtonVisibilityModelWidoku}"/>
+        
+        <Button x:Name="WylaczSerwer" Content="Wylacz serwer" HorizontalAlignment="Left" VerticalAlignment="Top"
+            Width="120" Height="42" Grid.Row="1" Margin="463,10,0,0" Command="{Binding WylaczSerwerKomenda}"
+                IsEnabled="{Binding WylaczSerwerButtonIsEnabledModelWidoku, Mode=TwoWay}"/>
     </Grid>
 </Window>
