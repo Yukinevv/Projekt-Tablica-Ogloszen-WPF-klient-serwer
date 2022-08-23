@@ -4,14 +4,19 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Sockets;
+using System.Threading;
+using System.Windows;
 
 namespace Serwer
 {
     public class PoleceniaOdKlienta
     {
-        public static void Rejestracja()
+        public static void Rejestracja(byte[] buffer, int BUFFER_SIZE, Socket current)
         {
-            string zserializowanyObiekt = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+
+            string zserializowanyObiekt = OperacjeSerwer.odKlienta;
             var obiekt = JsonConvert.DeserializeObject<Uzytkownik>(zserializowanyObiekt);
 
             bool czyMogeDodac = DataBaseLocator.Context.Uzytkownicy.Any(u => u.Login == obiekt.Login);
@@ -21,48 +26,74 @@ namespace Serwer
                 DataBaseLocator.Context.Uzytkownicy.Add(obiekt);
                 DataBaseLocator.Context.SaveChanges();
 
-                OperacjeSerwer.Wyslij("zarejestrowano");
+                OperacjeSerwer.Wyslij("zarejestrowano", current);
             }
             else
             {
                 string komunikat = "Uzytkownik o podanym loginie juz istnieje!";
-                OperacjeSerwer.Wyslij(komunikat);
+                OperacjeSerwer.Wyslij(komunikat, current);
             }
         }
 
-        public static void Logowanie()
+        public static void Logowanie(byte[] buffer, int BUFFER_SIZE, Socket current, List<string> zalogowaniKlienciLoginy)
         {
-            string login = OperacjeSerwer.Odbierz();
-            OperacjeSerwer.Wyslij("OK");
-            string haslo = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string login = OperacjeSerwer.odKlienta;
+            OperacjeSerwer.Wyslij("OK", current);
 
-            bool czyZalogowac = DataBaseLocator.Context.Uzytkownicy.Any(u => u.Login == login && u.Haslo == haslo);
-            if (czyZalogowac)
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            Thread.Sleep(100);
+            string haslo = OperacjeSerwer.odKlienta;
+
+            bool czyJestJuzZalogowany = zalogowaniKlienciLoginy.Contains(login);
+
+            bool czyJestWBazie = DataBaseLocator.Context.Uzytkownicy.Any(u => u.Login == login && u.Haslo == haslo);
+            if (czyJestWBazie && !czyJestJuzZalogowany)
             {
-                OperacjeSerwer.Wyslij("true");
+                OperacjeSerwer.Wyslij("zaloguj", current);
+            }
+            else if (czyJestWBazie && czyJestJuzZalogowany)
+            {
+                OperacjeSerwer.Wyslij("jest juz zalogowany", current);
             }
             else
             {
-                OperacjeSerwer.Wyslij("false");
+                OperacjeSerwer.Wyslij("nie ma w bazie", current);
             }
         }
 
-        public static void CzyAdmin()
+        public static void DodajLoginDoListyZalogowanych(byte[] buffer, int BUFFER_SIZE, Socket current, List<string> zalogowaniKlienciLoginy)
         {
-            string login = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string login = OperacjeSerwer.odKlienta;
+            zalogowaniKlienciLoginy.Add(login);
+            OperacjeSerwer.Wyslij("dodano", current);
+        }
+
+        public static void Wyloguj(byte[] buffer, int BUFFER_SIZE, Socket current, List<string> zalogowaniKlienciLoginy)
+        {
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string login = OperacjeSerwer.odKlienta;
+            zalogowaniKlienciLoginy.Remove(login);
+        }
+
+        public static void CzyAdmin(byte[] buffer, int BUFFER_SIZE, Socket current)
+        {
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string login = OperacjeSerwer.odKlienta;
 
             bool czyAdmin = DataBaseLocator.Context.Uzytkownicy.Any(u => u.Login == login && u.Uprawnienia == "admin");
             if (czyAdmin)
             {
-                OperacjeSerwer.Wyslij("admin");
+                OperacjeSerwer.Wyslij("admin", current);
             }
             else
             {
-                OperacjeSerwer.Wyslij("nie admin");
+                OperacjeSerwer.Wyslij("nie admin", current);
             }
         }
 
-        public static void Kategorie()
+        public static void Kategorie(byte[] buffer, int BUFFER_SIZE, Socket current)
         {
             var kategorie = DataBaseLocator.Context.Kategorie.ToList();
             string katSerialized = JsonConvert.SerializeObject(kategorie, Formatting.Indented,
@@ -70,13 +101,15 @@ namespace Serwer
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
-            OperacjeSerwer.Wyslij(katSerialized);
+            OperacjeSerwer.Wyslij(katSerialized, current);
         }
 
-        public static void WybraneNazwyKategorii()
+        public static void WybraneNazwyKategorii(byte[] buffer, int BUFFER_SIZE, Socket current)
         {
-            string wiadomosc = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string wiadomosc = OperacjeSerwer.odKlienta;
             int idOgloszenia = int.Parse(wiadomosc);
+
             var idWybranychKategorii = DataBaseLocator.Context.OgloszeniaKategorie.Where(ok => ok.OgloszenieId == idOgloszenia)
                 .Select(ok => ok.KategoriaId).ToList();
 
@@ -87,15 +120,23 @@ namespace Serwer
                     .Select(k => k.Nazwa).FirstOrDefault();
                 nazwyKategorii.Add(nazwaKategorii);
             }
-            string nazwyKategoriiSerialized = JsonConvert.SerializeObject(nazwyKategorii);
-            OperacjeSerwer.Wyslij(nazwyKategoriiSerialized);
+            string nazwyKategoriiSerialized = JsonConvert.SerializeObject(nazwyKategorii, Formatting.Indented,
+            new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+            OperacjeSerwer.Wyslij(nazwyKategoriiSerialized, current);
         }
 
-        public static void DodanieKategorii()
+        public static void DodanieKategorii(byte[] buffer, int BUFFER_SIZE, Socket current)
         {
-            string kategoriaSerialized = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string kategoriaSerialized = OperacjeSerwer.odKlienta;
             var kategoriaOdKlienta = JsonConvert.DeserializeObject<Kategoria>(kategoriaSerialized);
-            string login = OperacjeSerwer.Odbierz();
+
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            Thread.Sleep(100);
+            string login = OperacjeSerwer.odKlienta;
 
             bool czyDodac = DataBaseLocator.Context.Kategorie.Any(k => k.Nazwa == kategoriaOdKlienta.Nazwa);
             if (!czyDodac)
@@ -110,18 +151,19 @@ namespace Serwer
                 DataBaseLocator.Context.Kategorie.Add(nowaKategoria);
                 DataBaseLocator.Context.SaveChanges();
 
-                OperacjeSerwer.Wyslij("Dodano");
+                OperacjeSerwer.Wyslij("Dodano", current);
             }
             else
             {
                 string komunikat = "Kategoria o podanej nazwie juz istnieje! Prosze podac inna nazwe.";
-                OperacjeSerwer.Wyslij(komunikat);
+                OperacjeSerwer.Wyslij(komunikat, current);
             }
         }
 
-        public static void UsuniecieKategorii()
+        public static void UsuniecieKategorii(byte[] buffer, int BUFFER_SIZE, Socket current)
         {
-            string nazwaKategorii = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string nazwaKategorii = OperacjeSerwer.odKlienta;
 
             // sprawdzam czy kategoria o podanej przez klienta nazwie znajduje sie w bazie
             bool czyKategoriaIstnieje = DataBaseLocator.Context.Kategorie.Any(k => k.Nazwa == nazwaKategorii);
@@ -138,22 +180,23 @@ namespace Serwer
                     DataBaseLocator.Context.Kategorie.Remove(kategoria);
                     DataBaseLocator.Context.SaveChanges();
 
-                    OperacjeSerwer.Wyslij("usunieto");
+                    OperacjeSerwer.Wyslij("usunieto", current);
                 }
                 else
                 {
-                    OperacjeSerwer.Wyslij("nie usunieto");
+                    OperacjeSerwer.Wyslij("nie usunieto", current);
                 }
             }
             else
             {
-                OperacjeSerwer.Wyslij("nie ma takiej kategorii");
+                OperacjeSerwer.Wyslij("nie ma takiej kategorii", current);
             }
         }
 
-        public static void Ogloszenia()
+        public static void Ogloszenia(byte[] buffer, int BUFFER_SIZE, Socket current)
         {
-            string wiadomosc = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string wiadomosc = OperacjeSerwer.odKlienta;
             int idKategorii = int.Parse(wiadomosc);
 
             var idOgloszen = DataBaseLocator.Context.OgloszeniaKategorie.Where(ok => ok.KategoriaId == idKategorii)
@@ -170,12 +213,13 @@ namespace Serwer
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
-            OperacjeSerwer.Wyslij(oglSerialized);
+            OperacjeSerwer.Wyslij(oglSerialized, current);
         }
 
-        public static void MojeOgloszenia()
+        public static void MojeOgloszenia(byte[] buffer, int BUFFER_SIZE, Socket current)
         {
-            string login = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string login = OperacjeSerwer.odKlienta;
 
             int idUzytkownika = DataBaseLocator.Context.Uzytkownicy.Where(u => u.Login == login).Select(u => u.Id).FirstOrDefault();
             var ogloszenia = DataBaseLocator.Context.Ogloszenia.Where(o => o.UzytkownikId == idUzytkownika).ToList();
@@ -184,29 +228,34 @@ namespace Serwer
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
-            OperacjeSerwer.Wyslij(oglSerialized);
+            OperacjeSerwer.Wyslij(oglSerialized, current);
         }
 
-        public static void DodanieOgloszenia()
+        public static void DodanieOgloszenia(byte[] buffer, int BUFFER_SIZE, Socket current)
         {
-            string login = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string login = OperacjeSerwer.odKlienta;
 
             int idUzytkownika = DataBaseLocator.Context.Uzytkownicy.Where(u => u.Login == login).Select(u => u.Id).FirstOrDefault();
 
             // dodanie samego ogloszenia
-            string zserializowanyObiekt = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            Thread.Sleep(100);
+            string zserializowanyObiekt = OperacjeSerwer.odKlienta;
             var ogloszenie = JsonConvert.DeserializeObject<Ogloszenie>(zserializowanyObiekt);
             ogloszenie.UzytkownikId = idUzytkownika;
 
             DataBaseLocator.Context.Ogloszenia.Add(ogloszenie);
             DataBaseLocator.Context.SaveChanges();
 
-            OperacjeSerwer.Wyslij("dodano ogloszenie");
+            OperacjeSerwer.Wyslij("dodano ogloszenie", current);
 
             // dodanie relacji do tabeli OgloszeniaKategorie
             int idOgloszenia = DataBaseLocator.Context.Ogloszenia.OrderBy(o => o.Id).Select(o => o.Id).LastOrDefault();
 
-            string nazwyKategoriiSerialized = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            Thread.Sleep(100);
+            string nazwyKategoriiSerialized = OperacjeSerwer.odKlienta;
             var nazwyKategorii = JsonConvert.DeserializeObject<List<string>>(nazwyKategoriiSerialized);
             var idKategorii = new List<int>();
 
@@ -219,12 +268,14 @@ namespace Serwer
                 DataBaseLocator.Context.OgloszeniaKategorie.Add(new OgloszenieKategoria() { OgloszenieId = idOgloszenia, KategoriaId = id });
             }
             DataBaseLocator.Context.SaveChanges();
-            OperacjeSerwer.Wyslij("zakonczono dodawanie");
+
+            OperacjeSerwer.Wyslij("zakonczono dodawanie", current);
         }
 
-        public static void UsuniecieOgloszenia()
+        public static void UsuniecieOgloszenia(byte[] buffer, int BUFFER_SIZE, Socket current)
         {
-            string wiadomosc = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string wiadomosc = OperacjeSerwer.odKlienta;
             int idOgloszenia = int.Parse(wiadomosc);
 
             // usuniecie samego ogloszenia
@@ -235,12 +286,14 @@ namespace Serwer
             var relacje = DataBaseLocator.Context.OgloszeniaKategorie.Where(ok => ok.OgloszenieId == idOgloszenia);
             DataBaseLocator.Context.OgloszeniaKategorie.RemoveRange(relacje);
             DataBaseLocator.Context.SaveChanges();
-            OperacjeSerwer.Wyslij("Usunieto");
+
+            OperacjeSerwer.Wyslij("Usunieto", current);
         }
 
-        public static void EdycjaOgloszenia()
+        public static void EdycjaOgloszenia(byte[] buffer, int BUFFER_SIZE, Socket current)
         {
-            string oglSeralized = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string oglSeralized = OperacjeSerwer.odKlienta;
             var ogloszenieOdKlienta = JsonConvert.DeserializeObject<Ogloszenie>(oglSeralized);
 
             var ogloszenie = DataBaseLocator.Context.Ogloszenia.Where(o => o.Id == ogloszenieOdKlienta.Id).FirstOrDefault();
@@ -249,7 +302,7 @@ namespace Serwer
             ogloszenie.Tresc = ogloszenieOdKlienta.Tresc;
             DataBaseLocator.Context.SaveChanges();
 
-            OperacjeSerwer.Wyslij("zedytowano ogloszenie");
+            OperacjeSerwer.Wyslij("zedytowano ogloszenie", current);
 
             // edycja relacji w tabeli OgloszeniaKategorie
             // usuniecie wczesniejszych relacji
@@ -259,7 +312,9 @@ namespace Serwer
             DataBaseLocator.Context.SaveChanges();
 
             // dodanie nowych relacji
-            string nazwyKategoriiSerialized = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            Thread.Sleep(100);
+            string nazwyKategoriiSerialized = OperacjeSerwer.odKlienta;
             var nazwyKategorii = JsonConvert.DeserializeObject<List<string>>(nazwyKategoriiSerialized);
             var idKategorii = new List<int>();
 
@@ -272,14 +327,19 @@ namespace Serwer
                 DataBaseLocator.Context.OgloszeniaKategorie.Add(new OgloszenieKategoria() { OgloszenieId = idOgloszenia, KategoriaId = id });
             }
             DataBaseLocator.Context.SaveChanges();
-            OperacjeSerwer.Wyslij("zakonczono edycje");
+
+            OperacjeSerwer.Wyslij("zakonczono edycje", current);
         }
 
-        public static void CzyMozeEdytowac()
+        public static void CzyMozeEdytowac(byte[] buffer, int BUFFER_SIZE, Socket current)
         {
-            string login = OperacjeSerwer.Odbierz();
-            OperacjeSerwer.Wyslij("OK");
-            string wiadomosc = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string login = OperacjeSerwer.odKlienta;
+            OperacjeSerwer.Wyslij("OK", current);
+
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            Thread.Sleep(100);
+            string wiadomosc = OperacjeSerwer.odKlienta;
             Debug.WriteLine("Id uzytkownika wybranego ogloszenia = " + wiadomosc);
             int idUzytkownikaWybranegoOgloszenia = int.Parse(wiadomosc);
 
@@ -287,17 +347,18 @@ namespace Serwer
             bool czyAdmin = DataBaseLocator.Context.Uzytkownicy.Where(u => u.Id == idUzytkownikZalogowanego && u.Uprawnienia == "admin").Any();
             if (idUzytkownikZalogowanego == idUzytkownikaWybranegoOgloszenia || czyAdmin == true)
             {
-                OperacjeSerwer.Wyslij("TAK");
+                OperacjeSerwer.Wyslij("TAK", current);
             }
             else
             {
-                OperacjeSerwer.Wyslij("NIE");
+                OperacjeSerwer.Wyslij("NIE", current);
             }
         }
 
-        public static void MojeDane()
+        public static void MojeDane(byte[] buffer, int BUFFER_SIZE, Socket current)
         {
-            string login = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string login = OperacjeSerwer.odKlienta;
 
             var uzytkownik = DataBaseLocator.Context.Uzytkownicy.FirstOrDefault(u => u.Login == login);
             string uzytkownikSerialized = JsonConvert.SerializeObject(uzytkownik, Formatting.Indented,
@@ -305,14 +366,18 @@ namespace Serwer
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
-            OperacjeSerwer.Wyslij(uzytkownikSerialized);
+            OperacjeSerwer.Wyslij(uzytkownikSerialized, current);
         }
 
-        public static void EdycjaDanychUzytkownika()
+        public static void EdycjaDanychUzytkownika(byte[] buffer, int BUFFER_SIZE, Socket current)
         {
-            string uzytkownikOdKlientaSerialized = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string uzytkownikOdKlientaSerialized = OperacjeSerwer.odKlienta;
             var uzytkownikOdKlienta = JsonConvert.DeserializeObject<Uzytkownik>(uzytkownikOdKlientaSerialized);
-            string login = OperacjeSerwer.Odbierz(); // aktualny login uzytkownika
+
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            Thread.Sleep(100);
+            string login = OperacjeSerwer.odKlienta; // aktualny login uzytkownika
 
             // sprawdzam czy uzytkownik o nowo podanym loginie juz istnieje (roznym niz aktualny login)
             bool czyMogeEdytowac = DataBaseLocator.Context.Uzytkownicy.Any(u => u.Login == uzytkownikOdKlienta.Login && u.Login != login);
@@ -328,18 +393,19 @@ namespace Serwer
                 uzytkownikZBazy.Data_ur = uzytkownikOdKlienta.Data_ur;
                 DataBaseLocator.Context.SaveChanges();
 
-                OperacjeSerwer.Wyslij("edytowano");
+                OperacjeSerwer.Wyslij("edytowano", current);
             }
             else
             {
                 string komunikat = "Uzytkownik o podanym loginie juz istnieje! Prosze podac inny login.";
-                OperacjeSerwer.Wyslij(komunikat);
+                OperacjeSerwer.Wyslij(komunikat, current);
             }
         }
 
-        public static void Uzytkownicy()
+        public static void Uzytkownicy(byte[] buffer, int BUFFER_SIZE, Socket current)
         {
-            string login = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string login = OperacjeSerwer.odKlienta;
 
             var uzytkownicy = DataBaseLocator.Context.Uzytkownicy.Where(u => u.Login != login).ToList();
             string uzytkownicySerialized = JsonConvert.SerializeObject(uzytkownicy, Formatting.Indented,
@@ -347,12 +413,13 @@ namespace Serwer
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
-            OperacjeSerwer.Wyslij(uzytkownicySerialized);
+            OperacjeSerwer.Wyslij(uzytkownicySerialized, current);
         }
 
-        public static void AwansUzytkownika()
+        public static void AwansUzytkownika(byte[] buffer, int BUFFER_SIZE, Socket current)
         {
-            string login = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string login = OperacjeSerwer.odKlienta;
 
             var uzytkownik = DataBaseLocator.Context.Uzytkownicy.FirstOrDefault(u => u.Login == login);
 
@@ -361,18 +428,19 @@ namespace Serwer
                 uzytkownik.Uprawnienia = "admin";
                 DataBaseLocator.Context.SaveChanges();
 
-                OperacjeSerwer.Wyslij("awansowano");
+                OperacjeSerwer.Wyslij("awansowano", current);
             }
             else
             {
                 string komunikat = "Uzytkownik juz jest administratorem!";
-                OperacjeSerwer.Wyslij(komunikat);
+                OperacjeSerwer.Wyslij(komunikat, current);
             }
         }
 
-        public static void ZdegradowanieUzytkownika()
+        public static void ZdegradowanieUzytkownika(byte[] buffer, int BUFFER_SIZE, Socket current)
         {
-            string login = OperacjeSerwer.Odbierz();
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string login = OperacjeSerwer.odKlienta;
 
             var uzytkownik = DataBaseLocator.Context.Uzytkownicy.FirstOrDefault(u => u.Login == login);
 
@@ -381,12 +449,41 @@ namespace Serwer
                 uzytkownik.Uprawnienia = "uzytkownik";
                 DataBaseLocator.Context.SaveChanges();
 
-                OperacjeSerwer.Wyslij("zdegradowano");
+                OperacjeSerwer.Wyslij("zdegradowano", current);
             }
             else
             {
                 string komunikat = "Uzytkownik jest juz zwyklym uzytkownikiem!";
-                OperacjeSerwer.Wyslij(komunikat);
+                OperacjeSerwer.Wyslij(komunikat, current);
+            }
+        }
+
+        public static void OdlaczenieKlienta(Socket current, List<Socket> clientSockets)
+        {
+            MainWindowModelWidoku.ListBoxPolaczeniKlienciModelWidoku.Remove(current.RemoteEndPoint.ToString());
+            MainWindow.TextBoxLogs.Dispatcher.Invoke(new Action(() =>
+            {
+                MainWindow.TextBoxLogs.Text += "Klient o adresie IP: " + current.RemoteEndPoint.ToString() + " zakonczyl polaczenie.\n";
+            }));
+
+            current.Close();
+            clientSockets.Remove(current);
+        }
+
+        public static void NierozpoznaneRzadanie(Socket current, List<Socket> clientSockets)
+        {
+            if (!MainWindowModelWidoku.czyWylaczSerwerWcisniety)
+            {
+                //MessageBox.Show("Rzadanie " + odKlienta + ". Zamykam polaczenie.");
+                MessageBox.Show("Nierozpoznane rzadanie od klienta! Zamykam polaczenie.");
+                MainWindowModelWidoku.ListBoxPolaczeniKlienciModelWidoku.Remove(current.RemoteEndPoint.ToString());
+                MainWindow.TextBoxLogs.Dispatcher.Invoke(new Action(() =>
+                {
+                    MainWindow.TextBoxLogs.Text += "Klient o adresie IP: " + current.RemoteEndPoint.ToString() + " zakonczyl polaczenie.\n";
+                }));
+
+                current.Close();
+                clientSockets.Remove(current);
             }
         }
     }

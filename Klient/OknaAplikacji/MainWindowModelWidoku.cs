@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Windows;
+using System.Windows.Input;
 
 namespace Klient
 {
@@ -12,11 +13,19 @@ namespace Klient
 
             MainWindow.Rama.Content = new Logowanie();
 
-            LogowanieModelWidoku.PolaczZSerwerem();
+            OperacjeKlient.PolaczZSerwerem();
         }
 
         private void ZamkniecieOkna(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
+            OperacjeKlient.Wyslij("ODLACZENIE KLIENTA");
             OperacjeKlient.clientSocket.Close();
             if (StronaGlownaModelWidoku.CzyPanelAdminaOtwarty)
             {

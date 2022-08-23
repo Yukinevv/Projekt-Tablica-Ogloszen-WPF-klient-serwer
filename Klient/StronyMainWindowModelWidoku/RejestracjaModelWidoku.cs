@@ -37,11 +37,27 @@ namespace Klient
 
         private void Powrot(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             MainWindow.Rama.Content = new Logowanie();
         }
 
         private void Zarejestruj(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             var parametry = (object[])x;
             TextBoxImieTextModelWidoku = (string)parametry[0];
             TextBoxNazwiskoTextModelWidoku = (string)parametry[1];

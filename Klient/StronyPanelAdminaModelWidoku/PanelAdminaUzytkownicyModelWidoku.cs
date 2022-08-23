@@ -32,11 +32,27 @@ namespace Klient
 
         private void Powrot(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             PanelAdmina.Rama.Content = new PanelAdminaMenu();
         }
 
         private void Awansuj(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             OperacjeKlient.Wyslij("AWANS UZYTKOWNIKA");
             OperacjeKlient.Wyslij(TextBoxLoginUzytkownikaModelWidoku);
 
@@ -54,6 +70,14 @@ namespace Klient
 
         private void Zdegraduj(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             OperacjeKlient.Wyslij("ZDEGRADOWANIE UZYTKOWNIKA");
             OperacjeKlient.Wyslij(TextBoxLoginUzytkownikaModelWidoku);
 

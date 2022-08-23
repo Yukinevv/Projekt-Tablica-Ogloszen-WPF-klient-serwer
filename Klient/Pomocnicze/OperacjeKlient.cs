@@ -2,7 +2,6 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Klient
@@ -13,6 +12,27 @@ namespace Klient
                 AddressFamily.InterNetwork,
                 SocketType.Stream,
                 ProtocolType.Tcp);
+
+        public static void PolaczZSerwerem(object x = null)
+        {
+            EndPoint serverAddress = new IPEndPoint(IPAddress.Loopback, 11111);
+            try
+            {
+                clientSocket.Connect(serverAddress);
+                LogowanieModelWidoku.PolaczZSerweremButtonVisibilityModelWidoku = Visibility.Hidden;
+                MainWindow.Rama.Content = new Logowanie();
+            }
+            catch (SocketException)
+            {
+                MessageBox.Show("Polaczenie z serwerem nie zostalo nawiazane!", "Blad polaczenia");
+                clientSocket.Close();
+
+                clientSocket = new Socket(
+                AddressFamily.InterNetwork,
+                SocketType.Stream,
+                ProtocolType.Tcp);
+            }
+        }
 
         public static string Odbierz()
         {
@@ -25,6 +45,7 @@ namespace Klient
             catch (Exception)
             {
                 //MessageBox.Show("Brak polaczenia z serwerem! Przepraszamy za utrudnienia!", "Blad przy odbiorze danych");
+                clientSocket.Close();
                 return "";
             }
             if (received == 0)
@@ -48,6 +69,20 @@ namespace Klient
             catch (Exception)
             {
                 //MessageBox.Show("Brak polaczenia z serwerem! Przepraszamy za utrudnienia!", "Blad wyslania rzadania");
+                clientSocket.Close();
+                return;
+            }
+        }
+
+        public static bool SocketConnected(Socket s)
+        {
+            try
+            {
+                return !((s.Poll(1000, SelectMode.SelectRead) && (s.Available == 0)) || !s.Connected);
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
     }

@@ -37,6 +37,14 @@ namespace Klient
 
         private void Powrot(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             if (SkadWchodze == "ze strony ogloszenia")
             {
                 MainWindow.Rama.Content = new StronaOgloszenia();
@@ -49,6 +57,14 @@ namespace Klient
 
         private void Zatwierdz(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             var parametry = (object[])x;
             string tytul = (string)parametry[0];
             string tresc = (string)parametry[1];

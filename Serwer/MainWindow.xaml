@@ -3,24 +3,40 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:s="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:Serwer"
         mc:Ignorable="d"
         Title="Serwer" Height="450" Width="800" ResizeMode="CanMinimize">
+
+    <Window.Resources>
+        <s:Boolean x:Key="True">True</s:Boolean>
+    </Window.Resources>
+
+    <behaviors:Interaction.Triggers>
+        <behaviors:EventTrigger EventName="Closing">
+            <behaviors:InvokeCommandAction Command="{Binding WylaczSerwerKomenda}"/>
+        </behaviors:EventTrigger>
+    </behaviors:Interaction.Triggers>
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="325*"/>
-            <RowDefinition Height="109*"/>
+            <RowDefinition Height="178*"/>
+            <RowDefinition Height="39*"/>
         </Grid.RowDefinitions>
 
-        <ListBox x:Name="ListBoxPolaczeniKlienci" Margin="132,24,132,10"/>
+        <ListBox x:Name="ListBoxPolaczeniKlienci" ItemsSource="{Binding ListBoxPolaczeniKlienciModelWidoku}" Margin="132,24,132,127"/>
+
+        <TextBox x:Name="TextBoxLog" Margin="132,247,132,20" HorizontalContentAlignment="Center" IsReadOnly="True"/>
 
         <Button x:Name="UruchomSerwerButton" Content="Uruchom serwer" HorizontalAlignment="Left" VerticalAlignment="Top"
-                Width="120" Height="42" Grid.Row="1" Margin="217,10,0,0" Command="{Binding UruchomSerwerKomenda}"
+                Width="120" Height="42" Grid.Row="1" Margin="216,10,0,0" Command="{Binding UruchomSerwerKomenda}"
                 CommandParameter="{Binding ElementName=ListBoxPolaczeniKlienci}"
-                Visibility="{Binding UruchomSerwerButtonVisibilityModelWidoku}"/>
-        
+                Visibility="{Binding UruchomSerwerButtonVisibilityModelWidoku}" RenderTransformOrigin="0.514,0.998"/>
+
         <Button x:Name="WylaczSerwer" Content="Wylacz serwer" HorizontalAlignment="Left" VerticalAlignment="Top"
-            Width="120" Height="42" Grid.Row="1" Margin="463,10,0,0" Command="{Binding WylaczSerwerKomenda}"
-                IsEnabled="{Binding WylaczSerwerButtonIsEnabledModelWidoku, Mode=TwoWay}"/>
+                Width="120" Height="42" Grid.Row="1" Margin="466,10,0,0" Command="{Binding WylaczSerwerKomenda}"
+                CommandParameter="{StaticResource True}" IsEnabled="{Binding WylaczSerwerButtonIsEnabledModelWidoku, Mode=TwoWay}">
+        </Button>
     </Grid>
 </Window>

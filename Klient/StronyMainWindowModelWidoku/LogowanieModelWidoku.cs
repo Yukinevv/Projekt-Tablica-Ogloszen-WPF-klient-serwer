@@ -1,10 +1,7 @@
-﻿using System.Net.Sockets;
-using System.Net;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Threading.Tasks;
 
 namespace Klient
 {
@@ -24,7 +21,7 @@ namespace Klient
 
         public LogowanieModelWidoku(object x)
         {
-            PolaczZSerweremKomenda = new RelayCommand(PolaczZSerwerem);
+            PolaczZSerweremKomenda = new RelayCommand(OperacjeKlient.PolaczZSerwerem);
             PrzejdzDoRejestracjiKomenda = new RelayCommand(PrzejdzDoRejestracji);
             ZalogujKomenda = new RelayCommand(Zaloguj);
 
@@ -39,32 +36,11 @@ namespace Klient
 
             TextBoxLoginTextModelWidoku = daneLogowania[0];
             (x as PasswordBox).Password = daneLogowania[1];
-        }
-
-        public static void PolaczZSerwerem(object x = null)
-        {
-            EndPoint serverAddress = new IPEndPoint(IPAddress.Loopback, 11111);
-            try
-            {
-                OperacjeKlient.clientSocket.Connect(serverAddress);
-                PolaczZSerweremButtonVisibilityModelWidoku = Visibility.Hidden;
-                MainWindow.Rama.Content = new Logowanie();
-            }
-            catch (SocketException)
-            {
-                MessageBox.Show("BLAD: Polaczenie z serwerem nie zostalo nawiazane!");
-                OperacjeKlient.clientSocket.Close();
-
-                OperacjeKlient.clientSocket = new Socket(
-                AddressFamily.InterNetwork,
-                SocketType.Stream,
-                ProtocolType.Tcp);
-            }
-        }
+        }    
 
         private void PrzejdzDoRejestracji(object x)
         {
-            if (!OperacjeKlient.clientSocket.Connected)
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
             {
                 MessageBox.Show("Brak polaczenia z serwerem! Przepraszamy za utrudnienia!");
                 return;
@@ -74,7 +50,7 @@ namespace Klient
 
         private void Zaloguj(object x)
         {
-            if (!OperacjeKlient.clientSocket.Connected)
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
             {
                 MessageBox.Show("Brak polaczenia z serwerem! Przepraszamy za utrudnienia!");
                 return;
@@ -101,15 +77,19 @@ namespace Klient
 
             OperacjeKlient.Wyslij("LOGOWANIE");
             OperacjeKlient.Wyslij(TextBoxLoginTextModelWidoku);
-            OperacjeKlient.Odbierz();
+            if (OperacjeKlient.Odbierz() != "OK") return;
             OperacjeKlient.Wyslij(hash);
             string czyZalogowac = OperacjeKlient.Odbierz();
 
-            if (czyZalogowac == "true")
+            if (czyZalogowac == "zaloguj")
             {
                 MainWindow.Rama.Content = new StronaGlowna();
             }
-            else
+            else if (czyZalogowac == "jest juz zalogowany")
+            {
+                MessageBox.Show("Uzytkownik o podanym loginie jest juz zalogowany!", "Blad logowania");
+            }
+            else if (czyZalogowac == "nie ma w bazie")
             {
                 MessageBox.Show("Nieprawidlowe dane logowania!", "Blad logowania");
             }

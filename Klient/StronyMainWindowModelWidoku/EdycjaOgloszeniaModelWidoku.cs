@@ -53,6 +53,14 @@ namespace Klient
 
         private void Powrot(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             if (SkadWchodze == "ze strony ogloszenia")
             {
                 MainWindow.Rama.Content = new StronaOgloszenia();
@@ -65,6 +73,14 @@ namespace Klient
 
         private void Usun(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             var result = MessageBox.Show("Czy na pewno chcesz usunac te ogloszenie?", "Usuniecie ogloszenia",
                 MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.No)
@@ -91,6 +107,14 @@ namespace Klient
 
         private void Zatwierdz(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             var elementy = (System.Collections.IList)x;
             var wybraneKategorie = elementy.Cast<string>().ToList();
 

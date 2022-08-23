@@ -5,11 +5,15 @@ namespace Serwer
 {
     public class MainWindowModelWidoku : BaseViewModel
     {
+        public static MTObservableCollection<string> ListBoxPolaczeniKlienciModelWidoku { get; set; } = new MTObservableCollection<string>();
+
         public Visibility UruchomSerwerButtonVisibilityModelWidoku { get; set; } = Visibility.Visible;
         public bool WylaczSerwerButtonIsEnabledModelWidoku { get; set; } = false;
 
         public ICommand UruchomSerwerKomenda { get; set; }
         public ICommand WylaczSerwerKomenda { get; set; }
+
+        public static bool czyWylaczSerwerWcisniety = false;
 
         public MainWindowModelWidoku()
         {
@@ -22,19 +26,18 @@ namespace Serwer
 
         private void UruchomSerwer(object x)
         {
-            OperacjeSerwer.SerwerOperacje(x);
+            OperacjeSerwer.SerwerStart();
 
             UruchomSerwerButtonVisibilityModelWidoku = Visibility.Hidden;
             WylaczSerwerButtonIsEnabledModelWidoku = true;
-
-            OnPropertyChanged(nameof(UruchomSerwerButtonVisibilityModelWidoku));
-            OnPropertyChanged(nameof(WylaczSerwerButtonIsEnabledModelWidoku));
         }
 
         private void WylaczSerwer(object x)
         {
-            OperacjeSerwer.serverSocket.Close();
-            MessageBox.Show("Serwer zostal wylaczony!");
+            bool parametr = (x != null) ? (bool)x : false;
+            czyWylaczSerwerWcisniety = true;
+            OperacjeSerwer.SerwerStop();
+            if (parametr) MessageBox.Show("Serwer zostal wylaczony!");
             Application.Current.Shutdown();
         }
     }

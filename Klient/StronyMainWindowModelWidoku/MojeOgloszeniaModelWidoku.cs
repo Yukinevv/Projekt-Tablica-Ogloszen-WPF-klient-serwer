@@ -44,11 +44,27 @@ namespace Klient
 
         private void Powrot(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             MainWindow.Rama.Content = new MojProfil();
         }
 
         private void WyborOgloszenia(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             if (x == null)
             {
                 return;
@@ -102,6 +118,14 @@ namespace Klient
 
         private void PrzejdzDoDodawanieOgloszen(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             MainWindow.Rama.Content = new DodawanieOgloszen();
             DodawanieOgloszenModelWidoku.SkadWchodze = "z moich ogloszen";
         }

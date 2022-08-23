@@ -56,11 +56,27 @@ namespace Klient
 
         private void Powrot(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             MainWindow.Rama.Content = new StronaGlowna();
         }
 
         private void WyborOgloszenia(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             if (x == null) // x to SelectedItem z OgloszeniaLista
             {
                 return;
@@ -114,6 +130,14 @@ namespace Klient
      
         private void PrzejdzDoDodajOgloszenie(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             MainWindow.Rama.Content = new DodawanieOgloszen();
             DodawanieOgloszenModelWidoku.SkadWchodze = "ze strony ogloszenia";
         }

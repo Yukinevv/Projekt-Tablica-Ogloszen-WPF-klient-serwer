@@ -55,6 +55,11 @@ namespace Klient
 
             MojProfilButtonContentModelWidoku = "Profil " + LogowanieModelWidoku.TextBoxLoginTextModelWidoku;
 
+            // zabezpieczenie aby drugi klient nie mogl zalogowac sie na to same konto
+            OperacjeKlient.Wyslij("DODAJ LOGIN DO LISTY ZALOGOWANYCH");
+            OperacjeKlient.Wyslij(LogowanieModelWidoku.TextBoxLoginTextModelWidoku);
+            if (OperacjeKlient.Odbierz() != "dodano") return;
+
             // sprawdzenie czy uzytkownik ma uprawnienia administratora
             OperacjeKlient.Wyslij("CZY ADMIN");
             OperacjeKlient.Wyslij(LogowanieModelWidoku.TextBoxLoginTextModelWidoku);
@@ -78,6 +83,14 @@ namespace Klient
 
         public void WyborKategorii(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             if (x == null)
             {
                 return;
@@ -91,6 +104,17 @@ namespace Klient
 
         private void Wyloguj(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
+            OperacjeKlient.Wyslij("WYLOGUJ");
+            OperacjeKlient.Wyslij(LogowanieModelWidoku.TextBoxLoginTextModelWidoku);
+
             MainWindow.Rama.Content = new Logowanie();
             if (CzyPanelAdminaOtwarty)
             {
@@ -101,6 +125,14 @@ namespace Klient
 
         private void DodajKategorie(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             if (TextBoxNazwaNowejKategoriiTextModelWidoku == string.Empty || TextBoxNazwaNowejKategoriiTextModelWidoku == null)
             {
                 MessageBox.Show("Nie wpisales nazwy kategorii!");
@@ -148,6 +180,14 @@ namespace Klient
 
         private void UsunKategorie(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             if (TextBoxNazwaNowejKategoriiTextModelWidoku == string.Empty || TextBoxNazwaNowejKategoriiTextModelWidoku == null)
             {
                 MessageBox.Show("Nie wpisales nazwy kategorii!");
@@ -257,6 +297,14 @@ namespace Klient
 
         private void OtworzPanelAdmina(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             PanelAdmina = new PanelAdmina();
             PanelAdmina.Show();
             CzyPanelAdminaOtwarty = true;
@@ -264,6 +312,14 @@ namespace Klient
 
         private void PrzejdzDoMojProfil(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             MainWindow.Rama.Content = new MojProfil();
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace Serwer
 {
@@ -7,9 +8,12 @@ namespace Serwer
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static TextBox TextBoxLogs;
         public MainWindow()
         {
             InitializeComponent();
+
+            TextBoxLogs = TextBoxLog;
 
             DataContext = new MainWindowModelWidoku();
         }

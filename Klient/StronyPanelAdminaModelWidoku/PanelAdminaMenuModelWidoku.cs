@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace Klient
 {
@@ -42,6 +43,14 @@ namespace Klient
 
         private void WyborUzytkownika(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             if (x == null)
             {
                 return;

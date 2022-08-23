@@ -50,6 +50,14 @@ namespace Klient
 
         private void Zaktualizuj(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             var parametry = (object[])x;
             string haslo1 = (parametry[0] as PasswordBox).Password;
             string haslo2 = (parametry[1] as PasswordBox).Password;
@@ -131,11 +139,27 @@ namespace Klient
 
         private void Powrot(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             MainWindow.Rama.Content = new StronaGlowna();
         }
 
         private void PrzejdzDoMojeOgloszenia(object x)
         {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
             MainWindow.Rama.Content = new MojeOgloszenia();
         }
     }
