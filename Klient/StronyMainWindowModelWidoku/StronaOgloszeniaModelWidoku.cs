@@ -15,13 +15,9 @@ namespace Klient
         private List<Ogloszenie> OgloszeniaKopia = new List<Ogloszenie>();
 
         public ICommand PowrotKomenda { get; set; }
-
         public ICommand WyborOgloszeniaKomenda { get; set; }
-
         public ICommand PrzejdzDoDodajOgloszenieKomenda { get; set; }
-
         public ICommand SortujKomenda { get; set; }
-
         public ICommand FiltrujKomenda { get; set; }
 
         public static int idWybranegoOgloszenia;
@@ -44,8 +40,10 @@ namespace Klient
 
             OperacjeKlient.Wyslij("OGLOSZENIA");
             OperacjeKlient.Wyslij(StronaGlownaModelWidoku.idKategorii.ToString());
+
             string oglSerialized = OperacjeKlient.Odbierz();
             var ogloszenia = JsonConvert.DeserializeObject<List<Ogloszenie>>(oglSerialized);
+
             foreach (var ogloszenie in ogloszenia)
             {
                 OgloszeniaLista.Add(ogloszenie);
@@ -96,6 +94,7 @@ namespace Klient
             // potrzebne do edycji kategorii ogloszenia
             OperacjeKlient.Wyslij("WYBRANE NAZWY KATEGORII");
             OperacjeKlient.Wyslij(idWybranegoOgloszenia.ToString());
+
             string nazwyKategoriiSerialized = OperacjeKlient.Odbierz();
             NazwyWybranychKategoriiDoListBoxa = JsonConvert.DeserializeObject<List<string>>(nazwyKategoriiSerialized);
 
@@ -115,7 +114,7 @@ namespace Klient
             int idUzytkownika = ogloszenie.UzytkownikId;
             OperacjeKlient.Wyslij("CZY MOZE EDYTOWAC");
             OperacjeKlient.Wyslij(LogowanieModelWidoku.TextBoxLoginTextModelWidoku);
-            OperacjeKlient.Odbierz();
+            if (OperacjeKlient.Odbierz() != "OK") return;
             OperacjeKlient.Wyslij(idUzytkownika.ToString());
 
             string odpowiedz = OperacjeKlient.Odbierz();

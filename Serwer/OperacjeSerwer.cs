@@ -116,25 +116,13 @@ namespace Serwer
             {
                 PoleceniaOdKlienta.Logowanie(buffer, BUFFER_SIZE, current, zalogowaniKlienciLoginy);
             }
-            else if (odKlienta == "DODAJ LOGIN DO LISTY ZALOGOWANYCH")
+            else if (odKlienta == "DODAJ LOGIN i SPRAWDZ CZY ADMIN i POBIERZ KATEGORIE")
             {
-                PoleceniaOdKlienta.DodajLoginDoListyZalogowanych(buffer, BUFFER_SIZE, current, zalogowaniKlienciLoginy);
+                PoleceniaOdKlienta.DodajLoginCzyAdminKategorie(buffer, BUFFER_SIZE, current, zalogowaniKlienciLoginy);
             }
             else if (odKlienta == "WYLOGUJ")
             {
                 PoleceniaOdKlienta.Wyloguj(buffer, BUFFER_SIZE, current, zalogowaniKlienciLoginy);
-            }
-            else if (odKlienta == "CZY ADMIN")
-            {
-                PoleceniaOdKlienta.CzyAdmin(buffer, BUFFER_SIZE, current);
-            }
-            else if (odKlienta == "KATEGORIE")
-            {
-                PoleceniaOdKlienta.Kategorie(buffer, BUFFER_SIZE, current);
-            }
-            else if (odKlienta == "WYBRANE NAZWY KATEGORII")
-            {
-                PoleceniaOdKlienta.WybraneNazwyKategorii(buffer, BUFFER_SIZE, current);
             }
             else if (odKlienta == "DODANIE KATEGORII")
             {
@@ -148,9 +136,13 @@ namespace Serwer
             {
                 PoleceniaOdKlienta.Ogloszenia(buffer, BUFFER_SIZE, current);
             }
-            else if (odKlienta == "MOJE OGLOSZENIA")
+            else if (odKlienta == "WYBRANE NAZWY KATEGORII")
             {
-                PoleceniaOdKlienta.MojeOgloszenia(buffer, BUFFER_SIZE, current);
+                PoleceniaOdKlienta.WybraneNazwyKategorii(buffer, BUFFER_SIZE, current);
+            }
+            else if (odKlienta == "CZY MOZE EDYTOWAC")
+            {
+                PoleceniaOdKlienta.CzyMozeEdytowac(buffer, BUFFER_SIZE, current);
             }
             else if (odKlienta == "DODANIE OGLOSZENIA")
             {
@@ -163,10 +155,10 @@ namespace Serwer
             else if (odKlienta == "EDYCJA OGLOSZENIA")
             {
                 PoleceniaOdKlienta.EdycjaOgloszenia(buffer, BUFFER_SIZE, current);
-            }
-            else if (odKlienta == "CZY MOZE EDYTOWAC")
+            } 
+            else if (odKlienta == "UZYTKOWNICY")
             {
-                PoleceniaOdKlienta.CzyMozeEdytowac(buffer, BUFFER_SIZE, current);
+                PoleceniaOdKlienta.Uzytkownicy(buffer, BUFFER_SIZE, current);
             }
             else if (odKlienta == "MOJE DANE")
             {
@@ -176,9 +168,9 @@ namespace Serwer
             {
                 PoleceniaOdKlienta.EdycjaDanychUzytkownika(buffer, BUFFER_SIZE, current);
             }
-            else if (odKlienta == "UZYTKOWNICY")
+            else if (odKlienta == "MOJE OGLOSZENIA")
             {
-                PoleceniaOdKlienta.Uzytkownicy(buffer, BUFFER_SIZE, current);
+                PoleceniaOdKlienta.MojeOgloszenia(buffer, BUFFER_SIZE, current);
             }
             else if (odKlienta == "AWANS UZYTKOWNIKA")
             {
@@ -190,7 +182,7 @@ namespace Serwer
             }
             else if (odKlienta == "ODLACZENIE KLIENTA")
             {
-                PoleceniaOdKlienta.OdlaczenieKlienta(current, clientSockets);
+                PoleceniaOdKlienta.OdlaczenieKlienta(buffer, BUFFER_SIZE, current, clientSockets, zalogowaniKlienciLoginy);
                 return;
             }
             else

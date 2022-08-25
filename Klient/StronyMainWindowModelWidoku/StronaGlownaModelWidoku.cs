@@ -11,9 +11,9 @@ namespace Klient
 {
     public class StronaGlownaModelWidoku : BaseViewModel
     {
-        public ObservableCollection<Kategoria> KategorieLista { get; set; } = new ObservableCollection<Kategoria>();
+        public static ObservableCollection<KategoriaModelWidoku> KategorieLista { get; set; } = new ObservableCollection<KategoriaModelWidoku>();
 
-        private List<Kategoria> KategorieKopia = new List<Kategoria>();
+        private List<KategoriaModelWidoku> KategorieKopia = new List<KategoriaModelWidoku>();
 
         public string MojProfilButtonContentModelWidoku { get; set; }
 
@@ -55,14 +55,12 @@ namespace Klient
 
             MojProfilButtonContentModelWidoku = "Profil " + LogowanieModelWidoku.TextBoxLoginTextModelWidoku;
 
-            // zabezpieczenie aby drugi klient nie mogl zalogowac sie na to same konto
-            OperacjeKlient.Wyslij("DODAJ LOGIN DO LISTY ZALOGOWANYCH");
-            OperacjeKlient.Wyslij(LogowanieModelWidoku.TextBoxLoginTextModelWidoku);
-            if (OperacjeKlient.Odbierz() != "dodano") return;
+            OperacjeKlient.Wyslij("DODAJ LOGIN i SPRAWDZ CZY ADMIN i POBIERZ KATEGORIE");
+            // DODAJ LOGIN w celu zabezpieczenia aby drugi klient nie mogl zalogowac sie na to same konto
+            // SPRAWDZ CZY ADMIN - sprawdzenie czy uzytkownik ma uprawnienia administratora
 
-            // sprawdzenie czy uzytkownik ma uprawnienia administratora
-            OperacjeKlient.Wyslij("CZY ADMIN");
             OperacjeKlient.Wyslij(LogowanieModelWidoku.TextBoxLoginTextModelWidoku);
+
             czyAdmin = OperacjeKlient.Odbierz();
             if (czyAdmin == "nie admin")
             {
@@ -70,15 +68,29 @@ namespace Klient
                 PanelAdministracyjnyButtonVisibilityModelWidoku = Visibility.Hidden;
             }
 
-            OperacjeKlient.Wyslij("KATEGORIE");
             string katSerialized = OperacjeKlient.Odbierz();
             var kategorie = JsonConvert.DeserializeObject<List<Kategoria>>(katSerialized);
-            foreach (var kategoria in kategorie)
-            {
-                KategorieLista.Add(kategoria);
 
-                KategorieKopia.Add(kategoria);
+            string iloscOgloszenWDanychKategoriach = OperacjeKlient.Odbierz();
+            int[] ilosciOgloszen = JsonConvert.DeserializeObject<int[]>(iloscOgloszenWDanychKategoriach);
+
+            if (KategorieLista != null)
+            {
+                KategorieLista.Clear();
             }
+            for (int i = 0; i < kategorie.Count; i++)
+            {
+                KategorieLista.Add(new KategoriaModelWidoku
+                {
+                    Id = kategorie[i].Id,
+                    Nazwa = kategorie[i].Nazwa,
+                    Data_utw = kategorie[i].Data_utw,
+                    UzytkownikId = kategorie[i].UzytkownikId,
+                    IloscOgloszen = ilosciOgloszen[i]
+                });
+
+                KategorieKopia.Add(KategorieLista[i]);
+            }          
         }
 
         public void WyborKategorii(object x)
@@ -96,7 +108,7 @@ namespace Klient
                 return;
             }
 
-            Kategoria kategoria = x as Kategoria;
+            KategoriaModelWidoku kategoria = x as KategoriaModelWidoku;
             idKategorii = kategoria.Id;
 
             MainWindow.Rama.Content = new StronaOgloszenia();
@@ -165,7 +177,7 @@ namespace Klient
                 MessageBox.Show("Dodano nowa kategorie o nazwie: " + TextBoxNazwaNowejKategoriiTextModelWidoku);
 
                 // dodaje kategorie do ObservableCollection KategorieLista
-                var kategoria = new Kategoria
+                var kategoria = new KategoriaModelWidoku
                 {
                     Nazwa = TextBoxNazwaNowejKategoriiTextModelWidoku,
                     Data_utw = DateTime.Now
@@ -229,33 +241,25 @@ namespace Klient
 
             if (posortowano == false)
             {
-                if (tag == "Id")
-                {
-                    kategorie = kategorie.OrderBy(k => k.Id).ToList();
-                }
-                else if (tag == "Nazwa")
+                if (tag == "Nazwa")
                 {
                     kategorie = kategorie.OrderBy(k => k.Nazwa).ToList();
                 }
-                else if (tag == "Data_utw")
+                else if (tag == "IloscOgloszen")
                 {
-                    kategorie = kategorie.OrderBy(k => k.Data_utw).ToList();
+                    kategorie = kategorie.OrderBy(k => k.IloscOgloszen).ToList();
                 }
                 posortowano = true;
             }
             else
             {
-                if (tag == "Id")
-                {
-                    kategorie = kategorie.OrderByDescending(k => k.Id).ToList();
-                }
-                else if (tag == "Nazwa")
+                if (tag == "Nazwa")
                 {
                     kategorie = kategorie.OrderByDescending(k => k.Nazwa).ToList();
                 }
-                else if (tag == "Data_utw")
+                else if (tag == "IloscOgloszen")
                 {
-                    kategorie = kategorie.OrderByDescending(k => k.Data_utw).ToList();
+                    kategorie = kategorie.OrderByDescending(k => k.IloscOgloszen).ToList();
                 }
                 posortowano = false;
             }

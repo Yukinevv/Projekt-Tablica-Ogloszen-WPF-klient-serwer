@@ -4,85 +4,103 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
       xmlns:local="clr-namespace:Klient"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="StronaGlowna">
+      Title="StronaGlowna" Background="{DynamicResource stronaTlo}">
+
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <LinearGradientBrush x:Key="stronaTlo" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Offset="0.0" Color="#d3d3d3" />
+            <GradientStop Offset="1.0" Color="#c1c1c1" />
+        </LinearGradientBrush>
+    </Page.Resources>
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="60*"/>
-            <ColumnDefinition Width="680*"/>
-            <ColumnDefinition Width="60*"/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="60*"/>
             <RowDefinition Height="330*"/>
             <RowDefinition Height="60*"/>
         </Grid.RowDefinitions>
-        
-        <ListView x:Name="ListViewKategorie" ItemsSource="{Binding KategorieLista}" Margin="1,6,3,2" Grid.Row="1" Grid.Column="1">
+
+        <ListView x:Name="ListViewKategorie" ItemsSource="{Binding KategorieLista}" Grid.Row="1" Grid.Column="1" Margin="40,0"
+                  Background="LightGray" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" Width="550" ItemContainerStyle="{StaticResource listViewItemStyle1}">
+
             <behaviors:Interaction.Triggers>
                 <behaviors:EventTrigger EventName="MouseDoubleClick">
                     <behaviors:InvokeCommandAction Command="{Binding WyborKategoriiKomenda}" CommandParameter="{Binding SelectedItem, ElementName=ListViewKategorie}"/>
                 </behaviors:EventTrigger>
             </behaviors:Interaction.Triggers>
+
             <ListView.View>
-                <GridView>
+                <GridView ColumnHeaderContainerStyle="{StaticResource gridViewColumnHeaderStyle1}">
                     <GridView.Columns>
-                        <GridViewColumn Width="50" DisplayMemberBinding="{Binding Id}">
-                            <GridViewColumn.Header>
-                                <GridViewColumnHeader x:Name="Id" Tag="Id" Command="{Binding SortujKomenda}" CommandParameter="{Binding Tag, ElementName=Id}">Id</GridViewColumnHeader>
-                            </GridViewColumn.Header>
-                        </GridViewColumn>
-                        <GridViewColumn Width="250" DisplayMemberBinding="{Binding Nazwa}">
+                        <GridViewColumn Width="300" DisplayMemberBinding="{Binding Nazwa}">
                             <GridViewColumn.Header>
                                 <GridViewColumnHeader x:Name="Nazwa" Tag="Nazwa" Command="{Binding SortujKomenda}" CommandParameter="{Binding Tag, ElementName=Nazwa}">Nazwa kategorii</GridViewColumnHeader>
                             </GridViewColumn.Header>
                         </GridViewColumn>
-                        <GridViewColumn Width="200" DisplayMemberBinding="{Binding Data_utw}">
+                        <GridViewColumn Width="250" DisplayMemberBinding="{Binding IloscOgloszen}">
                             <GridViewColumn.Header>
-                                <GridViewColumnHeader x:Name="Data_utw" Tag="Data_utw" Command="{Binding SortujKomenda}" CommandParameter="{Binding Tag, ElementName=Data_utw}">Data utworzenia</GridViewColumnHeader>
+                                <GridViewColumnHeader x:Name="IloscOgloszen" Tag="IloscOgloszen" Command="{Binding SortujKomenda}" CommandParameter="{Binding Tag, ElementName=IloscOgloszen}">Ilosc dostepnych ogloszen</GridViewColumnHeader>
                             </GridViewColumn.Header>
                         </GridViewColumn>
                     </GridView.Columns>
                 </GridView>
             </ListView.View>
+            
         </ListView>
 
-        <Button x:Name="WylogujButton" Content="Wyloguj" HorizontalAlignment="Center" VerticalAlignment="Top" Height="30" Width="130"
-                Command="{Binding WylogujKomenda}" Grid.Row="2" Grid.Column="1" Margin="0,9,0,0" Style="{StaticResource PodstawowyStyl}"/>
-        
-        <Button x:Name="UsunKategorieButton" Content="Usun kategorie" HorizontalAlignment="Left" Margin="560,9,0,0" VerticalAlignment="Top" Height="30"
-                Width="96" Grid.Row="2" Grid.Column="1" Style="{StaticResource PodstawowyStyl}"
-                Visibility="{Binding UsunKategorieButtonVisibilityModelWidoku}" Command="{Binding UsunKategorieKomenda}"/>
-        
-        <TextBox x:Name="TextBoxNazwaNowejKategorii" HorizontalAlignment="Left" Margin="391,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center"
-                 Width="117" Height="32" Grid.Column="1" FontSize="16" VerticalContentAlignment="Center"
-                 Text="{Binding TextBoxNazwaNowejKategoriiTextModelWidoku}"/>
-        
-        <Label Content="Wpisz nazwę kategorii:" HorizontalAlignment="Left" Margin="250,0,0,0" VerticalAlignment="Center" Height="32" Width="141" Grid.Column="1"/>
+        <Button x:Name="WylogujButton" Grid.Row="2" Grid.Column="1" Margin="0" Style="{StaticResource buttonStyle1}"
+                Command="{Binding WylogujKomenda}">
+            <StackPanel Orientation="Horizontal">
+                <Icon:PackIconMaterial Kind="Logout" Style="{StaticResource menuButtonIcon}"/>
+                <TextBlock Text="Wyloguj" FontWeight="Bold"/>
+            </StackPanel>
+        </Button>
 
-        <TextBox x:Name="TextBoxFilter" HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center"
-                 Width="130" Height="30" Grid.Column="1" FontSize="16" VerticalContentAlignment="Center">
-            <behaviors:Interaction.Triggers>
-                <behaviors:EventTrigger EventName="TextChanged">
-                    <behaviors:InvokeCommandAction Command="{Binding FiltrujKomenda}" CommandParameter="{Binding Text, ElementName=TextBoxFilter}"/>
-                </behaviors:EventTrigger>
-            </behaviors:Interaction.Triggers>
-        </TextBox>
+        <Button x:Name="UsunKategorieButton" Content="Usun kategorie" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,40,0"
+                Style="{StaticResource buttonStyle1}" Visibility="{Binding UsunKategorieButtonVisibilityModelWidoku}" Command="{Binding UsunKategorieKomenda}"/>
 
-        <Label Content="Szukaj:" HorizontalAlignment="Left" Margin="17,14,0,16" RenderTransformOrigin="0.484,-0.069" Width="48" Grid.ColumnSpan="2" />
-        
-        <Button x:Name="PanelAdministracyjnyButton" Content="Panel admina" HorizontalAlignment="Left" Margin="450,9,0,0" VerticalAlignment="Top"
-                Height="30" Width="88" RenderTransformOrigin="3.236,0.548" Grid.Row="2" Grid.Column="1"
-                Visibility="{Binding PanelAdministracyjnyButtonVisibilityModelWidoku}" Command="{Binding OtworzPanelAdminaKomenda}"/>
-        
-        <Button x:Name="MojProfilButton" Content="{Binding MojProfilButtonContentModelWidoku}" HorizontalAlignment="Left" Margin="10,9,0,0"
-                VerticalAlignment="Top" Height="30" Width="96" RenderTransformOrigin="0.271,0.516" Grid.Column="1" Grid.Row="2"
-                Command="{Binding PrzejdzDoMojProfilKomenda}"/>
-        
-        <Button x:Name="DodajKategorieButton" Grid.Column="1" Content="Dodaj kategorie" HorizontalAlignment="Left" Margin="536,0,0,0"
-                VerticalAlignment="Center" Height="32" Width="120" Command="{Binding DodajKategorieKomenda}"/>
+        <Button x:Name="PanelAdministracyjnyButton" Content="Panel admina" Grid.Row="2" Grid.Column="1" HorizontalAlignment="right" Margin="0,0,175,0"
+                Style="{StaticResource buttonStyle1}" Visibility="{Binding PanelAdministracyjnyButtonVisibilityModelWidoku}" 
+                Command="{Binding OtworzPanelAdminaKomenda}"/>
+
+        <Button x:Name="MojProfilButton" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="2"
+                Margin="40,0,0,0" Style="{StaticResource buttonStyle1}" Command="{Binding PrzejdzDoMojProfilKomenda}">
+            <StackPanel Orientation="Horizontal">
+                <Icon:PackIconMaterial Kind="HomeVariant" Style="{StaticResource menuButtonIcon}"/>
+                <TextBlock Text="{Binding MojProfilButtonContentModelWidoku}"/>
+            </StackPanel>
+        </Button>
+
+        <Button x:Name="DodajKategorieButton" Grid.Column="1" Content="Dodaj kategorie" HorizontalAlignment="Right" Margin="0,0,40,0"
+                Style="{StaticResource buttonStyle1}" Command="{Binding DodajKategorieKomenda}"/>
+
+        <TextBox x:Name="TextBoxNazwaNowejKategorii" Margin="300,0,0,0" Width="120" Height="30" Padding="10,0"
+                 Text="{Binding TextBoxNazwaNowejKategoriiTextModelWidoku}" Style="{StaticResource textBoxStyle1}"/>
+
+        <Grid Width="170" HorizontalAlignment="Left" Margin="40,0,0,0">
+            <TextBlock Margin="20 0" VerticalAlignment="Center" Foreground="#B0B9C6" IsHitTestVisible="False" Panel.ZIndex="1" Text="Szukaj kategorii ..."
+                       Visibility="{Binding ElementName=TextBoxFilter, Path=Text.IsEmpty, Converter={StaticResource BoolToVis}}"/>
+
+            <TextBox Name="TextBoxFilter" Margin="0,12" Padding="20,0" Style="{StaticResource textBoxStyle1}">
+                <behaviors:Interaction.Triggers>
+                    <behaviors:EventTrigger EventName="TextChanged">
+                        <behaviors:InvokeCommandAction Command="{Binding FiltrujKomenda}" CommandParameter="{Binding Text, ElementName=TextBoxFilter}"/>
+                    </behaviors:EventTrigger>
+                </behaviors:Interaction.Triggers>
+            </TextBox>
+
+            <Icon:PackIconMaterial Kind="Magnify" Width="15" Height="15" VerticalAlignment="Center" Margin="0 0 15 0" Foreground="#B0B9C6" HorizontalAlignment="Right" />
+        </Grid>
+
+        <Label Content="Wpisz nazwę kategorii:" Margin="50,0,0,0" VerticalAlignment="Center" Height="30" Width="140"
+               VerticalContentAlignment="Center"/>
+
     </Grid>
 </Page>

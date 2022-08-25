@@ -26,6 +26,8 @@ namespace Klient
             }
 
             OperacjeKlient.Wyslij("ODLACZENIE KLIENTA");
+            OperacjeKlient.Wyslij(LogowanieModelWidoku.TextBoxLoginTextModelWidoku);
+
             OperacjeKlient.clientSocket.Close();
             if (StronaGlownaModelWidoku.CzyPanelAdminaOtwarty)
             {

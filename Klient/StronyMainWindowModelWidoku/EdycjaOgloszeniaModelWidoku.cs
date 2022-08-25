@@ -21,9 +21,7 @@ namespace Klient
         public static Visibility UsunOgloszenieButtonVisibilityModelWidoku { get; set; }
 
         public ICommand PowrotKomenda { get; set; }
-
         public ICommand UsunKomenda { get; set; }
-
         public ICommand ZatwierdzKomenda { get; set; }
 
         public static string SkadWchodze;
@@ -36,12 +34,9 @@ namespace Klient
             ZatwierdzKomenda = new RelayCommand(Zatwierdz);
 
             // wyswietlanie dostepnych kategorii w listboxie
-            OperacjeKlient.Wyslij("KATEGORIE");
-            string katSerialized = OperacjeKlient.Odbierz();
-            var kategorie = JsonConvert.DeserializeObject<List<Kategoria>>(katSerialized);
-            foreach (var kat in kategorie)
+            foreach (var kategoria in StronaGlownaModelWidoku.KategorieLista)
             {
-                listBox.Items.Add(kat.Nazwa);
+                listBox.Items.Add(kategoria.Nazwa);
             }
 
             // zaznaczenie kategorii wybranego ogloszenia

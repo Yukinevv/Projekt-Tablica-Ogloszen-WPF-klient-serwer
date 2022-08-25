@@ -14,7 +14,6 @@ namespace Klient
         public ObservableCollection<string> ListBoxKategorieModelWidoku { get; set; } = new ObservableCollection<string>();
 
         public ICommand PowrotKomenda { get; set; }
-
         public ICommand ZatwierdzKomenda { get; set; }
 
         public static string SkadWchodze;
@@ -25,13 +24,10 @@ namespace Klient
             ZatwierdzKomenda = new RelayCommand(Zatwierdz);
 
             // wyswietlanie dostepnych kategorii w listboxie
-            OperacjeKlient.Wyslij("KATEGORIE");
-            string katSerialized = OperacjeKlient.Odbierz();
-            var kategorie = JsonConvert.DeserializeObject<List<Kategoria>>(katSerialized);
 
-            foreach (var kat in kategorie)
+            foreach (var kategoria in StronaGlownaModelWidoku.KategorieLista)
             {
-                ListBoxKategorieModelWidoku.Add(kat.Nazwa);
+                ListBoxKategorieModelWidoku.Add(kategoria.Nazwa);
             }
         }
 

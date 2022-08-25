@@ -12,18 +12,15 @@ namespace Klient
     public class RejestracjaModelWidoku : BaseViewModel
     {
         public DateTime DatePickerDateEndModelWidoku { get; set; }
-
         public DateTime DatePickerDateStartModelWidoku { get; set; }
+        public DateTime DatePickerSelectionDateModelWidoku { get; set; }
 
         public string TextBoxImieTextModelWidoku { get; set; }
         public string TextBoxNazwiskoTextModelWidoku { get; set; }
         public string TextBoxLoginTextModelWidoku { get; set; }
         public string TextBoxEmailTextModelWidoku { get; set; }
 
-        public DateTime DatePickerSelectionDateModelWidoku { get; set; }
-
         public ICommand PowrotKomenda { get; set; }
-
         public ICommand ZarejestrujKomenda { get; set; }
 
         public RejestracjaModelWidoku()
@@ -87,6 +84,13 @@ namespace Klient
             else if (!TextBoxEmailTextModelWidoku.Contains("@"))
             {
                 MessageBox.Show("Nieprawidłowy format adresu Email");
+                return;
+            }
+
+            var result = MessageBox.Show("Czy zarejestrowac na podane dane?", "Rejestracja uzytkownika",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.No)
+            {
                 return;
             }
 

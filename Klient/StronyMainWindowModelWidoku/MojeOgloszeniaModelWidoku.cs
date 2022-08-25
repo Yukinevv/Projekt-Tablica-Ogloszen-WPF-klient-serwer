@@ -103,7 +103,7 @@ namespace Klient
             int idUzytkownika = ogloszenie.UzytkownikId;
             OperacjeKlient.Wyslij("CZY MOZE EDYTOWAC");
             OperacjeKlient.Wyslij(LogowanieModelWidoku.TextBoxLoginTextModelWidoku);
-            OperacjeKlient.Odbierz();
+            if (OperacjeKlient.Odbierz() != "OK") return;
             OperacjeKlient.Wyslij(idUzytkownika.ToString());
 
             string odpowiedz = OperacjeKlient.Odbierz();

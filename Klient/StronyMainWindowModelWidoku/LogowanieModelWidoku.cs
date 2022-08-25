@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using Newtonsoft.Json;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -76,11 +77,15 @@ namespace Klient
             string hash = RejestracjaModelWidoku.GetHash(sha256Hash, haslo);
 
             OperacjeKlient.Wyslij("LOGOWANIE");
-            OperacjeKlient.Wyslij(TextBoxLoginTextModelWidoku);
-            if (OperacjeKlient.Odbierz() != "OK") return;
-            OperacjeKlient.Wyslij(hash);
-            string czyZalogowac = OperacjeKlient.Odbierz();
+            string[] dane = new string[2] { TextBoxLoginTextModelWidoku, hash };
+            string daneSerialized = JsonConvert.SerializeObject(dane, Formatting.Indented,
+            new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+            OperacjeKlient.Wyslij(daneSerialized);
 
+            string czyZalogowac = OperacjeKlient.Odbierz();
             if (czyZalogowac == "zaloguj")
             {
                 MainWindow.Rama.Content = new StronaGlowna();
