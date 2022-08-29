@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace Serwer
 {
+    /// <summary>
+    /// Klasa pomocnicza. W przypadku pustych tabel w bazie danych zostaja dodane rekordy ze startowymi danymi
+    /// </summary>
     public class StartoweDane
     {
         private readonly MyDbContext _dbContext;

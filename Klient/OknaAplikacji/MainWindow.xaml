@@ -6,7 +6,7 @@
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:Klient"
         mc:Ignorable="d"
-        Title="Klient" Height="450" Width="800" ResizeMode="CanMinimize">
+        Title="Klient" Height="auto" Width="auto" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize">
 
     <behaviors:Interaction.Triggers>
         <behaviors:EventTrigger EventName="Closing">
@@ -14,7 +14,7 @@
         </behaviors:EventTrigger>
     </behaviors:Interaction.Triggers>
 
-    <Grid>
+    <Grid Width="800" Height="450">
         <Frame x:Name="Ramka" NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>

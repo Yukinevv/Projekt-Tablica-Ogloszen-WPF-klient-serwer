@@ -4,82 +4,89 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
       xmlns:local="clr-namespace:Klient"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="MojeOgloszenia">
 
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <LinearGradientBrush x:Key="backgroundPage" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Offset="0.0" Color="#d3d3d3" />
+            <GradientStop Offset="1.0" Color="#c1c1c1" />
+        </LinearGradientBrush>
+    </Page.Resources>
+
+    <Page.Style>
+        <Style TargetType="{x:Type Page}">
+            <Setter Property="Background" Value="{StaticResource backgroundPage}"/>
+        </Style>
+    </Page.Style>
+    
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="60*"/>
-            <ColumnDefinition Width="680*"/>
-            <ColumnDefinition Width="60*"/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="60*"/>
             <RowDefinition Height="330*"/>
             <RowDefinition Height="60*"/>
         </Grid.RowDefinitions>
 
-        <ListView x:Name="ListViewOgloszenia" ItemsSource="{Binding OgloszeniaLista}" Margin="9,6,8,6" Grid.Column="1" Grid.Row="1">
+        <ListView x:Name="ListViewOgloszenia" Grid.Row="1" Width="700" ItemsSource="{Binding OgloszeniaLista}" Background="Transparent" BorderThickness="0"
+                  ItemContainerStyle="{StaticResource listViewItemStyle1}" ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                  ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+
             <behaviors:Interaction.Triggers>
                 <behaviors:EventTrigger EventName="MouseDoubleClick">
                     <behaviors:InvokeCommandAction Command="{Binding WyborOgloszeniaKomenda}" CommandParameter="{Binding SelectedItem, ElementName=ListViewOgloszenia}"/>
                 </behaviors:EventTrigger>
             </behaviors:Interaction.Triggers>
+
             <ListView.View>
-                <GridView>
+                <GridView ColumnHeaderContainerStyle="{StaticResource gridViewColumnHeaderStyle1}">
                     <GridView.Columns>
-                        <GridViewColumn Width="30" DisplayMemberBinding="{Binding Id}">
+                        <GridViewColumn Width="310" DisplayMemberBinding="{Binding Tytul}">
                             <GridViewColumn.Header>
-                                <GridViewColumnHeader x:Name="Id" Tag="Id" Command="{Binding SortujKomenda}" CommandParameter="{Binding Tag, ElementName=Id}">Id</GridViewColumnHeader>
+                                <GridViewColumnHeader x:Name="Tytul" Tag="Tytul" Command="{Binding SortujKomenda}" CommandParameter="{Binding Tag, ElementName=Tytul}">Tytul ogloszenia</GridViewColumnHeader>
                             </GridViewColumn.Header>
                         </GridViewColumn>
-                        <GridViewColumn Width="30" DisplayMemberBinding="{Binding UzytkownikId}">
-                            <GridViewColumn.Header>
-                                <GridViewColumnHeader x:Name="UzytkownikId" Tag="UzytkownikId" Command="{Binding SortujKomenda}" CommandParameter="{Binding Tag, ElementName=UzytkownikId}">Id u</GridViewColumnHeader>
-                            </GridViewColumn.Header>
-                        </GridViewColumn>
-                        <GridViewColumn Width="120" DisplayMemberBinding="{Binding Tytul}">
-                            <GridViewColumn.Header>
-                                <GridViewColumnHeader x:Name="Tytul" Tag="Tytul" Command="{Binding SortujKomenda}" CommandParameter="{Binding Tag, ElementName=Tytul}">Tytul</GridViewColumnHeader>
-                            </GridViewColumn.Header>
-                        </GridViewColumn>
-                        <GridViewColumn Width="120" DisplayMemberBinding="{Binding Data_utw}">
-                            <GridViewColumn.Header>
-                                <GridViewColumnHeader x:Name="Data_utw" Tag="Data_utw" Command="{Binding SortujKomenda}" CommandParameter="{Binding Tag, ElementName=Data_utw}">Data utworzenia</GridViewColumnHeader>
-                            </GridViewColumn.Header>
-                        </GridViewColumn>
-                        <GridViewColumn Width="120" DisplayMemberBinding="{Binding Data_ed}">
+                        <GridViewColumn Width="190" DisplayMemberBinding="{Binding Data_ed}">
                             <GridViewColumn.Header>
                                 <GridViewColumnHeader x:Name="Data_ed" Tag="Data_ed" Command="{Binding SortujKomenda}" CommandParameter="{Binding Tag, ElementName=Data_ed}">Data edycji</GridViewColumnHeader>
                             </GridViewColumn.Header>
                         </GridViewColumn>
-                        <GridViewColumn Width="200" DisplayMemberBinding="{Binding Tresc}">
+                        <GridViewColumn Width="190" DisplayMemberBinding="{Binding Data_utw}">
                             <GridViewColumn.Header>
-                                <GridViewColumnHeader x:Name="Tresc" Tag="Tresc" Command="{Binding SortujKomenda}" CommandParameter="{Binding Tag, ElementName=Tresc}">Tresc ogloszenia</GridViewColumnHeader>
+                                <GridViewColumnHeader x:Name="Data_utw" Tag="Data_utw" Command="{Binding SortujKomenda}" CommandParameter="{Binding Tag, ElementName=Data_utw}">Data utworzenia</GridViewColumnHeader>
                             </GridViewColumn.Header>
                         </GridViewColumn>
                     </GridView.Columns>
                 </GridView>
             </ListView.View>
-        </ListView>
-        
-        <Button x:Name="PowrotButton" Content="Powrot" HorizontalAlignment="Center" Margin="0,6,0,0" VerticalAlignment="Top" Height="32" Width="142"
-                Grid.Row="2" Grid.Column="1" Command="{Binding PowrotKomenda}"/>
-        
-        <Button x:Name="DodajOgloszenieButton" Content="Dodaj ogłoszenie" HorizontalAlignment="Left" Margin="502,6,0,0" VerticalAlignment="Top"
-                Height="32" Width="148" Grid.Row="2" Grid.Column="1" Command="{Binding PrzejdzDoDodawanieOgloszenKomenda}"/>
 
-        <TextBox x:Name="TextBoxFilter" HorizontalAlignment="Left" Margin="73,17,0,0" TextWrapping="Wrap" VerticalAlignment="Top"
-                 Width="120" Height="30" Grid.Column="1" FontSize="16" VerticalContentAlignment="Center">
-            <behaviors:Interaction.Triggers>
-                <behaviors:EventTrigger EventName="TextChanged">
-                    <behaviors:InvokeCommandAction Command="{Binding FiltrujKomenda}" CommandParameter="{Binding Text, ElementName=TextBoxFilter}"/>
-                </behaviors:EventTrigger>
-            </behaviors:Interaction.Triggers>
-        </TextBox>
+        </ListView>
+
+        <Button x:Name="PowrotButton" Grid.Row="2" Height="35" Width="140" Style="{StaticResource buttonStyle1}"
+                Content="Powrot" Command="{Binding PowrotKomenda}"/>
+
+        <Button x:Name="DodajOgloszenieButton" Grid.Row="0" Height="35" Width="140" HorizontalAlignment="Right" Margin="0,0,50,0"
+                Style="{StaticResource buttonStyle1}" Content="Dodaj ogłoszenie" Command="{Binding PrzejdzDoDodawanieOgloszenKomenda}"/>
+
+        <Grid Grid.Row="0" HorizontalAlignment="Left" Width="170" Margin="50,0,0,0">
+            <TextBlock VerticalAlignment="Center" Margin="20 0" Foreground="#B0B9C6" IsHitTestVisible="False" Panel.ZIndex="1" Text="Szukaj ogloszenia ..."
+                       Visibility="{Binding ElementName=TextBoxFilter, Path=Text.IsEmpty, Converter={StaticResource BoolToVis}}"/>
+
+            <TextBox Name="TextBoxFilter" Margin="0,12" Style="{StaticResource textBoxStyle1}" Padding="20,0">
+                <behaviors:Interaction.Triggers>
+                    <behaviors:EventTrigger EventName="TextChanged">
+                        <behaviors:InvokeCommandAction Command="{Binding FiltrujKomenda}" CommandParameter="{Binding Text, ElementName=TextBoxFilter}"/>
+                    </behaviors:EventTrigger>
+                </behaviors:Interaction.Triggers>
+            </TextBox>
+
+            <Icon:PackIconMaterial Kind="Magnify" HorizontalAlignment="Right" VerticalAlignment="Center" Width="15" Height="15" Margin="0 0 15 0"
+                                   Foreground="#B0B9C6"/>
+        </Grid>
         
-        <Label Content="Szukaj:" HorizontalAlignment="Left" Margin="9,17,0,0" VerticalAlignment="Top" Height="30" Width="59" Grid.Column="1"/>
     </Grid>
 </Page>

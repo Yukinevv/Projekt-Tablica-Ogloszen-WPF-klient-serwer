@@ -9,12 +9,18 @@ using System.Windows.Input;
 
 namespace Klient
 {
+    /// <summary>
+    /// Klasa robiaca za model widoku dla strony DodawanieOgloszen
+    /// </summary>
     public class DodawanieOgloszenModelWidoku : BaseViewModel
     {
         public ObservableCollection<string> ListBoxKategorieModelWidoku { get; set; } = new ObservableCollection<string>();
 
+        public string TextBoxWybraneKategorieModelWidoku { get; set; } = "WYBRANE KATEGORIE:\nBrak wybranych kategorii...";
+
         public ICommand PowrotKomenda { get; set; }
         public ICommand ZatwierdzKomenda { get; set; }
+        public ICommand ZaktualizujTextBoxWybraneKategorieKomenda { get; set; }
 
         public static string SkadWchodze;
 
@@ -22,6 +28,7 @@ namespace Klient
         {
             PowrotKomenda = new RelayCommand(Powrot);
             ZatwierdzKomenda = new RelayCommand(Zatwierdz);
+            ZaktualizujTextBoxWybraneKategorieKomenda = new RelayCommand(ZaktualizujTextBoxWybraneKategorie);
 
             // wyswietlanie dostepnych kategorii w listboxie
 
@@ -29,6 +36,22 @@ namespace Klient
             {
                 ListBoxKategorieModelWidoku.Add(kategoria.Nazwa);
             }
+        }
+
+        private void ZaktualizujTextBoxWybraneKategorie(object x)
+        {
+            var elementy = (System.Collections.IList)x;
+            var wybraneKategorie = elementy.Cast<string>().ToList();
+
+            TextBoxWybraneKategorieModelWidoku = string.Empty;
+            TextBoxWybraneKategorieModelWidoku += "WYBRANE KATEGORIE:\n";
+
+            foreach (var kategoria in wybraneKategorie)
+            {
+                TextBoxWybraneKategorieModelWidoku += kategoria + ", ";
+            }
+
+            if (wybraneKategorie.Count == 0) TextBoxWybraneKategorieModelWidoku += "Brak wybranych kategorii...";
         }
 
         private void Powrot(object x)

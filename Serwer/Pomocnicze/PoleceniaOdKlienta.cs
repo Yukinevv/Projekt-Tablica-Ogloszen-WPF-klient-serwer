@@ -9,6 +9,9 @@ using System.Windows;
 
 namespace Serwer
 {
+    /// <summary>
+    /// Klasa zawierajaca metody obslugujace zachowanie serwera w zaleznosci od otrzymanego rzadania
+    /// </summary>
     public class PoleceniaOdKlienta
     {
         public static void Rejestracja(byte[] buffer, int BUFFER_SIZE, Socket current)
@@ -495,7 +498,7 @@ namespace Serwer
             MainWindowModelWidoku.ListBoxPolaczeniKlienciModelWidoku.Remove(current.RemoteEndPoint.ToString());
             MainWindow.TextBoxLogs.Dispatcher.Invoke(new Action(() =>
             {
-                MainWindow.TextBoxLogs.Text += "Klient o adresie IP: " + current.RemoteEndPoint.ToString() + " zakonczyl polaczenie.\n";
+                MainWindow.TextBoxLogs.Text += "Klient o adresie IP: " + current.RemoteEndPoint.ToString() + " zakonczyl polaczenie.    (" + DateTime.Now.ToString("HH:mm:ss") + ")\n";
             }));
 
             current.Close();
@@ -510,7 +513,7 @@ namespace Serwer
                 MainWindowModelWidoku.ListBoxPolaczeniKlienciModelWidoku.Remove(current.RemoteEndPoint.ToString());
                 MainWindow.TextBoxLogs.Dispatcher.Invoke(new Action(() =>
                 {
-                    MainWindow.TextBoxLogs.Text += "Klient o adresie IP: " + current.RemoteEndPoint.ToString() + " zakonczyl polaczenie.\n";
+                    MainWindow.TextBoxLogs.Text += "Klient o adresie IP: " + current.RemoteEndPoint.ToString() + " zakonczyl polaczenie.    (" + DateTime.Now.ToString("HH:mm:ss") + ")\n";
                 }));
 
                 current.Close();

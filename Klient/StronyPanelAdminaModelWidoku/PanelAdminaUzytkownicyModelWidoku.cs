@@ -3,6 +3,9 @@ using System.Windows.Input;
 
 namespace Klient
 {
+    /// <summary>
+    /// Klasa robiaca za model widoku dla strony PanelAdminaUzytkownicy
+    /// </summary>
     public class PanelAdminaUzytkownicyModelWidoku : BaseViewModel
     {
         public string TextBoxImieUzytkownikaModelWidoku { get; set; }
@@ -26,7 +29,7 @@ namespace Klient
             TextBoxNazwiskoUzytkownikaModelWidoku = PanelAdminaMenuModelWidoku.WybranyUzytkownik.Nazwisko;
             TextBoxLoginUzytkownikaModelWidoku = PanelAdminaMenuModelWidoku.WybranyUzytkownik.Login;
             TextBoxEmailUzytkownikaModelWidoku = PanelAdminaMenuModelWidoku.WybranyUzytkownik.Email;
-            TextBoxDataUrodzeniaUzytkownikaModelWidoku = PanelAdminaMenuModelWidoku.WybranyUzytkownik.Data_ur.ToString();
+            TextBoxDataUrodzeniaUzytkownikaModelWidoku = PanelAdminaMenuModelWidoku.WybranyUzytkownik.Data_ur.ToString("dd-MM-yyyy");
             TextBoxRolaUzytkownikaModelWidoku = PanelAdminaMenuModelWidoku.WybranyUzytkownik.Uprawnienia;
         }
 

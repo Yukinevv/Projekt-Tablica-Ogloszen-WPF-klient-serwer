@@ -4,11 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 
 namespace Klient
 {
+    /// <summary>
+    /// Klasa robiaca za model widoku dla StronaGlowna
+    /// </summary>
     public class StronaGlownaModelWidoku : BaseViewModel
     {
         public static ObservableCollection<KategoriaModelWidoku> KategorieLista { get; set; } = new ObservableCollection<KategoriaModelWidoku>();

@@ -11,7 +11,19 @@
 
     <Page.Resources>
         <local:MultiValueConverter x:Key="mvc"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <LinearGradientBrush x:Key="backgroundPage" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Offset="0.0" Color="#d3d3d3" />
+            <GradientStop Offset="1.0" Color="#c1c1c1" />
+        </LinearGradientBrush>
     </Page.Resources>
+
+    <Page.Style>
+        <Style TargetType="{x:Type Page}">
+            <Setter Property="Background" Value="{StaticResource backgroundPage}"/>
+        </Style>
+    </Page.Style>
 
     <behaviors:Interaction.Triggers>
         <local:EnterKeyDownEventTrigger EventName="KeyDown">
@@ -27,24 +39,54 @@
     </behaviors:Interaction.Triggers>
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="400*"/>
-            <ColumnDefinition Width="400*"/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="90*"/>
-            <RowDefinition Height="240*"/>
-            <RowDefinition Height="120*"/>
+            <RowDefinition Height="100*"/>
+            <RowDefinition Height="250*"/>
+            <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
 
-        <TextBox x:Name="TextBoxLogin" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="326,55,0,0" Width="148" Height="34" TextWrapping="Wrap"
-                 Grid.ColumnSpan="2" Grid.Row="1" FontSize="16" VerticalContentAlignment="Center" Text="{Binding TextBoxLoginTextModelWidoku, Mode=TwoWay}"/>
+        <Border Grid.ColumnSpan="2" Grid.Row="1" Width="250" Height="40" Margin="70,0,70,80" BorderBrush="black" BorderThickness="1" CornerRadius="5"
+                Background="White">
+            <Grid Margin="7 9">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-        <PasswordBox x:Name="PasswordBoxHaslo" HorizontalAlignment="Left" Margin="326,140,0,0" VerticalAlignment="Top" Width="148" Height="34"
-                     Grid.ColumnSpan="2" Grid.Row="1" FontSize="16" VerticalContentAlignment="Center"/>
+                <Image Source="/Obrazki/Email.png" Height="20"/>
+                
+                <TextBlock x:Name="textEmail" Text="Login" Style="{StaticResource textHint}" IsHitTestVisible="False"
+                           Visibility="{Binding ElementName=TextBoxLogin, Path=Text.IsEmpty, Converter={StaticResource BoolToVis}}"/>
+                
+                <TextBox Name="TextBoxLogin" Style="{StaticResource textBoxStyle2}" Text="{Binding TextBoxLoginTextModelWidoku, Mode=TwoWay}"/>
+            </Grid>
+        </Border>
 
-        <Button x:Name="LogowanieButton" Content="Zaloguj sie" HorizontalAlignment="Left" Grid.Row="2" VerticalAlignment="Top" Height="48" Width="152"
-                Margin="200,11,0,0" FontSize="18" Command="{Binding ZalogujKomenda}">
+        <Border Grid.ColumnSpan="2" Grid.Row="1" Width="250" Height="40" Margin="70,70,70,0" BorderBrush="Black" BorderThickness="1" CornerRadius="5"
+                Background="White">
+            <Grid Margin="7 9">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Image Source="/Obrazki/Lock.png" Height="20" />
+                
+                <TextBlock x:Name="textPassword" Text="Haslo" Style="{StaticResource textHint}" IsHitTestVisible="False"
+                           Visibility="{Binding TextBlockPasswordVisibilityModelWidoku}"/>
+                
+                <PasswordBox x:Name="PasswordBoxHaslo" Style="{StaticResource textBoxStyle2}">
+                    <behaviors:Interaction.Triggers>
+                        <behaviors:EventTrigger EventName="PasswordChanged">
+                            <behaviors:InvokeCommandAction Command="{Binding SprawdzCzyPasswordBoxPustyKomenda}" CommandParameter="{Binding ElementName=PasswordBoxHaslo}"/>
+                        </behaviors:EventTrigger>
+                    </behaviors:Interaction.Triggers>
+                </PasswordBox>
+            </Grid>
+        </Border>
+
+        <Button x:Name="LogowanieButton"  Grid.Row="2" VerticalAlignment="Top" Height="45" Width="150" Margin="0,15,200,0" Style="{StaticResource buttonStyle1}"
+                Content="Zaloguj sie" FontSize="18" Command="{Binding ZalogujKomenda}">
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource mvc}">
                     <Binding Path="Text" ElementName="TextBoxLogin" />
@@ -53,24 +95,20 @@
             </Button.CommandParameter>
         </Button>
 
-        <Button x:Name="RejestracjaButton" Content="Zarejestruj sie" HorizontalAlignment="Left" Grid.Row="2" VerticalAlignment="Top" Height="47"
-                Width="150" Grid.Column="1" Margin="50,11,0,0" FontSize="18" Command="{Binding PrzejdzDoRejestracjiKomenda}"/>
+        <Button x:Name="RejestracjaButton" Grid.Row="2" VerticalAlignment="Top" Height="45" Width="150" Margin="200,15,0,0" Style="{StaticResource buttonStyle1}"
+                Content="Zarejestruj sie" FontSize="18" Command="{Binding PrzejdzDoRejestracjiKomenda}"/>
 
-        <Label Content="Login" HorizontalAlignment="Left" Margin="326,24,0,0" VerticalAlignment="Top" Width="148" Grid.ColumnSpan="2"
-               Height="26" Grid.Row="1"/>
-
-        <Label Content="Hasło" HorizontalAlignment="Left" Margin="326,109,0,0" VerticalAlignment="Top" Width="148" Grid.ColumnSpan="2"
-               Height="26" Grid.Row="1"/>
-
-        <Label Content="TABLICA OGŁOSZEŃ" HorizontalContentAlignment="Center" FontSize="25" HorizontalAlignment="Left" Margin="250,31,0,0"
-               VerticalAlignment="Top" Grid.ColumnSpan="2" Height="49" Width="300"/>
-
-        <CheckBox Content="Zapamiętaj" HorizontalAlignment="Left" Margin="326,179,0,0" Grid.Row="1"
-                  VerticalAlignment="Top" Height="30" Width="102" Grid.ColumnSpan="2" FontSize="14" VerticalContentAlignment="Center"
+        <CheckBox Grid.Row="1" Height="30" Width="100" Margin="0,145,145,0" Content="Zapamiętaj" FontSize="14" VerticalContentAlignment="Center"
                   IsChecked="{Binding CheckBoxZapamietajIsCheckedModelWidoku, Mode=TwoWay}"/>
 
-        <Button x:Name="PolaczZSerweremButton" Content="Polacz z serwerem" HorizontalAlignment="Left" VerticalAlignment="Top" Height="31"
-            Width="143" Grid.Column="1" Margin="223,14,0,0" FontSize="14" Command="{Binding PolaczZSerweremKomenda}"
-                Visibility="{Binding PolaczZSerweremButtonVisibilityModelWidoku, Mode=TwoWay}"/>
+        <Button x:Name="PolaczZSerweremButton" Grid.Row="0" HorizontalAlignment="Right" Height="30" Width="145" Margin="0,0,20,20" Style="{StaticResource buttonStyle1}"
+                Content="Polacz z serwerem" FontSize="14" Visibility="{Binding PolaczZSerweremButtonVisibilityModelWidoku, Mode=TwoWay}"
+                Command="{Binding PolaczZSerweremKomenda}"/>
+
+        <Label Content="TABLICA OGŁOSZEŃ" Grid.Row="0" HorizontalContentAlignment="Center" Height="40" Width="250" Margin="0,15,0,0"
+               FontSize="25" FontWeight="Bold"/>
+        <Label Content="PROJEKT - PROGRAMOWANIE III" Grid.Row="0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" Width="250"
+               FontSize="15" FontWeight="Bold" Foreground="DarkGoldenrod"/>
+
     </Grid>
 </Page>

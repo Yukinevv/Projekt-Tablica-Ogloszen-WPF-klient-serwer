@@ -8,16 +8,22 @@
       xmlns:local="clr-namespace:Klient"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="StronaGlowna" Background="{DynamicResource stronaTlo}">
+      Title="StronaGlowna">
 
     <Page.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
 
-        <LinearGradientBrush x:Key="stronaTlo" StartPoint="0,0" EndPoint="0,1">
+        <LinearGradientBrush x:Key="backgroundPage" StartPoint="0,0" EndPoint="0,1">
             <GradientStop Offset="0.0" Color="#d3d3d3" />
             <GradientStop Offset="1.0" Color="#c1c1c1" />
         </LinearGradientBrush>
     </Page.Resources>
+
+    <Page.Style>
+        <Style TargetType="{x:Type Page}">
+            <Setter Property="Background" Value="{StaticResource backgroundPage}"/>
+        </Style>
+    </Page.Style>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -26,9 +32,9 @@
             <RowDefinition Height="60*"/>
         </Grid.RowDefinitions>
 
-        <ListView x:Name="ListViewKategorie" ItemsSource="{Binding KategorieLista}" Grid.Row="1" Grid.Column="1" Margin="40,0"
-                  Background="LightGray" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" Width="550" ItemContainerStyle="{StaticResource listViewItemStyle1}">
+        <ListView x:Name="ListViewKategorie" Grid.Row="1" Width="550" ItemsSource="{Binding KategorieLista}" Background="Transparent" BorderThickness="0"
+                  ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  ItemContainerStyle="{StaticResource listViewItemStyle1}">
 
             <behaviors:Interaction.Triggers>
                 <behaviors:EventTrigger EventName="MouseDoubleClick">
@@ -55,7 +61,7 @@
             
         </ListView>
 
-        <Button x:Name="WylogujButton" Grid.Row="2" Grid.Column="1" Margin="0" Style="{StaticResource buttonStyle1}"
+        <Button x:Name="WylogujButton" Grid.Row="2" Margin="0" Style="{StaticResource buttonStyle1}"
                 Command="{Binding WylogujKomenda}">
             <StackPanel Orientation="Horizontal">
                 <Icon:PackIconMaterial Kind="Logout" Style="{StaticResource menuButtonIcon}"/>
@@ -63,32 +69,32 @@
             </StackPanel>
         </Button>
 
-        <Button x:Name="UsunKategorieButton" Content="Usun kategorie" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,40,0"
-                Style="{StaticResource buttonStyle1}" Visibility="{Binding UsunKategorieButtonVisibilityModelWidoku}" Command="{Binding UsunKategorieKomenda}"/>
+        <Button x:Name="UsunKategorieButton" Grid.Row="2" HorizontalAlignment="Right" Margin="0,0,40,0" Style="{StaticResource buttonStyle1}"
+                Content="Usun kategorie" Visibility="{Binding UsunKategorieButtonVisibilityModelWidoku}" Command="{Binding UsunKategorieKomenda}"/>
 
-        <Button x:Name="PanelAdministracyjnyButton" Content="Panel admina" Grid.Row="2" Grid.Column="1" HorizontalAlignment="right" Margin="0,0,175,0"
-                Style="{StaticResource buttonStyle1}" Visibility="{Binding PanelAdministracyjnyButtonVisibilityModelWidoku}" 
+        <Button x:Name="PanelAdministracyjnyButton" Grid.Row="2" HorizontalAlignment="right" Margin="0,0,175,0" Style="{StaticResource buttonStyle1}"
+                Content="Panel Admina" Foreground="Red" Visibility="{Binding PanelAdministracyjnyButtonVisibilityModelWidoku}"
                 Command="{Binding OtworzPanelAdminaKomenda}"/>
 
-        <Button x:Name="MojProfilButton" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="2"
-                Margin="40,0,0,0" Style="{StaticResource buttonStyle1}" Command="{Binding PrzejdzDoMojProfilKomenda}">
+        <Button x:Name="MojProfilButton" Grid.Row="2" HorizontalAlignment="Left" Margin="40,0,0,0" Style="{StaticResource buttonStyle1}"
+                Command="{Binding PrzejdzDoMojProfilKomenda}">
             <StackPanel Orientation="Horizontal">
                 <Icon:PackIconMaterial Kind="HomeVariant" Style="{StaticResource menuButtonIcon}"/>
                 <TextBlock Text="{Binding MojProfilButtonContentModelWidoku}"/>
             </StackPanel>
         </Button>
 
-        <Button x:Name="DodajKategorieButton" Grid.Column="1" Content="Dodaj kategorie" HorizontalAlignment="Right" Margin="0,0,40,0"
-                Style="{StaticResource buttonStyle1}" Command="{Binding DodajKategorieKomenda}"/>
+        <Button x:Name="DodajKategorieButton" Grid.Row="0" HorizontalAlignment="Right" Margin="0,0,40,0" Style="{StaticResource buttonStyle1}"
+                Content="Dodaj kategorie" Command="{Binding DodajKategorieKomenda}"/>
 
-        <TextBox x:Name="TextBoxNazwaNowejKategorii" Margin="300,0,0,0" Width="120" Height="30" Padding="10,0"
-                 Text="{Binding TextBoxNazwaNowejKategoriiTextModelWidoku}" Style="{StaticResource textBoxStyle1}"/>
+        <TextBox x:Name="TextBoxNazwaNowejKategorii" Grid.Row="0" Width="120" Height="30" Margin="300,0,0,0" Style="{StaticResource textBoxStyle1}"
+                 Text="{Binding TextBoxNazwaNowejKategoriiTextModelWidoku}"/>
 
-        <Grid Width="170" HorizontalAlignment="Left" Margin="40,0,0,0">
-            <TextBlock Margin="20 0" VerticalAlignment="Center" Foreground="#B0B9C6" IsHitTestVisible="False" Panel.ZIndex="1" Text="Szukaj kategorii ..."
+        <Grid Grid.Row="0" HorizontalAlignment="Left" Width="170" Margin="40,0,0,0">
+            <TextBlock VerticalAlignment="Center" Margin="20 0" Foreground="#B0B9C6" IsHitTestVisible="False" Panel.ZIndex="1" Text="Szukaj kategorii ..."
                        Visibility="{Binding ElementName=TextBoxFilter, Path=Text.IsEmpty, Converter={StaticResource BoolToVis}}"/>
 
-            <TextBox Name="TextBoxFilter" Margin="0,12" Padding="20,0" Style="{StaticResource textBoxStyle1}">
+            <TextBox Name="TextBoxFilter" Margin="0,12" Style="{StaticResource textBoxStyle1}" Padding="20,0">
                 <behaviors:Interaction.Triggers>
                     <behaviors:EventTrigger EventName="TextChanged">
                         <behaviors:InvokeCommandAction Command="{Binding FiltrujKomenda}" CommandParameter="{Binding Text, ElementName=TextBoxFilter}"/>
@@ -96,10 +102,11 @@
                 </behaviors:Interaction.Triggers>
             </TextBox>
 
-            <Icon:PackIconMaterial Kind="Magnify" Width="15" Height="15" VerticalAlignment="Center" Margin="0 0 15 0" Foreground="#B0B9C6" HorizontalAlignment="Right" />
+            <Icon:PackIconMaterial Kind="Magnify" VerticalAlignment="Center" HorizontalAlignment="Right" Width="15" Height="15" Margin="0 0 15 0"
+                                   Foreground="#B0B9C6"/>
         </Grid>
 
-        <Label Content="Wpisz nazwę kategorii:" Margin="50,0,0,0" VerticalAlignment="Center" Height="30" Width="140"
+        <Label Content="Wpisz nazwę kategorii:" Grid.Row="0" VerticalAlignment="Center" Height="30" Width="140" Margin="50,0,0,0"
                VerticalContentAlignment="Center"/>
 
     </Grid>

@@ -8,6 +8,9 @@ using System.Windows;
 
 namespace Klient
 {
+    /// <summary>
+    /// Klasa robiaca za model widoku dla strony PanelAdminaMenu
+    /// </summary>
     public class PanelAdminaMenuModelWidoku : BaseViewModel
     {
         public ObservableCollection<Uzytkownik> UzytkownicyLista { get; set; } = new ObservableCollection<Uzytkownik>();

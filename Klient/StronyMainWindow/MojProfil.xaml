@@ -10,12 +10,23 @@
 
     <Page.Resources>
         <local:MultiValueConverter x:Key="mvc"/>
+
+        <LinearGradientBrush x:Key="backgroundPage" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Offset="0.0" Color="#d3d3d3" />
+            <GradientStop Offset="1.0" Color="#c1c1c1" />
+        </LinearGradientBrush>
     </Page.Resources>
-    
+
+    <Page.Style>
+        <Style TargetType="{x:Type Page}">
+            <Setter Property="Background" Value="{StaticResource backgroundPage}"/>
+        </Style>
+    </Page.Style>
+
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="117*"/>
-            <ColumnDefinition Width="83*"/>
+            <ColumnDefinition Width="600*"/>
+            <ColumnDefinition Width="200*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="50*"/>
@@ -23,12 +34,12 @@
             <RowDefinition Height="50*"/>
             <RowDefinition Height="50*"/>
         </Grid.RowDefinitions>
-        
-        <Button x:Name="MojeOgloszeniaButton" Content="Moje ogłoszenia" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Center"
-                Height="36" Width="156" Margin="272,0,0,0" FontSize="16" Command="{Binding PrzejdzDoMojeOgloszeniaKomenda}"/>
 
-        <Button x:Name="ZaktualizujDaneButton" Content="Zaktualizuj dane" HorizontalAlignment="Left" Margin="51,0,0,0" Grid.Row="3"
-                VerticalAlignment="Center" Height="36" Width="156" FontSize="16" Command="{Binding ZaktualizujKomenda}">
+        <Button x:Name="MojeOgloszeniaButton" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Height="35" Width="150" Margin="0,20,20,0"
+                Style="{StaticResource buttonStyle1}" Content="Moje ogłoszenia" FontSize="16" Command="{Binding PrzejdzDoMojeOgloszeniaKomenda}"/>
+
+        <Button x:Name="ZaktualizujDaneButton" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" Height="35" Width="180" Margin="0,0,80,0"
+                Style="{StaticResource buttonStyle1}" Content="Zaktualizuj dane" FontSize="16" Command="{Binding ZaktualizujKomenda}">
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource mvc}">
                     <Binding ElementName="PassBox1"/>
@@ -36,41 +47,38 @@
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
-        
-        <TextBox x:Name="TextBoxImie" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top"
-                 Width="156" Height="36" Margin="0,56,0,0" FontSize="16" VerticalContentAlignment="Center" Text="{Binding TextBoxImieModelWidoku}"/>
-        
-        <TextBox x:Name="TextBoxNazwisko" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top"
-                 Width="156" Height="36" Grid.Column="1" Margin="0,56,0,0" FontSize="16" VerticalContentAlignment="Center"
-                 Text="{Binding TextBoxNazwiskoModelWidoku}"/>
-        
-        <TextBox x:Name="TextBoxLogin" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top"
-                 Width="156" Height="36" Grid.Row="1" Margin="0,56,0,0" FontSize="16" VerticalContentAlignment="Center"
-                 Text="{Binding TextBoxLoginModelWidoku}"/>
-        
-        <TextBox x:Name="TextBoxEmail" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top"
-                 Width="156" Height="36" Grid.Column="1" Grid.Row="1" Margin="0,56,0,0" FontSize="16" VerticalContentAlignment="Center"
-                 Text="{Binding TextBoxEmailModelWidoku}"/>
-        
-        <PasswordBox x:Name="PassBox1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="156" Height="36" Grid.Row="2" Margin="51,56,0,0"
-                     FontSize="16" VerticalContentAlignment="Center"/>
-        
-        <PasswordBox x:Name="PassBox2" HorizontalAlignment="Left" VerticalAlignment="Top" Width="156" Height="36" Grid.Row="2" Margin="272,56,0,0"
-                     FontSize="16" VerticalContentAlignment="Center"/>
-        
-        <DatePicker x:Name="DatePicker1" Grid.Column="1" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Top" Height="36"
-                    Width="156" Margin="0,56,0,0" FontSize="20" DisplayDateEnd="{Binding DatePickerDateEndModelWidoku}"
-                    DisplayDateStart="{Binding DatePickerDateStartModelWidoku}" SelectedDate="{Binding DatePickerSelectedDateModelWidoku}"/>
-        
-        <Button x:Name="PowrotButton" Content="Powrót" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" Height="36" Width="156"
-                Grid.Column="1" FontSize="16" Command="{Binding PowrotKomenda}"/>
 
-        <Label Content="Imię" HorizontalAlignment="Left" Margin="142,25,0,0" VerticalAlignment="Top" Width="102" Height="26"/>
-        <Label Content="Nazwisko" HorizontalAlignment="Left" Margin="77,25,0,0" VerticalAlignment="Top" Width="102" Grid.Column="1" Height="26"/>
-        <Label Content="Login" HorizontalAlignment="Left" Margin="142,26,0,0" VerticalAlignment="Top" Width="102" Grid.Row="1" Height="26"/>
-        <Label Content="Email" HorizontalAlignment="Left" Margin="77,22,0,0" VerticalAlignment="Top" Width="102" Grid.Column="1" Grid.Row="1" Height="26"/>
-        <Label Content="Hasło" HorizontalAlignment="Left" Margin="37,25,0,0" VerticalAlignment="Top" Width="102" Grid.Row="2" Height="26"/>
-        <Label Content="Powtórz hasło" HorizontalAlignment="Left" Margin="263,25,0,0" VerticalAlignment="Top" Width="102" Grid.Row="2" Height="26"/>
-        <Label Content="Data urodzenia" HorizontalAlignment="Left" Margin="77,25,0,0" VerticalAlignment="Top" Width="102" Grid.Column="1" Grid.Row="2" Height="26"/>
+        <Button x:Name="PowrotButton" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Right" Height="35" Width="150" Margin="0,0,20,0"
+                Style="{StaticResource buttonStyle1}" Content="Powrót" FontSize="16" Command="{Binding PowrotKomenda}"/>
+
+        <TextBox x:Name="TextBoxImie" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Width="180" Height="35" Margin="80,40,0,0"
+                 Style="{StaticResource textBoxStyle1}" FontSize="16" VerticalContentAlignment="Center" Text="{Binding TextBoxImieModelWidoku}"/>
+
+        <TextBox x:Name="TextBoxNazwisko" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" Width="180" Height="35" Margin="0,40,80,0"
+                 Style="{StaticResource textBoxStyle1}" FontSize="16" VerticalContentAlignment="Center" Text="{Binding TextBoxNazwiskoModelWidoku}"/>
+
+        <TextBox x:Name="TextBoxLogin" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Width="180" Height="35" Margin="80,40,0,0"
+                 Style="{StaticResource textBoxStyle1}" FontSize="16" VerticalContentAlignment="Center" Text="{Binding TextBoxLoginModelWidoku}"/>
+
+        <TextBox x:Name="TextBoxEmail" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" Width="180" Height="35" Margin="0,40,80,0"
+                 Style="{StaticResource textBoxStyle1}" FontSize="16" VerticalContentAlignment="Center" Text="{Binding TextBoxEmailModelWidoku}"/>
+
+        <PasswordBox x:Name="PassBox1" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" Width="180" Height="35" Margin="80,40,0,0"
+                     Style="{StaticResource textBoxStyle1}" FontSize="16" VerticalContentAlignment="Center"/>
+
+        <PasswordBox x:Name="PassBox2" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" Width="180" Height="35" Margin="0,40,80,0"
+                     Style="{StaticResource textBoxStyle1}" FontSize="16" VerticalContentAlignment="Center"/>
+
+        <DatePicker x:Name="DatePicker1" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" Height="35" Width="180" Margin="80,0,0,0"
+                    FontSize="18" DisplayDateEnd="{Binding DatePickerDateEndModelWidoku}" DisplayDateStart="{Binding DatePickerDateStartModelWidoku}"
+                    SelectedDate="{Binding DatePickerSelectedDateModelWidoku}"/>
+
+        <Label Content="Imię" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="25" Margin="80,30,0,0"/>
+        <Label Content="Nazwisko" Grid.Column="0" Grid.Row="0" VerticalAlignment="Top" Width="100" Height="25" Margin="180,30,0,0"/>
+        <Label Content="Login" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="25" Margin="80,30,0,0"/>
+        <Label Content="Email" Grid.Column="0" Grid.Row="1" VerticalAlignment="Top" Width="100" Height="25" Margin="180,30,0,0"/>
+        <Label Content="Hasło" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="25" Margin="80,30,0,0"/>
+        <Label Content="Powtórz hasło" Grid.Column="0" Grid.Row="2" VerticalAlignment="Top" Width="100" Height="25" Margin="180,30,0,0"/>
+        <Label Content="Data urodzenia" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="25" Margin="80,10,0,0"/>
     </Grid>
 </Page>

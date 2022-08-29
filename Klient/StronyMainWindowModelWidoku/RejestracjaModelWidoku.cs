@@ -9,16 +9,14 @@ using System.Windows.Input;
 
 namespace Klient
 {
+    /// <summary>
+    /// Klasa robiaca za model widoku dla strony Rejestracja
+    /// </summary>
     public class RejestracjaModelWidoku : BaseViewModel
     {
         public DateTime DatePickerDateEndModelWidoku { get; set; }
         public DateTime DatePickerDateStartModelWidoku { get; set; }
-        public DateTime DatePickerSelectionDateModelWidoku { get; set; }
-
-        public string TextBoxImieTextModelWidoku { get; set; }
-        public string TextBoxNazwiskoTextModelWidoku { get; set; }
-        public string TextBoxLoginTextModelWidoku { get; set; }
-        public string TextBoxEmailTextModelWidoku { get; set; }
+        public DateTime DatePickerSelectedDateModelWidoku { get; set; } = DateTime.Today;
 
         public ICommand PowrotKomenda { get; set; }
         public ICommand ZarejestrujKomenda { get; set; }
@@ -56,17 +54,17 @@ namespace Klient
             }
 
             var parametry = (object[])x;
-            TextBoxImieTextModelWidoku = (string)parametry[0];
-            TextBoxNazwiskoTextModelWidoku = (string)parametry[1];
-            TextBoxLoginTextModelWidoku = (string)parametry[2];
-            TextBoxEmailTextModelWidoku = (string)parametry[3];
-            DatePickerSelectionDateModelWidoku = (DateTime)parametry[4];
+            string imie = (string)parametry[0];
+            string nazwisko = (string)parametry[1];
+            string login = (string)parametry[2];
+            string email = (string)parametry[3];
+            DateTime data_ur = (DateTime)parametry[4];
             string haslo1 = (parametry[5] as PasswordBox).Password;
             string haslo2 = (parametry[6] as PasswordBox).Password;
 
-            if (TextBoxImieTextModelWidoku == string.Empty || TextBoxNazwiskoTextModelWidoku == string.Empty || TextBoxLoginTextModelWidoku == string.Empty
-                || TextBoxEmailTextModelWidoku == string.Empty || haslo1 == string.Empty || haslo2 == string.Empty
-                || DatePickerSelectionDateModelWidoku.ToString() == string.Empty)
+            if (imie == string.Empty || nazwisko == string.Empty || login == string.Empty
+                || email == string.Empty || haslo1 == string.Empty || haslo2 == string.Empty
+                || data_ur.ToString() == string.Empty)
             {
                 MessageBox.Show("Uzupelnij wszystkie pola!");
                 return;
@@ -81,7 +79,7 @@ namespace Klient
                 MessageBox.Show("Hasło powinno miec długość od 8 do 20 znaków");
                 return;
             }
-            else if (!TextBoxEmailTextModelWidoku.Contains("@"))
+            else if (!email.Contains("@"))
             {
                 MessageBox.Show("Nieprawidłowy format adresu Email");
                 return;
@@ -101,12 +99,12 @@ namespace Klient
             OperacjeKlient.Wyslij("REJESTRACJA");
             Uzytkownik uzytkownik = new Uzytkownik()
             {
-                Imie = TextBoxImieTextModelWidoku,
-                Nazwisko = TextBoxNazwiskoTextModelWidoku,
-                Login = TextBoxLoginTextModelWidoku,
-                Email = TextBoxEmailTextModelWidoku,
+                Imie = imie,
+                Nazwisko = nazwisko,
+                Login = login,
+                Email = email,
                 Haslo = hash,
-                Data_ur = (DateTime)DatePickerSelectionDateModelWidoku,
+                Data_ur = data_ur,
                 Uprawnienia = "uzytkownik"
             };
             string uzytkownikSerialized = JsonConvert.SerializeObject(uzytkownik, Formatting.Indented,

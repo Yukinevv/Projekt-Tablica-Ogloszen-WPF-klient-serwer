@@ -1,5 +1,9 @@
 ﻿namespace Klient
 {
+    /// <summary>
+    /// Klasa pomocnicza, ktorej celem jest umozliwienie zapisania danych do pamieci podrecznej aplikacji, tak aby po wznowieniu jej dzialania uzytkownik
+    /// nie utracil zapisanych danych
+    /// </summary>
     public static class Ustawienia
     {
         public static string[] WczytajDaneLogowania()

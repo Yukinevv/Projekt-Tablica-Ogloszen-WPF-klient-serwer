@@ -3,6 +3,9 @@ using System.Windows.Input;
 
 namespace Serwer
 {
+    /// <summary>
+    /// Klasa robiaca za model widoku dla okna MainWindow
+    /// </summary>
     public class MainWindowModelWidoku : BaseViewModel
     {
         public static MTObservableCollection<string> ListBoxPolaczeniKlienciModelWidoku { get; set; } = new MTObservableCollection<string>();

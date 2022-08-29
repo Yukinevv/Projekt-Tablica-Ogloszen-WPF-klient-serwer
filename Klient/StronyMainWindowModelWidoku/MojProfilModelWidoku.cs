@@ -8,6 +8,9 @@ using System.Windows.Input;
 
 namespace Klient
 {
+    /// <summary>
+    /// Klasa robiaca za model widoku dla strony MojProfil
+    /// </summary>
     public class MojProfilModelWidoku : BaseViewModel
     {
         public DateTime DatePickerDateEndModelWidoku { get; set; }

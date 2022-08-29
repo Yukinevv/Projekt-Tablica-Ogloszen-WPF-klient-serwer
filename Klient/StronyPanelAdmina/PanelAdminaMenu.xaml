@@ -4,45 +4,71 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
       xmlns:local="clr-namespace:Klient"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="400"
       Title="PanelAdminaMenu">
 
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        
+        <LinearGradientBrush x:Key="backgroundPage" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Offset="0.0" Color="#d3d3d3" />
+            <GradientStop Offset="1.0" Color="#c1c1c1" />
+        </LinearGradientBrush>
+    </Page.Resources>
+
+    <Page.Style>
+        <Style TargetType="{x:Type Page}">
+            <Setter Property="Background" Value="{StaticResource backgroundPage}"/>
+        </Style>
+    </Page.Style>
+
     <Grid>
-        <ListView x:Name="ListViewUzytkownicy" ItemsSource="{Binding UzytkownicyLista}" Margin="0,42,0,0">
+        <ListView x:Name="ListViewUzytkownicy" Margin="10,50,10,10" ItemsSource="{Binding UzytkownicyLista}" ItemContainerStyle="{StaticResource listViewItemStyle1}"
+                  BorderThickness="0" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+
             <behaviors:Interaction.Triggers>
                 <behaviors:EventTrigger EventName="MouseDoubleClick">
                     <behaviors:InvokeCommandAction Command="{Binding WyborUzytkownikaKomenda}" CommandParameter="{Binding SelectedItem, ElementName=ListViewUzytkownicy}"/>
                 </behaviors:EventTrigger>
             </behaviors:Interaction.Triggers>
+
             <ListView.View>
-                <GridView>
+                <GridView ColumnHeaderContainerStyle="{StaticResource gridViewColumnHeaderStyle1}">
                     <GridView.Columns>
                         <GridViewColumn Width="120" DisplayMemberBinding="{Binding Id}">
                             <GridViewColumn.Header>
-                                <GridViewColumnHeader x:Name="Id" Tag="Id" Command="{Binding Sortuj}" CommandParameter="{Binding Tag, ElementName=Id}">Id użytkownika</GridViewColumnHeader>
+                                <GridViewColumnHeader x:Name="Id" Tag="Id" Command="{Binding SortujKomenda}" CommandParameter="{Binding Tag, ElementName=Id}">Id użytkownika</GridViewColumnHeader>
                             </GridViewColumn.Header>
                         </GridViewColumn>
                         <GridViewColumn Width="250" DisplayMemberBinding="{Binding Login}">
                             <GridViewColumn.Header>
-                                <GridViewColumnHeader x:Name="Login" Tag="Login" Command="{Binding Sortuj}" CommandParameter="{Binding Tag, ElementName=Login}">Login użytkownika</GridViewColumnHeader>
+                                <GridViewColumnHeader x:Name="Login" Tag="Login" Command="{Binding SortujKomenda}" CommandParameter="{Binding Tag, ElementName=Login}">Login użytkownika</GridViewColumnHeader>
                             </GridViewColumn.Header>
                         </GridViewColumn>
                     </GridView.Columns>
                 </GridView>
             </ListView.View>
+
         </ListView>
 
-        <TextBox x:Name="TextBoxFilter" HorizontalAlignment="Left" Margin="63,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top"
-                 Width="120" Height="27">
-            <behaviors:Interaction.Triggers>
-                <behaviors:EventTrigger EventName="TextChanged">
-                    <behaviors:InvokeCommandAction Command="{Binding FiltrujKomenda}" CommandParameter="{Binding Text, ElementName=TextBoxFilter}"/>
-                </behaviors:EventTrigger>
-            </behaviors:Interaction.Triggers>
-        </TextBox>
+        <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Width="170" Height="50" Margin="12,0,0,0">
+            <TextBlock VerticalAlignment="Center" Margin="20 0" Foreground="#B0B9C6" IsHitTestVisible="False" Panel.ZIndex="1" Text="Szukaj uzytkownika ..."
+                       Visibility="{Binding ElementName=TextBoxFilter, Path=Text.IsEmpty, Converter={StaticResource BoolToVis}}"/>
+
+            <TextBox Name="TextBoxFilter" Margin="0,8" Style="{StaticResource textBoxStyle1}" Padding="20,0">
+                <behaviors:Interaction.Triggers>
+                    <behaviors:EventTrigger EventName="TextChanged">
+                        <behaviors:InvokeCommandAction Command="{Binding FiltrujKomenda}" CommandParameter="{Binding Text, ElementName=TextBoxFilter}"/>
+                    </behaviors:EventTrigger>
+                </behaviors:Interaction.Triggers>
+            </TextBox>
+
+            <Icon:PackIconMaterial Kind="Magnify" VerticalAlignment="Center" HorizontalAlignment="Right" Width="15" Height="15" Margin="0 0 15 0"
+                                   Foreground="#B0B9C6"/>
+        </Grid>
         
-        <Label Content="Szukaj:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="27" Width="53"/>
     </Grid>
 </Page>

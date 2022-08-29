@@ -6,6 +6,11 @@ using System.Windows.Threading;
 
 namespace Serwer
 {
+    /// <summary>
+    /// Klasa pomocnicza bedaca rozszerzeniem dla klasy ObservableCollection<T>. Zaimplementowana zostala w celu uzywania tej kolekcji w przypadku pracy
+    /// na wielu watkach
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class MTObservableCollection<T> : ObservableCollection<T>
     {
         public override event NotifyCollectionChangedEventHandler CollectionChanged;

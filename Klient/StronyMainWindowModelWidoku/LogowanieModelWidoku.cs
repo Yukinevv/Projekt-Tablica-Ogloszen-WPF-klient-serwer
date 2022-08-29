@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Controls;
@@ -6,6 +7,9 @@ using System.Windows.Input;
 
 namespace Klient
 {
+    /// <summary>
+    /// Klasa robiaca za model widoku dla strony Logowanie
+    /// </summary>
     public class LogowanieModelWidoku : BaseViewModel
     {
         public static string TextBoxLoginTextModelWidoku { get; set; } = string.Empty;
@@ -13,10 +17,12 @@ namespace Klient
         public bool CheckBoxZapamietajIsCheckedModelWidoku { get; set; }
 
         public static Visibility PolaczZSerweremButtonVisibilityModelWidoku { get; set; } = Visibility.Hidden;
+        public Visibility TextBlockPasswordVisibilityModelWidoku { get; set; }
 
         public ICommand PolaczZSerweremKomenda { get; set; }
         public ICommand PrzejdzDoRejestracjiKomenda { get; set; }
         public ICommand ZalogujKomenda { get; set; }
+        public ICommand SprawdzCzyPasswordBoxPustyKomenda { get; set; }
 
         private static string[] daneLogowania = new string[2];
 
@@ -25,6 +31,7 @@ namespace Klient
             PolaczZSerweremKomenda = new RelayCommand(OperacjeKlient.PolaczZSerwerem);
             PrzejdzDoRejestracjiKomenda = new RelayCommand(PrzejdzDoRejestracji);
             ZalogujKomenda = new RelayCommand(Zaloguj);
+            SprawdzCzyPasswordBoxPustyKomenda = new RelayCommand(SprawdzCzyPasswordBoxPusty);
 
             // jezeli nie jestesmy polaczeni z serwerem to pokazuje przycisk polaczenia
             if (!OperacjeKlient.clientSocket.Connected)
@@ -37,7 +44,20 @@ namespace Klient
 
             TextBoxLoginTextModelWidoku = daneLogowania[0];
             (x as PasswordBox).Password = daneLogowania[1];
-        }    
+            SprawdzCzyPasswordBoxPusty(x);
+        }
+
+        private void SprawdzCzyPasswordBoxPusty(object x)
+        {
+            if ((x as PasswordBox).Password == "")
+            {
+                TextBlockPasswordVisibilityModelWidoku = Visibility.Visible;
+            }
+            else
+            {
+                TextBlockPasswordVisibilityModelWidoku = Visibility.Hidden;
+            }
+        }
 
         private void PrzejdzDoRejestracji(object x)
         {

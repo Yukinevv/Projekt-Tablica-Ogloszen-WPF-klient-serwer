@@ -4,6 +4,10 @@ using System.Windows.Input;
 
 namespace Klient
 {
+    /// <summary>
+    /// Klasa pomocnicza bedaca rozszerzeniem dla klasy EventTrigger. Dzieki tej konkretnej implementacji komenda zostanie wykonana po wcisnieciu
+    /// klawisza Enter
+    /// </summary>
     public class EnterKeyDownEventTrigger : EventTrigger
     {
         public EnterKeyDownEventTrigger() : base("KeyDown")

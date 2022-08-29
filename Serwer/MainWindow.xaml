@@ -7,10 +7,36 @@
         xmlns:s="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:Serwer"
         mc:Ignorable="d"
-        Title="Serwer" Height="450" Width="800" ResizeMode="CanMinimize">
+        Title="Serwer" Height="auto" Width="auto" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize" Background="Black">
 
     <Window.Resources>
         <s:Boolean x:Key="True">True</s:Boolean>
+
+        <Style x:Key="buttonStyle1" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="10" BorderThickness="1" BorderBrush="White">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#e8e8e8"/>
+                    <Setter Property="Foreground" Value="DimGray"/>
+                </Trigger>
+                <Trigger Property="IsMouseCaptured" Value="True">
+                    <Setter Property="Background" Value="#d9d9d9"/>
+                    <Setter Property="Foreground" Value="DimGray"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
 
     <behaviors:Interaction.Triggers>
@@ -19,24 +45,53 @@
         </behaviors:EventTrigger>
     </behaviors:Interaction.Triggers>
 
-    <Grid>
+    <Grid Width="800" Height="450">
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50*"/>
+            <ColumnDefinition Width="50*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="178*"/>
-            <RowDefinition Height="39*"/>
+            <RowDefinition Height="85*"/>
+            <RowDefinition Height="15*"/>
         </Grid.RowDefinitions>
 
-        <ListBox x:Name="ListBoxPolaczeniKlienci" ItemsSource="{Binding ListBoxPolaczeniKlienciModelWidoku}" Margin="132,24,132,127"/>
+        <ListBox x:Name="ListBoxPolaczeniKlienci" Grid.Column="1" Grid.Row="0" Margin="160,50,40,20" ItemsSource="{Binding ListBoxPolaczeniKlienciModelWidoku}"
+                 Background="Black" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Background" Value="Black"/>
+                    <Setter Property="Foreground" Value="Green"/>
+                    <Setter Property="Margin" Value="0,5,0,0"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
 
-        <TextBox x:Name="TextBoxLog" Margin="132,247,132,20" HorizontalContentAlignment="Center" IsReadOnly="True"/>
+        <TextBox x:Name="TextBoxLog" Grid.ColumnSpan="2" Grid.Row="0" IsReadOnly="True" Margin="40,50,270,20">
+            <TextBox.Style>
+                <Style TargetType="TextBox">
+                    <Setter Property="Background" Value="Black"/>
+                    <Setter Property="Foreground" Value="Green"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="Padding" Value="0,6,0,0"/>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
 
-        <Button x:Name="UruchomSerwerButton" Content="Uruchom serwer" HorizontalAlignment="Left" VerticalAlignment="Top"
-                Width="120" Height="42" Grid.Row="1" Margin="216,10,0,0" Command="{Binding UruchomSerwerKomenda}"
-                CommandParameter="{Binding ElementName=ListBoxPolaczeniKlienci}"
-                Visibility="{Binding UruchomSerwerButtonVisibilityModelWidoku}" RenderTransformOrigin="0.514,0.998"/>
+        <Button x:Name="UruchomSerwerButton" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" Width="140" Height="40" Margin="0,0,50,0" 
+                Style="{StaticResource buttonStyle1}" Content="Uruchom serwer" FontWeight="Bold" Visibility="{Binding UruchomSerwerButtonVisibilityModelWidoku}"
+                Command="{Binding UruchomSerwerKomenda}" CommandParameter="{Binding ElementName=ListBoxPolaczeniKlienci}"/>
 
-        <Button x:Name="WylaczSerwer" Content="Wylacz serwer" HorizontalAlignment="Left" VerticalAlignment="Top"
-                Width="120" Height="42" Grid.Row="1" Margin="466,10,0,0" Command="{Binding WylaczSerwerKomenda}"
-                CommandParameter="{StaticResource True}" IsEnabled="{Binding WylaczSerwerButtonIsEnabledModelWidoku, Mode=TwoWay}">
-        </Button>
+        <Button x:Name="WylaczSerwer" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Width="140" Height="40" Margin="50,0,0,0"
+                Style="{StaticResource buttonStyle1}" Content="Wylacz serwer" FontWeight="Bold" IsEnabled="{Binding WylaczSerwerButtonIsEnabledModelWidoku, Mode=TwoWay}"
+                Command="{Binding WylaczSerwerKomenda}" CommandParameter="{StaticResource True}"/>
+
+        <Label Content="Logi" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Height="35" Margin="40,10,0,0"
+               Foreground="White" FontSize="18"/>
+        <Label Content="Polaczeni klienci" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Height="35" Margin="160,10,0,0"
+               Foreground="White" FontSize="18"/>
+
     </Grid>
 </Window>

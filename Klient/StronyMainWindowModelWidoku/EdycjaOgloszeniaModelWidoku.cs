@@ -9,20 +9,25 @@ using System.Windows.Input;
 
 namespace Klient
 {
+    /// <summary>
+    /// Klasa robiaca za model widoku dla strony EdycjaOgloszenia
+    /// </summary>
     public class EdycjaOgloszeniaModelWidoku : BaseViewModel
     {
-        public static string TextBoxTytulTextModelWidoku { get; set; }
-        public static string TextBoxTrescTextModelWidoku { get; set; }
+        public string TextBoxTytulTextModelWidoku { get; set; }
+        public string TextBoxTrescTextModelWidoku { get; set; }
+        public string TextBoxWybraneKategorieModelWidoku { get; set; } = "WYBRANE KATEGORIE:\n";
 
-        public static bool TextBoxTytulIsReadOnlyModelWidoku { get; set; }
-        public static bool TextBoxTrescIsReadOnlyModelWidoku { get; set; }
-
-        public static Visibility ZatwierdzEdycjeOgloszeniaButtonVisibilityModelWidoku { get; set; }
-        public static Visibility UsunOgloszenieButtonVisibilityModelWidoku { get; set; }
+        public Visibility ZatwierdzEdycjeOgloszeniaButtonVisibilityModelWidoku { get; set; } = Visibility.Visible;
+        public Visibility UsunOgloszenieButtonVisibilityModelWidoku { get; set; } = Visibility.Visible;
+        public bool TextBoxTytulIsReadOnlyModelWidoku { get; set; } = false;
+        public bool TextBoxTrescIsReadOnlyModelWidoku { get; set; } = false;
+        public bool ListBoxKategorieIsEnabledModelWidoku { get; set; } = true;
 
         public ICommand PowrotKomenda { get; set; }
         public ICommand UsunKomenda { get; set; }
         public ICommand ZatwierdzKomenda { get; set; }
+        public ICommand ZaktualizujTextBoxWybraneKategorieKomenda { get; set; }
 
         public static string SkadWchodze;
 
@@ -32,6 +37,7 @@ namespace Klient
             PowrotKomenda = new RelayCommand(Powrot);
             UsunKomenda = new RelayCommand(Usun);
             ZatwierdzKomenda = new RelayCommand(Zatwierdz);
+            ZaktualizujTextBoxWybraneKategorieKomenda = new RelayCommand(ZaktualizujTextBoxWybraneKategorie);
 
             // wyswietlanie dostepnych kategorii w listboxie
             foreach (var kategoria in StronaGlownaModelWidoku.KategorieLista)
@@ -43,7 +49,45 @@ namespace Klient
             foreach (var nazwa in StronaOgloszeniaModelWidoku.NazwyWybranychKategoriiDoListBoxa)
             {
                 listBox.SelectedItems.Add(nazwa);
+                TextBoxWybraneKategorieModelWidoku += nazwa + ", ";
             }
+
+            // uzupelnienie textboxow danymi ogloszenia      
+            TextBoxTytulTextModelWidoku = StronaOgloszeniaModelWidoku.TytulWybranegoOgloszenia;
+            TextBoxTrescTextModelWidoku = StronaOgloszeniaModelWidoku.TrescWybranegoOgloszenia;
+
+            // sprawdzenie czy uzytkownik jest wlascicielem wybranego ogloszenia lub czy jest adminem
+            // jezeli NIE to ukrywam przyciski odpowiadajace za edycje i usuniecie ogloszenia
+            OperacjeKlient.Wyslij("CZY MOZE EDYTOWAC");
+            OperacjeKlient.Wyslij(LogowanieModelWidoku.TextBoxLoginTextModelWidoku);
+            if (OperacjeKlient.Odbierz() != "OK") return;
+            OperacjeKlient.Wyslij(StronaOgloszeniaModelWidoku.idUzytkownika.ToString());
+
+            string odpowiedz = OperacjeKlient.Odbierz();
+            if (odpowiedz == "NIE")
+            {
+                ZatwierdzEdycjeOgloszeniaButtonVisibilityModelWidoku = Visibility.Hidden;
+                UsunOgloszenieButtonVisibilityModelWidoku = Visibility.Hidden;
+                TextBoxTytulIsReadOnlyModelWidoku = true;
+                TextBoxTrescIsReadOnlyModelWidoku = true;
+                ListBoxKategorieIsEnabledModelWidoku = false;
+            }
+        }
+
+        private void ZaktualizujTextBoxWybraneKategorie(object x)
+        {
+            var elementy = (System.Collections.IList)x;
+            var wybraneKategorie = elementy.Cast<string>().ToList();
+
+            TextBoxWybraneKategorieModelWidoku = string.Empty;
+            TextBoxWybraneKategorieModelWidoku += "WYBRANE KATEGORIE:\n";
+
+            foreach (var kategoria in wybraneKategorie)
+            {
+                TextBoxWybraneKategorieModelWidoku += kategoria + ", ";
+            }
+
+            if (wybraneKategorie.Count == 0) TextBoxWybraneKategorieModelWidoku += "Brak wybranych kategorii...";
         }
 
         private void Powrot(object x)

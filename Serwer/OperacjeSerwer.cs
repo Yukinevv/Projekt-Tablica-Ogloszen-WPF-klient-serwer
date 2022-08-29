@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Serwer
 {
+    /// <summary>
+    /// Klasa odpowiadajaca za dzialanie serwera w tym m.in. obsluge wysylanych przez klientow rzadan
+    /// </summary>
     public class OperacjeSerwer : BaseViewModel
     {
         public static Socket serverSocket = new Socket(
@@ -55,7 +58,7 @@ namespace Serwer
             MainWindowModelWidoku.ListBoxPolaczeniKlienciModelWidoku.Add(socket.RemoteEndPoint.ToString());
             MainWindow.TextBoxLogs.Dispatcher.Invoke(new Action(() =>
             {
-                MainWindow.TextBoxLogs.Text += "Polaczono z klientem o adresie IP: " + socket.RemoteEndPoint.ToString() + "\n";
+                MainWindow.TextBoxLogs.Text += "Polaczono z klientem o adresie IP: " + socket.RemoteEndPoint.ToString() + "    (" + DateTime.Now.ToString("HH:mm:ss") + ")\n";
             }));
 
             socket.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, SerwerOperacje, socket);
@@ -107,6 +110,13 @@ namespace Serwer
         {
             Socket current = (Socket)AR.AsyncState;
             Odbierz(AR);
+
+            MainWindow.TextBoxLogs.Dispatcher.Invoke(new Action(() =>
+            {
+                string rzadanie = odKlienta;
+                if (odKlienta.Length > 25) rzadanie = odKlienta.Substring(0, 25);
+                MainWindow.TextBoxLogs.Text += "[" + current.RemoteEndPoint.ToString() + "] Wyslal rzadanie: " + rzadanie + "    (" + DateTime.Now.ToString("HH:mm:ss") + ")\n";
+            }));
 
             if (odKlienta == "REJESTRACJA")
             {

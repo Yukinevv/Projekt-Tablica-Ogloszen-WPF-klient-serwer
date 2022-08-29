@@ -6,6 +6,9 @@ using System.Windows;
 
 namespace Klient
 {
+    /// <summary>
+    /// Klasa odpowiadajaca za obsluge elementow sieciowych w kliencie
+    /// </summary>
     public class OperacjeKlient
     {
         public static Socket clientSocket = new Socket(

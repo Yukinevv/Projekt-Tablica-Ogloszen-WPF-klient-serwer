@@ -3,6 +3,9 @@ using System.Windows.Input;
 
 namespace Klient
 {
+    /// <summary>
+    /// Klasa robiaca za model widoku dla okna MainWindow
+    /// </summary>
     public class MainWindowModelWidoku : BaseViewModel
     {
         public ICommand ZamkniecieOknaKomenda { get; set; }

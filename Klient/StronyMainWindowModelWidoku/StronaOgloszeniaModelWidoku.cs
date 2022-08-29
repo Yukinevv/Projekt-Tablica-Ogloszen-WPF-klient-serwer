@@ -8,6 +8,9 @@ using System.Windows.Input;
 
 namespace Klient
 {
+    /// <summary>
+    /// Klasa robiaca za model widoku dla StronaOgloszenia
+    /// </summary>
     public class StronaOgloszeniaModelWidoku : BaseViewModel
     {
         public ObservableCollection<Ogloszenie> OgloszeniaLista { get; set; } = new ObservableCollection<Ogloszenie>();
@@ -24,9 +27,11 @@ namespace Klient
 
         public static string TytulWybranegoOgloszenia;
 
-        public static string TrescWybranegoOgloszenia;   
+        public static string TrescWybranegoOgloszenia;
 
         public static List<string> NazwyWybranychKategoriiDoListBoxa;
+
+        public static int idUzytkownika;
 
         private bool posortowano = false;
 
@@ -80,16 +85,15 @@ namespace Klient
                 return;
             }
 
-            // domyslnie ustawiam mozliwosc edycji, a pozniej bede sprawdzac czy uzytkownik moze edytowac ogloszenie / jest adminem
-            EdycjaOgloszeniaModelWidoku.ZatwierdzEdycjeOgloszeniaButtonVisibilityModelWidoku = Visibility.Visible;
-            EdycjaOgloszeniaModelWidoku.UsunOgloszenieButtonVisibilityModelWidoku = Visibility.Visible;
-            EdycjaOgloszeniaModelWidoku.TextBoxTytulIsReadOnlyModelWidoku = false;
-            EdycjaOgloszeniaModelWidoku.TextBoxTrescIsReadOnlyModelWidoku = false;
-
             var ogloszenie = x as Ogloszenie;
 
             // potrzebne do np. usuniecia wybranego ogloszenia
             idWybranegoOgloszenia = ogloszenie.Id;
+            idUzytkownika = ogloszenie.UzytkownikId;
+
+            // potrzebne do weryfikacji zmian przy edycji ogloszenia
+            TytulWybranegoOgloszenia = ogloszenie.Tytul;
+            TrescWybranegoOgloszenia = ogloszenie.Tresc;
 
             // potrzebne do edycji kategorii ogloszenia
             OperacjeKlient.Wyslij("WYBRANE NAZWY KATEGORII");
@@ -100,31 +104,6 @@ namespace Klient
 
             MainWindow.Rama.Content = new EdycjaOgloszenia();
             EdycjaOgloszeniaModelWidoku.SkadWchodze = "ze strony ogloszenia";
-
-            // uzupelnienie textboxow danymi ogloszenia      
-            EdycjaOgloszeniaModelWidoku.TextBoxTytulTextModelWidoku = ogloszenie.Tytul;
-            EdycjaOgloszeniaModelWidoku.TextBoxTrescTextModelWidoku = ogloszenie.Tresc;
-
-            // potrzebne do weryfikacji zmian przy edycji ogloszenia
-            TytulWybranegoOgloszenia = ogloszenie.Tytul;
-            TrescWybranegoOgloszenia = ogloszenie.Tresc;
-
-            // sprawdzenie czy uzytkownik jest wlascicielem wybranego ogloszenia lub czy jest adminem
-            // jezeli NIE to ukrywam przyciski odpowiadajace za edycje i usuniecie ogloszenia
-            int idUzytkownika = ogloszenie.UzytkownikId;
-            OperacjeKlient.Wyslij("CZY MOZE EDYTOWAC");
-            OperacjeKlient.Wyslij(LogowanieModelWidoku.TextBoxLoginTextModelWidoku);
-            if (OperacjeKlient.Odbierz() != "OK") return;
-            OperacjeKlient.Wyslij(idUzytkownika.ToString());
-
-            string odpowiedz = OperacjeKlient.Odbierz();
-            if (odpowiedz == "NIE")
-            {
-                EdycjaOgloszeniaModelWidoku.ZatwierdzEdycjeOgloszeniaButtonVisibilityModelWidoku = Visibility.Hidden;
-                EdycjaOgloszeniaModelWidoku.UsunOgloszenieButtonVisibilityModelWidoku = Visibility.Hidden;
-                EdycjaOgloszeniaModelWidoku.TextBoxTytulIsReadOnlyModelWidoku = true;
-                EdycjaOgloszeniaModelWidoku.TextBoxTrescIsReadOnlyModelWidoku = true;
-            }
         }
      
         private void PrzejdzDoDodajOgloszenie(object x)
@@ -148,15 +127,7 @@ namespace Klient
 
             if (posortowano == false)
             {
-                if (tag == "Id")
-                {
-                    ogloszenia = ogloszenia.OrderBy(o => o.Id).ToList();
-                }
-                else if (tag == "UzytkownikId")
-                {
-                    ogloszenia = ogloszenia.OrderBy(o => o.UzytkownikId).ToList();
-                }
-                else if (tag == "Tytul")
+                if (tag == "Tytul")
                 {
                     ogloszenia = ogloszenia.OrderBy(o => o.Tytul).ToList();
                 }
@@ -168,23 +139,11 @@ namespace Klient
                 {
                     ogloszenia = ogloszenia.OrderBy(o => o.Data_ed).ToList();
                 }
-                else if (tag == "Tresc")
-                {
-                    ogloszenia = ogloszenia.OrderBy(o => o.Tresc).ToList();
-                }
                 posortowano = true;
             }
             else
             {
-                if (tag == "Id")
-                {
-                    ogloszenia = ogloszenia.OrderByDescending(o => o.Id).ToList();
-                }
-                else if (tag == "UzytkownikId")
-                {
-                    ogloszenia = ogloszenia.OrderByDescending(o => o.UzytkownikId).ToList();
-                }
-                else if (tag == "Tytul")
+                if (tag == "Tytul")
                 {
                     ogloszenia = ogloszenia.OrderByDescending(o => o.Tytul).ToList();
                 }
@@ -195,10 +154,6 @@ namespace Klient
                 else if (tag == "Data_ed")
                 {
                     ogloszenia = ogloszenia.OrderByDescending(o => o.Data_ed).ToList();
-                }
-                else if (tag == "Tresc")
-                {
-                    ogloszenia = ogloszenia.OrderByDescending(o => o.Tresc).ToList();
                 }
                 posortowano = false;
             }

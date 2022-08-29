@@ -3,6 +3,9 @@ using BibliotekaEncje.Encje;
 
 namespace Serwer
 {
+    /// <summary>
+    /// Klasa odpowiadajaca za konfiguracje Entity Frameworka (bazy danych)
+    /// </summary>
     public class MyDbContext : DbContext
     {
         public DbSet<Uzytkownik> Uzytkownicy { get; set; }
