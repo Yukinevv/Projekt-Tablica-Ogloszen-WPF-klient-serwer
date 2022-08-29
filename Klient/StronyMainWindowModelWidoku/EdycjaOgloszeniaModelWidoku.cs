@@ -23,11 +23,13 @@ namespace Klient
         public bool TextBoxTytulIsReadOnlyModelWidoku { get; set; } = false;
         public bool TextBoxTrescIsReadOnlyModelWidoku { get; set; } = false;
         public bool ListBoxKategorieIsEnabledModelWidoku { get; set; } = true;
+        public Visibility LabelTytulVisibility { get; set; } = Visibility.Visible;
 
         public ICommand PowrotKomenda { get; set; }
         public ICommand UsunKomenda { get; set; }
         public ICommand ZatwierdzKomenda { get; set; }
         public ICommand ZaktualizujTextBoxWybraneKategorieKomenda { get; set; }
+        public ICommand PrzejdzDoKomentarzeKomenda { get; set; }
 
         public static string SkadWchodze;
 
@@ -38,6 +40,7 @@ namespace Klient
             UsunKomenda = new RelayCommand(Usun);
             ZatwierdzKomenda = new RelayCommand(Zatwierdz);
             ZaktualizujTextBoxWybraneKategorieKomenda = new RelayCommand(ZaktualizujTextBoxWybraneKategorie);
+            PrzejdzDoKomentarzeKomenda = new RelayCommand(PrzejdzDoKomentarze);
 
             // wyswietlanie dostepnych kategorii w listboxie
             foreach (var kategoria in StronaGlownaModelWidoku.KategorieLista)
@@ -71,7 +74,21 @@ namespace Klient
                 TextBoxTytulIsReadOnlyModelWidoku = true;
                 TextBoxTrescIsReadOnlyModelWidoku = true;
                 ListBoxKategorieIsEnabledModelWidoku = false;
+                LabelTytulVisibility = Visibility.Hidden;
             }
+        }
+
+        private void PrzejdzDoKomentarze(object x)
+        {
+            if (!OperacjeKlient.SocketConnected(OperacjeKlient.clientSocket))
+            {
+                MessageBox.Show("Utracono polaczenie z serwerem! Aplikacja zostanie zamknieta.");
+                OperacjeKlient.clientSocket.Close();
+                Application.Current.Shutdown();
+                return;
+            }
+
+            MainWindow.Rama.Content = new KomentarzeOgloszenia();
         }
 
         private void ZaktualizujTextBoxWybraneKategorie(object x)

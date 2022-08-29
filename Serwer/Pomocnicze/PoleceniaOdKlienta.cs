@@ -491,6 +491,80 @@ namespace Serwer
             }
         }
 
+        public static void Komentarze(byte[] buffer, int BUFFER_SIZE, Socket current)
+        {
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string wiadomosc = OperacjeSerwer.odKlienta;
+            int idOgloszenia = int.Parse(wiadomosc);
+
+            var komentarze = DataBaseLocator.Context.Komentarze.Where(k => k.OgloszenieId == idOgloszenia).ToList();            
+
+            string komentarzeSerialized = JsonConvert.SerializeObject(komentarze, Formatting.Indented,
+            new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+            OperacjeSerwer.Wyslij(komentarzeSerialized, current);
+
+            // wyslanie loginow wlascicieli danych komentarzy
+            var loginy = new string[komentarze.Count]; // ewentualnie komentarze.Count + 1
+            for (int i = 0; i < komentarze.Count; i++)
+            {
+                loginy[i] = DataBaseLocator.Context.Uzytkownicy.Where(u => u.Id == komentarze[i].UzytkownikId).Select(u => u.Login).FirstOrDefault();
+            }
+
+            string loginySerialized = JsonConvert.SerializeObject(loginy, Formatting.Indented,
+            new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+            OperacjeSerwer.Wyslij(loginySerialized, current);
+        }
+
+        public static void DodanieKomentarza(byte[] buffer, int BUFFER_SIZE, Socket current)
+        {
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            string login = OperacjeSerwer.odKlienta;
+
+            OperacjeSerwer.Wyslij("OK", current);
+
+            // wyciagam z bazy id uzytkownika na podstawie przeslanego loginu
+            int idUzytkownika = DataBaseLocator.Context.Uzytkownicy.Where(u => u.Login == login).Select(u => u.Id).FirstOrDefault();
+
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            Thread.Sleep(100);
+            string komentarzSerialized = OperacjeSerwer.odKlienta;
+            var komentarzOdKlienta = JsonConvert.DeserializeObject<Komentarz>(komentarzSerialized);
+
+            var komentarz = new Komentarz
+            {
+                Tresc = komentarzOdKlienta.Tresc,
+                UzytkownikId = idUzytkownika,
+                OgloszenieId = komentarzOdKlienta.OgloszenieId
+            };
+
+            DataBaseLocator.Context.Komentarze.Add(komentarz);
+            DataBaseLocator.Context.SaveChanges();
+
+            OperacjeSerwer.Wyslij("dodano", current);
+        }
+
+        public static void UsuniecieKomentarzy(byte[] buffer, int BUFFER_SIZE, Socket current)
+        {
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            Thread.Sleep(100);
+            string idZaznaczonychKomentarzySerialized = OperacjeSerwer.odKlienta;
+            var idZaznaczonychKomentarzy = JsonConvert.DeserializeObject<int[]>(idZaznaczonychKomentarzySerialized);
+
+            foreach (var idKomentarza in idZaznaczonychKomentarzy)
+            {
+                DataBaseLocator.Context.Komentarze.Remove(DataBaseLocator.Context.Komentarze.FirstOrDefault(k => k.Id == idKomentarza));
+            }
+            DataBaseLocator.Context.SaveChanges();
+
+            OperacjeSerwer.Wyslij("usunieto", current);
+        }
+
         public static void OdlaczenieKlienta(byte[] buffer, int BUFFER_SIZE, Socket current, List<Socket> clientSockets, List<string> zalogowaniKlienciLoginy)
         {
             Wyloguj(buffer, BUFFER_SIZE, current, zalogowaniKlienciLoginy);

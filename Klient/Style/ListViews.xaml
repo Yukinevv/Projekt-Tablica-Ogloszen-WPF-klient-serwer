@@ -21,14 +21,14 @@
                 <Setter Property="Background" Value="LightGray" />
                 <Setter Property="BorderBrush" Value="white" />
                 <Setter Property="BorderThickness" Value="3" />
-                <Setter Property="FontSize" Value="17" />
+                <Setter Property="FontSize" Value="15" />
                 <Setter Property="FontWeight" Value="Bold" />
             </Trigger>
             <Trigger Property="IsSelected" Value="True">
                 <Setter Property="Background" Value="LightGray" />
                 <Setter Property="BorderBrush" Value="white" />
                 <Setter Property="BorderThickness" Value="3" />
-                <Setter Property="FontSize" Value="17" />
+                <Setter Property="FontSize" Value="15" />
                 <Setter Property="FontWeight" Value="Bold" />
             </Trigger>
         </Style.Triggers>

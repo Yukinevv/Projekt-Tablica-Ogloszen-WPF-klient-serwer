@@ -52,11 +52,14 @@
         <TextBox IsReadOnly="True" Grid.Column="1" VerticalAlignment="Bottom" Height="80" Margin="0,0,40,30" Padding="2,2" Style="{StaticResource textBoxStyle1}"
                  TextWrapping="Wrap" VerticalContentAlignment="Top" Text="{Binding TextBoxWybraneKategorieModelWidoku, Mode=TwoWay}"/>
 
-        <Button x:Name="ZatwierdzButton" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="150" Margin="40,0,0,30"
+        <Button x:Name="ZatwierdzButton" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="120" Margin="40,0,0,30"
                 Content="Zatwierdź" FontSize="18" Style="{StaticResource buttonStyle1}" Visibility="{Binding ZatwierdzEdycjeOgloszeniaButtonVisibilityModelWidoku, Mode=TwoWay}"
                 Command="{Binding ZatwierdzKomenda}" CommandParameter="{Binding SelectedItems, ElementName=ListBoxKategorie}"/>
 
-        <Button x:Name="PowrótButton" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="40" Width="150" Margin="0,0,40,30"
+        <Button Grid.Column="0" VerticalAlignment="Bottom" Height="40" Width="130" Margin="80,0,0,30" Style="{StaticResource buttonStyle1}"
+                Content="Komentarze" FontSize="18" Command="{Binding PrzejdzDoKomentarzeKomenda}"/>
+
+        <Button x:Name="PowrótButton" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="40" Width="100" Margin="0,0,20,30"
                 Style="{StaticResource buttonStyle1}" Content="Powrót" FontSize="18" Command="{Binding PowrotKomenda}"/>
 
         <Button x:Name="UsunButton" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Height="40" Width="150" Margin="0,10,20,0"
@@ -64,7 +67,7 @@
                 Command="{Binding UsunKomenda}"/>
 
         <Label Content="Edytuj swoje ogłoszenie" Grid.ColumnSpan="2" VerticalAlignment="Top" Height="40" Width="270" Margin="0,10,0,0"
-               HorizontalContentAlignment="Center" FontSize="20" FontWeight="Bold"/>
+               HorizontalContentAlignment="Center" FontSize="20" FontWeight="Bold" Visibility="{Binding LabelTytulVisibility, Mode=TwoWay}"/>
         <Label Content="Tytuł" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="25" Margin="40,50,0,0"/>
         <Label Content="Treść" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="25" Margin="40,125,0,0"/>
         <Label Content="Kategorie" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="70" Margin="0,80,0,0"/>

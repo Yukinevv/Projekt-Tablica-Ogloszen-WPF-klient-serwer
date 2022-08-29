@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Serwer.Migrations
 {
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -74,6 +74,33 @@ namespace Serwer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Komentarze",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Tresc = table.Column<string>(type: "varchar(2048)", nullable: false),
+                    UzytkownikId = table.Column<int>(type: "integer", nullable: false),
+                    OgloszenieId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Komentarze", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Komentarze_Ogloszenia_OgloszenieId",
+                        column: x => x.OgloszenieId,
+                        principalTable: "Ogloszenia",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Komentarze_Uzytkownicy_UzytkownikId",
+                        column: x => x.UzytkownikId,
+                        principalTable: "Uzytkownicy",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OgloszeniaKategorie",
                 columns: table => new
                 {
@@ -103,6 +130,16 @@ namespace Serwer.Migrations
                 column: "UzytkownikId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Komentarze_OgloszenieId",
+                table: "Komentarze",
+                column: "OgloszenieId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Komentarze_UzytkownikId",
+                table: "Komentarze",
+                column: "UzytkownikId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Ogloszenia_UzytkownikId",
                 table: "Ogloszenia",
                 column: "UzytkownikId");
@@ -115,6 +152,9 @@ namespace Serwer.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Komentarze");
+
             migrationBuilder.DropTable(
                 name: "OgloszeniaKategorie");
 

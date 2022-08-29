@@ -12,8 +12,8 @@ using Serwer;
 namespace Serwer.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20220715092413_Init")]
-    partial class Init
+    [Migration("20220829100112_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -47,6 +47,33 @@ namespace Serwer.Migrations
                     b.HasIndex("UzytkownikId");
 
                     b.ToTable("Kategorie");
+                });
+
+            modelBuilder.Entity("BibliotekaEncje.Encje.Komentarz", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OgloszenieId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Tresc")
+                        .IsRequired()
+                        .HasColumnType("varchar(2048)");
+
+                    b.Property<int>("UzytkownikId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OgloszenieId");
+
+                    b.HasIndex("UzytkownikId");
+
+                    b.ToTable("Komentarze");
                 });
 
             modelBuilder.Entity("BibliotekaEncje.Encje.Ogloszenie", b =>
@@ -148,6 +175,25 @@ namespace Serwer.Migrations
                     b.Navigation("Uzytkownik");
                 });
 
+            modelBuilder.Entity("BibliotekaEncje.Encje.Komentarz", b =>
+                {
+                    b.HasOne("BibliotekaEncje.Encje.Ogloszenie", "Ogloszenie")
+                        .WithMany("Komentarze")
+                        .HasForeignKey("OgloszenieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BibliotekaEncje.Encje.Uzytkownik", "Uzytkownik")
+                        .WithMany("Komentarze")
+                        .HasForeignKey("UzytkownikId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ogloszenie");
+
+                    b.Navigation("Uzytkownik");
+                });
+
             modelBuilder.Entity("BibliotekaEncje.Encje.Ogloszenie", b =>
                 {
                     b.HasOne("BibliotekaEncje.Encje.Uzytkownik", "Uzytkownik")
@@ -186,11 +232,15 @@ namespace Serwer.Migrations
             modelBuilder.Entity("BibliotekaEncje.Encje.Ogloszenie", b =>
                 {
                     b.Navigation("Kategorie");
+
+                    b.Navigation("Komentarze");
                 });
 
             modelBuilder.Entity("BibliotekaEncje.Encje.Uzytkownik", b =>
                 {
                     b.Navigation("Kategorie");
+
+                    b.Navigation("Komentarze");
 
                     b.Navigation("Ogloszenia");
                 });

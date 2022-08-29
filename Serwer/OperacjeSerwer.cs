@@ -190,6 +190,18 @@ namespace Serwer
             {
                 PoleceniaOdKlienta.ZdegradowanieUzytkownika(buffer, BUFFER_SIZE, current);
             }
+            else if (odKlienta == "KOMENTARZE")
+            {
+                PoleceniaOdKlienta.Komentarze(buffer, BUFFER_SIZE, current);
+            }
+            else if (odKlienta == "DODANIE KOMENTARZA")
+            {
+                PoleceniaOdKlienta.DodanieKomentarza(buffer, BUFFER_SIZE, current);
+            }
+            else if (odKlienta == "USUNIECIE KOMENTARZY")
+            {
+                PoleceniaOdKlienta.UsuniecieKomentarzy(buffer, BUFFER_SIZE, current);
+            }
             else if (odKlienta == "ODLACZENIE KLIENTA")
             {
                 PoleceniaOdKlienta.OdlaczenieKlienta(buffer, BUFFER_SIZE, current, clientSockets, zalogowaniKlienciLoginy);

@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Serwer
 {
@@ -51,27 +53,36 @@ namespace Serwer
                 {
                     if (!dbContext.Uzytkownicy.Any())
                     {
-                        string[] Imie = new string[] { "Adrian", "Pawel", "Bartek", "Lukasz", "Czesio" };
+                        string[] Imie = new string[] { "Maciej", "Pawel", "Bartek", "Lukasz", "Czesio" };
                         string[] Nazwisko = new string[] { "Kowalski", "Nowak", "Lukasiewicz", "Nowy", "Stary" };
                         Random r = new Random();
+
+                        SHA256 sha256Hash = SHA256.Create();
+                        string hash = GetHash(sha256Hash, "qwerty123");
+
+                        var uzyteLoginy = new List<string>();
 
                         for (int i = 1; i <= 5; i++)
                         {
                             string wybraneImie = Imie[r.Next(0, Imie.Length)];
-                            string wybraneNazwisko = Nazwisko[r.Next(0, Nazwisko.Length)];
+                            string wybraneNazwisko = Nazwisko[r.Next(0, Nazwisko.Length)]; 
 
                             Uzytkownik uzytkownik = new Uzytkownik()
                             {
-                                Login = wybraneImie + wybraneNazwisko,
-                                Haslo = "qwerty",
+                                Login = wybraneImie.ToLower() + wybraneNazwisko.ToLower()[0],
+                                Haslo = hash,
                                 Imie = wybraneImie,
                                 Nazwisko = wybraneNazwisko,
-                                Email = wybraneImie + "@gmail.com",
+                                Email = wybraneImie.ToLower() + wybraneNazwisko.ToLower()[0] + "@gmail.com",
                                 Data_ur = DateTime.Now,
                                 Uprawnienia = "uzytkownik"
                             };
 
-                            dbContext.Uzytkownicy.Add(uzytkownik);
+                            if (!uzyteLoginy.Contains(uzytkownik.Login)) // jezeli login sie nie powtarza to dodaje uzytkownika do bazy
+                            {
+                                dbContext.Uzytkownicy.Add(uzytkownik);
+                                uzyteLoginy.Add(uzytkownik.Login);
+                            }   
                         }
                         dbContext.SaveChanges();
                     }
@@ -170,6 +181,19 @@ namespace Serwer
                 }
             };
             return relacje;
+        }
+
+        public static string GetHash(HashAlgorithm hashAlgorithm, string input)
+        {
+            byte[] data = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+            var sBuilder = new StringBuilder();
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+            return sBuilder.ToString();
         }
     }
 }

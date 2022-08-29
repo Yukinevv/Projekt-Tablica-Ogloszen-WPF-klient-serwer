@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serwer", "Serwer\Serwer.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BibliotekaEncje", "BibliotekaEncje\BibliotekaEncje.csproj", "{7C8FE6B4-43BE-4AAF-AD84-3B86FB927FD3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Klient", "Klient\Klient.csproj", "{63302E1F-2911-4B06-B261-A03223665863}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Klient", "Klient\Klient.csproj", "{6FA5CA73-63C2-4582-8EB4-2361474AC3C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{7C8FE6B4-43BE-4AAF-AD84-3B86FB927FD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C8FE6B4-43BE-4AAF-AD84-3B86FB927FD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C8FE6B4-43BE-4AAF-AD84-3B86FB927FD3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{63302E1F-2911-4B06-B261-A03223665863}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{63302E1F-2911-4B06-B261-A03223665863}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{63302E1F-2911-4B06-B261-A03223665863}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{63302E1F-2911-4B06-B261-A03223665863}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FA5CA73-63C2-4582-8EB4-2361474AC3C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FA5CA73-63C2-4582-8EB4-2361474AC3C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FA5CA73-63C2-4582-8EB4-2361474AC3C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FA5CA73-63C2-4582-8EB4-2361474AC3C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

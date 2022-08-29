@@ -16,6 +16,8 @@ namespace Serwer
 
         public DbSet<OgloszenieKategoria> OgloszeniaKategorie { get; set; }
 
+        public DbSet<Komentarz> Komentarze { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Uzytkownik>(u =>
@@ -30,6 +32,7 @@ namespace Serwer
                 // relacje jeden do wielu
                 u.HasMany(u => u.Ogloszenia).WithOne(o => o.Uzytkownik).HasForeignKey(o => o.UzytkownikId);
                 u.HasMany(u => u.Kategorie).WithOne(k => k.Uzytkownik).HasForeignKey(k => k.UzytkownikId);
+                u.HasMany(u => u.Komentarze).WithOne(k => k.Uzytkownik).HasForeignKey(k => k.UzytkownikId);
             });
 
             modelBuilder.Entity<Ogloszenie>(o =>
@@ -37,6 +40,9 @@ namespace Serwer
                 o.Property(o => o.Tytul).IsRequired().HasColumnType("varchar(30)");
                 o.Property(o => o.Tresc).IsRequired().HasColumnType("varchar(4096)");
                 o.Property(o => o.Data_ed).ValueGeneratedOnUpdate();
+
+                // relacja jeden do wielu
+                o.HasMany(o => o.Komentarze).WithOne(k => k.Ogloszenie).HasForeignKey(k => k.OgloszenieId);
             });
 
             modelBuilder.Entity<Kategoria>(k =>
@@ -50,6 +56,11 @@ namespace Serwer
                 ok.HasKey(x => new { x.OgloszenieId, x.KategoriaId });
                 ok.HasOne(ok => ok.Ogloszenie).WithMany(o => o.Kategorie).HasForeignKey(ok => ok.OgloszenieId).OnDelete(DeleteBehavior.Restrict);
                 ok.HasOne(ok => ok.Kategoria).WithMany(k => k.Ogloszenia).HasForeignKey(ok => ok.KategoriaId).OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Komentarz>(k =>
+            {
+                k.Property(k => k.Tresc).IsRequired().HasColumnType("varchar(2048)");
             });
         }
 

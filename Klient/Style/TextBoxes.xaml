@@ -4,7 +4,6 @@
     <Style x:Key="textBoxStyle1" TargetType="Control">
         <Setter Property="Background" Value="white" />
         <Setter Property="Foreground" Value="black" />
-        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Padding" Value="10,0" />
@@ -29,6 +28,15 @@
         </Setter>
     </Style>
 
+    <Style x:Key="textBoxStyle2" TargetType="Control">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Grid.Column" Value="1" />
+        <Setter Property="Margin" Value="10 0 0 0" />
+        <Setter Property="Foreground" Value="black" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
     <Style x:Key="textHint" TargetType="TextBlock">
         <Setter Property="FontSize" Value="14" />
         <Setter Property="Grid.Column" Value="1" />
@@ -37,14 +45,20 @@
         <Setter Property="Foreground" Value="#ACB0AF" />
     </Style>
 
-
-    <Style x:Key="textBoxStyle2" TargetType="Control">
-        <Setter Property="FontSize" Value="14" />
-        <Setter Property="Grid.Column" Value="1" />
-        <Setter Property="Margin" Value="10 0 0 0" />
+    <Style x:Key="textBoxStyle3" TargetType="Control">
+        <Setter Property="Background" Value="white" />
         <Setter Property="Foreground" Value="black" />
-        <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Padding" Value="5,5" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Control}">
+                    <Border x:Name="border" CornerRadius="10" Background="{TemplateBinding Background}" SnapsToDevicePixels="True" BorderThickness="0">
+                        <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
 </ResourceDictionary>

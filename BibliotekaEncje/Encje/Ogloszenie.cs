@@ -21,5 +21,7 @@ namespace BibliotekaEncje.Encje
         public virtual Uzytkownik Uzytkownik { get; set; }
 
         public virtual List<OgloszenieKategoria> Kategorie { get; set; }
+
+        public virtual List<Komentarz> Komentarze { get; set; } = new List<Komentarz>();
     }
 }

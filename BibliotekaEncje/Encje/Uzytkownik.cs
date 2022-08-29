@@ -26,5 +26,6 @@ namespace BibliotekaEncje.Encje
 
         public virtual List<Kategoria> Kategorie { get; set; } = new List<Kategoria>();
 
+        public virtual List<Komentarz> Komentarze { get; set; } = new List<Komentarz>();
     }
 }
