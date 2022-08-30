@@ -202,6 +202,10 @@ namespace Serwer
             {
                 PoleceniaOdKlienta.UsuniecieKomentarzy(buffer, BUFFER_SIZE, current);
             }
+            else if (odKlienta == "EDYCJA KOMENTARZA")
+            {
+                PoleceniaOdKlienta.EdycjaKomentarza(buffer, BUFFER_SIZE, current);
+            }
             else if (odKlienta == "ODLACZENIE KLIENTA")
             {
                 PoleceniaOdKlienta.OdlaczenieKlienta(buffer, BUFFER_SIZE, current, clientSockets, zalogowaniKlienciLoginy);

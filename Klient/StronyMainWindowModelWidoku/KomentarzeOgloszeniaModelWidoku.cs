@@ -8,11 +8,14 @@ using System.Windows.Input;
 
 namespace Klient
 {
+    /// <summary>
+    /// Klasa robiaca za model widoku dla strony KomentarzeOgloszenia
+    /// </summary>
     public class KomentarzeOgloszeniaModelWidoku : BaseViewModel
     {
-        public ObservableCollection<KomentarzModelWidoku> KomentarzeLista { get; set; } = new ObservableCollection<KomentarzModelWidoku>();
+        public static ObservableCollection<KomentarzModelWidoku> KomentarzeLista { get; set; } = new ObservableCollection<KomentarzModelWidoku>();
 
-        public string TextBoxTrescModelWidoku { get; set; }
+        public static string TextBoxTrescModelWidoku { get; set; } = string.Empty;
 
         public string TextBoxTytulOgloszeniaModelWidoku { get; set; }
         public string TextBoxTrescOgloszeniaModelWidoku { get; set; }
@@ -45,6 +48,11 @@ namespace Klient
 
             string loginySerialized = OperacjeKlient.Odbierz();
             var loginy = JsonConvert.DeserializeObject<string[]>(loginySerialized);
+
+            if (KomentarzeLista != null)
+            {
+                KomentarzeLista.Clear();
+            }
 
             for (int i = 0; i < komentarze.Count; i++)
             {
@@ -83,7 +91,7 @@ namespace Klient
                 return;
             }
 
-            if (TextBoxTrescModelWidoku == string.Empty || TextBoxTrescModelWidoku == null)
+            if (TextBoxTrescModelWidoku == string.Empty)
             {
                 MessageBox.Show("Komentarz nie moze byc pusty!");
                 return;
@@ -118,6 +126,7 @@ namespace Klient
             if (odpowiedz == "dodano")
             {
                 MessageBox.Show("Dodano komentarz!");
+                TextBoxTrescModelWidoku = string.Empty;
                 MainWindow.Rama.Content = new KomentarzeOgloszenia();
             }
         }

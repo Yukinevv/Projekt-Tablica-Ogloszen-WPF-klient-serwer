@@ -105,6 +105,7 @@ namespace Klient
             // wyslanie ogloszenia do dodania
             OperacjeKlient.Wyslij("DODANIE OGLOSZENIA");
             OperacjeKlient.Wyslij(LogowanieModelWidoku.TextBoxLoginTextModelWidoku);
+            if (OperacjeKlient.Odbierz() != "OK") return;
             var ogloszenie = new Ogloszenie()
             {
                 Tytul = tytul,

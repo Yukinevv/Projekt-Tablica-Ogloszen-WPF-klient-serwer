@@ -128,7 +128,10 @@ namespace Serwer
             string kategoriaSerialized = OperacjeSerwer.odKlienta;
             var kategoriaOdKlienta = JsonConvert.DeserializeObject<Kategoria>(kategoriaSerialized);
 
+            OperacjeSerwer.Wyslij("OK", current);
+
             current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            Thread.Sleep(100);
             string login = OperacjeSerwer.odKlienta;
 
             // sprawdzam czy moze podana kategoria juz istnieje
@@ -265,6 +268,8 @@ namespace Serwer
         {
             current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
             string login = OperacjeSerwer.odKlienta;
+
+            OperacjeSerwer.Wyslij("OK", current);
 
             // pobieram z bazy id uzytkownika o podanym loginie
             int idUzytkownika = DataBaseLocator.Context.Uzytkownicy.Where(u => u.Login == login).Select(u => u.Id).FirstOrDefault();
@@ -563,6 +568,22 @@ namespace Serwer
             DataBaseLocator.Context.SaveChanges();
 
             OperacjeSerwer.Wyslij("usunieto", current);
+        }
+
+        public static void EdycjaKomentarza(byte[] buffer, int BUFFER_SIZE, Socket current)
+        {
+            current.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, OperacjeSerwer.Odbierz, current);
+            Thread.Sleep(100);
+            string daneSerialized = OperacjeSerwer.odKlienta;
+
+            var dane = JsonConvert.DeserializeObject<string[]>(daneSerialized);
+            int idWybranegoKomentarza = int.Parse(dane[0]);
+
+            var komentarz = DataBaseLocator.Context.Komentarze.FirstOrDefault(k => k.Id == idWybranegoKomentarza);
+            komentarz.Tresc = dane[1];
+            DataBaseLocator.Context.SaveChanges();
+
+            OperacjeSerwer.Wyslij("zedytowano", current);
         }
 
         public static void OdlaczenieKlienta(byte[] buffer, int BUFFER_SIZE, Socket current, List<Socket> clientSockets, List<string> zalogowaniKlienciLoginy)

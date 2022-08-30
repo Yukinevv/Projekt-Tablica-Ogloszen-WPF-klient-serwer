@@ -88,7 +88,7 @@
                 Content="Dodaj kategorie" Command="{Binding DodajKategorieKomenda}"/>
 
         <TextBox x:Name="TextBoxNazwaNowejKategorii" Grid.Row="0" Width="120" Height="30" Margin="300,0,0,0" Style="{StaticResource textBoxStyle1}"
-                 Text="{Binding TextBoxNazwaNowejKategoriiTextModelWidoku}"/>
+                 Text="{Binding TextBoxNazwaNowejKategoriiTextModelWidoku, Mode=TwoWay}"/>
 
         <Grid Grid.Row="0" HorizontalAlignment="Left" Width="170" Margin="40,0,0,0">
             <TextBlock VerticalAlignment="Center" Margin="20 0" Foreground="#B0B9C6" IsHitTestVisible="False" Panel.ZIndex="1" Text="Szukaj kategorii ..."

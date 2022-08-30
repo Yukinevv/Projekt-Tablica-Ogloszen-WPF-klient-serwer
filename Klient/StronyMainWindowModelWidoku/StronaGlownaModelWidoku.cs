@@ -173,6 +173,7 @@ namespace Klient
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
             OperacjeKlient.Wyslij(kategoriaSerialized);
+            if (OperacjeKlient.Odbierz() != "OK") return;
             OperacjeKlient.Wyslij(LogowanieModelWidoku.TextBoxLoginTextModelWidoku);
 
             string odpowiedz = OperacjeKlient.Odbierz();
@@ -187,6 +188,8 @@ namespace Klient
                     Data_utw = DateTime.Now
                 };
                 KategorieLista.Add(kategoria);
+
+                TextBoxNazwaNowejKategoriiTextModelWidoku = string.Empty;
             }
             else
             {
